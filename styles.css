@@ -1371,3 +1371,7 @@ input:checked+.slider::before {
 }
 
 /* [/SCROLLBAR] */
+
+.fab {
+  font-family: 'Inter', sans-serif !important;
+}
