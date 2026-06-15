@@ -386,6 +386,8 @@ function openModal() {
   document.getElementById('f-id').value = '';
   document.getElementById('form').reset();
   document.getElementById('f-precol').value             = '';
+  document.getElementById('f-kmtrip').value             = '';
+  document.getElementById('f-kmlprev').value            = '';
   document.getElementById('modal-title').textContent    = '🛢️ Novo Abastecimento';
   document.getElementById('modal-subtitle').textContent = '';
   document.getElementById('btn-salvar').textContent     = '✅ Salvar Abastecimento';
@@ -403,9 +405,8 @@ function openEdit(idx) {
   document.getElementById('f-litros').value    = r['Litros']           || '';
   document.getElementById('f-valor').value     = r['Valor']            || '';
   document.getElementById('f-kmtotal').value   = r['KM_Total']         || '';
-  document.getElementById('f-kmtrip').value    = r['KM_Trip']          || '';
   selectedPostoNome = r['Posto'] || '';
-  calcPreco(); cancelInlineAddPosto(); renderPostoPicker();
+  calcPreco(); calcKm(); cancelInlineAddPosto(); renderPostoPicker();
   const d    = new Date(r['Data']);
   const dStr = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
   document.getElementById('modal-title').textContent    = '✏️ Editar Abastecimento';
@@ -452,6 +453,13 @@ function confirmDeleteRecord() {
 /* [SUBMIT-FORM] ══════════════════════════════ */
 function submitForm(e) {
   e.preventDefault();
+
+  // ✅ Valida KM Total (obrigatório p/ cálculos)
+  if (!document.getElementById('f-kmtotal').value) {
+    showToast('⚠️ Informe o KM Total (hodômetro)', '');
+    return;
+  }
+
   const btn = document.getElementById('btn-salvar');
   btn.disabled = true; btn.textContent = '⏳ Salvando...';
 
@@ -463,7 +471,7 @@ function submitForm(e) {
     litros:      +document.getElementById('f-litros').value,
     valor:       +document.getElementById('f-valor').value,
     kmTotal:     +document.getElementById('f-kmtotal').value || '',
-    kmTrip:      +document.getElementById('f-kmtrip').value  || '',
+    // ❌ kmTrip removido — backend calcula sozinho
     posto:       selectedPostoNome
   };
 
@@ -477,7 +485,9 @@ function submitForm(e) {
       if (res.success) {
         showToast(msgOk, 'ok'); closeModal();
         document.getElementById('form').reset();
-        document.getElementById('f-precol').value = '';
+        document.getElementById('f-precol').value  = '';
+        document.getElementById('f-kmtrip').value  = '';
+        document.getElementById('f-kmlprev').value = '';
         selectedPostoNome = ''; loadRecords();
       } else { showToast('❌ ' + res.error, 'err'); }
     })
@@ -570,6 +580,59 @@ function calcPreco() {
   const v = +document.getElementById('f-valor').value;
   document.getElementById('f-precol').value = (l>0&&v>0) ? `R$ ${(v/l).toFixed(3)}/L` : '';
 }
+
+/* [CALC-KM-PREVIEW] — prévia de KM rodados e km/L no formulário */
+function calcKm() {
+  const kmTotalEl = document.getElementById('f-kmtotal');
+  const kmTripEl  = document.getElementById('f-kmtrip');
+  const kmlPrevEl = document.getElementById('f-kmlprev');
+
+  const kmTotal = +kmTotalEl.value || 0;
+  const litros  = +document.getElementById('f-litros').value || 0;
+  const dataVal = document.getElementById('f-data').value;
+  const editId  = document.getElementById('f-id').value;
+
+  if (kmTotal <= 0 || !dataVal) {
+    kmTripEl.value  = '';
+    kmlPrevEl.value = '';
+    return;
+  }
+
+  // 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora)
+  const dataAtual = new Date(dataVal).getTime();
+  let prevKmTotal = null, prevTime = -Infinity;
+
+  records.forEach(r => {
+    if (editId && String(r['ID']) === String(editId)) return; // ignora o próprio
+    const t  = new Date(r['Data']).getTime();
+    const km = +r['KM_Total'] || 0;
+    if (km > 0 && t < dataAtual && t > prevTime) {
+      prevTime = t; prevKmTotal = km;
+    }
+  });
+
+  // 🛣️ KM Rodados
+  if (prevKmTotal === null) {
+    kmTripEl.value  = '— (1º registro)';
+    kmlPrevEl.value = '—';
+    return;
+  }
+
+  const dist = kmTotal - prevKmTotal;
+  if (dist <= 0) {
+    kmTripEl.value  = '⚠️ KM ≤ anterior';
+    kmlPrevEl.value = '—';
+    return;
+  }
+
+  kmTripEl.value = `${dist.toFixed(0)} km`;
+
+  // ⚡ Prévia de km/L (estimativa simples)
+  kmlPrevEl.value = (litros > 0)
+    ? `~ ${(dist / litros).toFixed(2)} km/L`
+    : '—';
+}
+/* [/CALC-KM-PREVIEW] */
 
 function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 

@@ -154,21 +154,21 @@
   <!-- [/PAGE-ADMIN] -->
 
   <!-- [BOTTOM-NAV] ══════════════════════════════ -->
-<nav class="bottom-nav">
-  <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
-    <span class="nav-icon">⛽</span>Início
-  </button>
-  <button class="nav-item" id="nav-analytics" onclick="switchTab('analytics')">
-    <span class="nav-icon">📊</span>Análise
-  </button>
-  <button class="nav-item" id="nav-admin" onclick="switchTab('admin')">
-    <span class="nav-icon">⚙️</span>Admin
-  </button>
-<button class="nav-item nav-registrar" onclick="openModal()">
-  <span class="nav-icon">+</span>
-</button>
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+      <span class="nav-icon">⛽</span>Início
+    </button>
+    <button class="nav-item" id="nav-analytics" onclick="switchTab('analytics')">
+      <span class="nav-icon">📊</span>Análise
+    </button>
+    <button class="nav-item" id="nav-admin" onclick="switchTab('admin')">
+      <span class="nav-icon">⚙️</span>Admin
+    </button>
+    <button class="nav-item nav-registrar" onclick="openModal()">
+      <span class="nav-icon">+</span>
+    </button>
 
-</nav>
+  </nav>
 
   <!-- [/BOTTOM-NAV] -->
 
@@ -188,7 +188,7 @@
         <!-- [FORM-DATA] -->
         <div class="form-group">
           <label class="form-label">📅 Data e Hora <span class="req">*</span></label>
-          <input type="datetime-local" class="form-control" id="f-data" required>
+          <input type="datetime-local" class="form-control" id="f-data" required oninput="calcKm()">
         </div>
         <!-- [/FORM-DATA] -->
 
@@ -222,7 +222,7 @@
           <div class="form-group">
             <label class="form-label">💧 Litros <span class="req">*</span></label>
             <input type="number" class="form-control" id="f-litros" step="0.01" min="0.01" placeholder="0.00"
-              inputmode="decimal" required oninput="calcPreco()">
+              inputmode="decimal" required oninput="calcPreco();calcKm()">
           </div>
           <div class="form-group">
             <label class="form-label">💰 Valor Total R$ <span class="req">*</span></label>
@@ -243,16 +243,19 @@
         <!-- [FORM-HODOMETRO] -->
         <hr class="divider">
         <div class="section-sub">📍 Hodômetro</div>
+        <div class="form-group">
+          <label class="form-label">📍 KM Total <span class="req">*</span></label>
+          <input type="number" class="form-control" id="f-kmtotal" step="1" min="0" placeholder="000000"
+            inputmode="numeric" required oninput="calcKm()">
+        </div>
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label">📍 KM Total <span class="req">*</span></label>
-            <input type="number" class="form-control" id="f-kmtotal" step="1" min="0" placeholder="000000"
-              inputmode="numeric" required>
+            <label class="form-label">🛣️ KM Rodados — calculado</label>
+            <input type="text" class="form-control calc" id="f-kmtrip" readonly placeholder="Preencha o KM Total ↑">
           </div>
           <div class="form-group">
-            <label class="form-label">🛣️ KM Trip</label>
-            <input type="number" class="form-control" id="f-kmtrip" step="0.1" min="0" placeholder="0.0"
-              inputmode="decimal">
+            <label class="form-label">⚡ km/L — prévia</label>
+            <input type="text" class="form-control calc" id="f-kmlprev" readonly placeholder="Estimativa">
           </div>
         </div>
         <!-- [/FORM-HODOMETRO] -->
