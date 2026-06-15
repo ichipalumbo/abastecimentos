@@ -800,6 +800,7 @@ button, input, select, textarea {
 
 /* 💚 Registrar — único card destacado (à direita) */
 /* 💚 Registrar — quadrado fixo, só o "+" */
+/* 💚 Registrar — "+" perfeitamente centralizado */
 .nav-registrar {
   flex: 0 0 auto;
   width: 56px;
@@ -809,15 +810,24 @@ button, input, select, textarea {
   border-radius: 14px;
   margin: auto 8px auto 0;
   padding: 0;
+
+  display: flex;             /* 🔑 ativa centralização */
+  align-items: center;       /* 🔑 centro vertical */
+  justify-content: center;   /* 🔑 centro horizontal */
+
   box-shadow: 0 4px 14px rgba(74, 222, 128, .4);
   transition: transform .15s, background .2s;
 }
 
 .nav-registrar .nav-icon {
   color: #0e0e1a;
-  font-size: 2.2rem;     /* 🔑 "+" bem grande! */
+  font-size: 2.2rem;
   font-weight: 400;
-  line-height: 1;
+  line-height: 1;            /* 🔑 remove espaço extra do texto */
+  display: flex;             /* garante alinhamento do "+" */
+  align-items: center;
+  justify-content: center;
+  margin: 0;                 /* 🔑 remove qualquer margem herdada */
 }
 
 .nav-registrar:active {
