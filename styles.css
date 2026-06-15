@@ -750,36 +750,6 @@ button, input, select, textarea {
 
 /* [/ADMIN] */
 
-/* [FAB] ══════════════════════════════════════ */
-.fab {
-  position: fixed;
-  bottom: calc(var(--nav-h) + var(--safe-b) + 16px);
-  right: 18px;
-  background: var(--blue);
-  color: #fff;
-  border: none;
-  border-radius: 30px;
-  padding: 18px 28px;          /* ⬆️ um tiquinho maior */
-  font-family: 'Inter', sans-serif;  /* ✅ fonte coesa */
-  font-size: 1.15rem;          /* ⬆️ aumentado (era 0.95rem) */
-  font-weight: 600;            /* 600 fica elegante (era 700) */
-  letter-spacing: .2px;        /* respiro sutil entre letras */
-  box-shadow: 0 8px 30px rgba(108, 143, 255, .45);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 200;
-  transition: transform .15s, background .2s;
-}
-
-.fab:active {
-  transform: scale(.95);
-  background: var(--blue-dark);
-}
-
-/* [/FAB] */
-
 /* [BOTTOM-NAV] ═══════════════════════════════ */
 .bottom-nav {
   position: fixed;
@@ -1374,3 +1344,32 @@ input:checked+.slider::before {
 
 /* [/SCROLLBAR] */
 
+/* [FAB] ══════════════════════════════════════ */
+.fab {
+  position: fixed;
+  bottom: calc(var(--nav-h) + var(--safe-b) + 16px);
+  right: 18px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 18px 28px;          /* ⬆️ um tiquinho maior */
+  font-family: 'Inter', sans-serif;  /* ✅ fonte coesa */
+  font-size: 1.15rem;          /* ⬆️ aumentado (era 0.95rem) */
+  font-weight: 600;            /* 600 fica elegante (era 700) */
+  letter-spacing: .2px;        /* respiro sutil entre letras */
+  box-shadow: 0 8px 30px rgba(108, 143, 255, .45);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 200;
+  transition: transform .15s, background .2s;
+}
+
+.fab:active {
+  transform: scale(.95);
+  background: var(--blue-dark);
+}
+
+/* [/FAB] */
