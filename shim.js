@@ -4,7 +4,7 @@
 ══════════════════════════════════════════════════════════ */
 
 // 🔧 TROQUE pela SUA URL /exec real:
-const API_URL   = 'https://script.google.com/macros/s/SEU_ID_AQUI/exec';
+const API_URL   = 'https://script.google.com/macros/s/AKfycbyaw7Hltfk4nYdXjvUnaeYtpCpgf1MlKUD3PrxNs3vT1IJEY33iJ2GJZDwLKKtGoDQF/exec';
 // 🔑 Mesmo token do Code.gs:
 const API_TOKEN = 'abst_7gK9pQ2xW5nR8tL4vY6mZ3jH';
 
