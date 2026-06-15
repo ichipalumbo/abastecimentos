@@ -40,30 +40,56 @@
   <div class="us-cards">
     <button class="us-card" onclick="selectUser('Luccas')">
       <div class="us-avatar car-red">
-        <svg viewBox="0 0 100 60" width="84" height="50">
-          <path d="M8 42 L14 28 C16 23 20 21 26 21 L62 21 C68 21 73 23 77 28 L88 34 C92 35 94 38 94 42 L94 46 C94 47 93 48 92 48 L84 48 A8 8 0 0 0 68 48 L40 48 A8 8 0 0 0 24 48 L10 48 C9 48 8 47 8 46 Z" fill="currentColor"/>
-          <path d="M24 28 L30 22 L46 22 L46 28 Z" fill="rgba(255,255,255,.35)"/>
-          <path d="M50 22 L60 22 C64 22 67 23 70 27 L72 28 L50 28 Z" fill="rgba(255,255,255,.35)"/>
-          <circle cx="32" cy="48" r="6" fill="#1a1a1a"/>
-          <circle cx="32" cy="48" r="2.5" fill="#888"/>
-          <circle cx="76" cy="48" r="6" fill="#1a1a1a"/>
-          <circle cx="76" cy="48" r="2.5" fill="#888"/>
-        </svg>
+<svg viewBox="0 0 120 70" width="92" height="54">
+  <!-- sombra -->
+  <ellipse cx="60" cy="62" rx="46" ry="4" fill="rgba(0,0,0,.25)"/>
+  <!-- corpo alto e quadrado (monovolume) -->
+  <path d="M8 50 C8 47 10 45 13 45 L14 45 L18 20 C19 14 23 11 30 11 L78 11 C85 11 90 14 94 22 L104 40 L110 42 C114 43 116 46 116 50 L116 53 C116 55 114 56 112 56 L102 56 A9 9 0 0 0 84 56 L46 56 A9 9 0 0 0 28 56 L11 56 C9 56 8 54 8 52 Z" fill="currentColor"/>
+  <!-- vidros grandes e verticais (cara de minivan) -->
+  <path d="M23 22 C24 17 27 15 31 15 L52 15 L52 38 L19 38 Z" fill="rgba(255,255,255,.30)"/>
+  <path d="M56 15 L74 15 C80 15 84 17 88 24 L94 38 L56 38 Z" fill="rgba(255,255,255,.30)"/>
+  <!-- divisórias das portas -->
+  <line x1="54" y1="15" x2="54" y2="38" stroke="rgba(0,0,0,.15)" stroke-width="1.5"/>
+  <line x1="38" y1="15" x2="38" y2="38" stroke="rgba(0,0,0,.12)" stroke-width="1.2"/>
+  <!-- farol -->
+  <path d="M110 43 L115 45 C116 46 116 48 115 48 L110 48 Z" fill="rgba(255,255,180,.9)"/>
+  <!-- rodas -->
+  <circle cx="93" cy="56" r="9" fill="#1a1a1a"/>
+  <circle cx="93" cy="56" r="4.5" fill="#444"/>
+  <circle cx="93" cy="56" r="1.8" fill="#888"/>
+  <circle cx="37" cy="56" r="9" fill="#1a1a1a"/>
+  <circle cx="37" cy="56" r="4.5" fill="#444"/>
+  <circle cx="37" cy="56" r="1.8" fill="#888"/>
+</svg>
       </div>
       <div class="us-name">Luccas</div>
       <div class="us-tag">🔴 Fiat Idea</div>
     </button>
     <button class="us-card" onclick="selectUser('Josy')">
       <div class="us-avatar car-silver">
-        <svg viewBox="0 0 100 60" width="84" height="50">
-          <path d="M8 42 L14 28 C16 23 20 21 26 21 L62 21 C68 21 73 23 77 28 L88 34 C92 35 94 38 94 42 L94 46 C94 47 93 48 92 48 L84 48 A8 8 0 0 0 68 48 L40 48 A8 8 0 0 0 24 48 L10 48 C9 48 8 47 8 46 Z" fill="currentColor"/>
-          <path d="M24 28 L30 22 L46 22 L46 28 Z" fill="rgba(0,0,0,.18)"/>
-          <path d="M50 22 L60 22 C64 22 67 23 70 27 L72 28 L50 28 Z" fill="rgba(0,0,0,.18)"/>
-          <circle cx="32" cy="48" r="6" fill="#1a1a1a"/>
-          <circle cx="32" cy="48" r="2.5" fill="#888"/>
-          <circle cx="76" cy="48" r="6" fill="#1a1a1a"/>
-          <circle cx="76" cy="48" r="2.5" fill="#888"/>
-        </svg>
+<svg viewBox="0 0 130 60" width="96" height="48">
+  <!-- sombra -->
+  <ellipse cx="65" cy="54" rx="52" ry="4" fill="rgba(0,0,0,.25)"/>
+  <!-- corpo baixo e longo, com porta-malas (3 volumes) -->
+  <path d="M6 42 C6 39 8 37 11 37 L13 37 L24 24 C27 20 31 18 37 18 L70 18 C76 18 80 20 84 24 L96 33 L118 37 C123 38 125 40 125 44 L125 46 C125 48 123 49 121 49 L112 49 A9 9 0 0 0 94 49 L50 49 A9 9 0 0 0 32 49 L9 49 C7 49 6 47 6 45 Z" fill="currentColor"/>
+  <!-- vidros baixos e alongados -->
+  <path d="M29 25 C31 21 34 20 37 20 L54 20 L54 32 L23 32 Z" fill="rgba(0,0,0,.20)"/>
+  <path d="M58 20 L70 20 C74 20 78 22 82 27 L86 32 L58 32 Z" fill="rgba(0,0,0,.20)"/>
+  <!-- divisória das portas -->
+  <line x1="56" y1="20" x2="56" y2="32" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+  <!-- porta-malas (linha do bagageiro) -->
+  <line x1="96" y1="33" x2="118" y2="37" stroke="rgba(0,0,0,.12)" stroke-width="1.2"/>
+  <!-- farol -->
+  <path d="M119 38 L124 40 C125 41 125 43 124 43 L119 43 Z" fill="rgba(255,255,180,.9)"/>
+  <!-- rodas -->
+  <circle cx="103" cy="49" r="9" fill="#1a1a1a"/>
+  <circle cx="103" cy="49" r="4.5" fill="#444"/>
+  <circle cx="103" cy="49" r="1.8" fill="#888"/>
+  <circle cx="41" cy="49" r="9" fill="#1a1a1a"/>
+  <circle cx="41" cy="49" r="4.5" fill="#444"/>
+  <circle cx="41" cy="49" r="1.8" fill="#888"/>
+</svg>
+
       </div>
       <div class="us-name">Josy</div>
       <div class="us-tag">⚪ Renault Logan</div>
