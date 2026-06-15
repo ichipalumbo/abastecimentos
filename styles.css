@@ -54,8 +54,13 @@ body {
   overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
 }
-button, input, select, textarea {
-  font-family: inherit;   /* 🔑 herda a fonte do app */
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  /* 🔑 herda a fonte do app */
 }
 
 /* [/BASE] */
@@ -133,7 +138,7 @@ button, input, select, textarea {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .user-select.hidden {
@@ -811,23 +816,47 @@ button, input, select, textarea {
   margin: auto 8px auto 0;
   padding: 0;
 
-  display: flex;             /* 🔑 ativa centralização */
-  align-items: center;       /* 🔑 centro vertical */
-  justify-content: center;   /* 🔑 centro horizontal */
+  display: flex;
+  /* 🔑 ativa centralização */
+  align-items: center;
+  /* 🔑 centro vertical */
+  justify-content: center;
+  /* 🔑 centro horizontal */
 
   box-shadow: 0 4px 14px rgba(74, 222, 128, .4);
   transition: transform .15s, background .2s;
 }
 
 .nav-registrar .nav-icon {
-  color: #0e0e1a;
-  font-size: 2.2rem;
-  font-weight: 400;
-  line-height: 1;            /* 🔑 remove espaço extra do texto */
-  display: flex;             /* garante alinhamento do "+" */
-  align-items: center;
-  justify-content: center;
-  margin: 0;                 /* 🔑 remove qualquer margem herdada */
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-size: 0;
+  /* esconde qualquer texto */
+}
+
+.nav-registrar .nav-icon::before,
+.nav-registrar .nav-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: #0e0e1a;
+  border-radius: 2px;
+}
+
+.nav-registrar .nav-icon::before {
+  /* | vertical */
+  width: 3px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+}
+
+.nav-registrar .nav-icon::after {
+  /* — horizontal */
+  width: 24px;
+  height: 3px;
+  transform: translate(-50%, -50%);
 }
 
 .nav-registrar:active {
@@ -1355,10 +1384,12 @@ input:checked+.slider::before {
   pointer-events: none;
   transition: opacity .25s ease;
 }
+
 .loader-overlay.active {
   opacity: 1;
   pointer-events: all;
 }
+
 .loader-overlay .loader-spinner {
   width: 44px;
   height: 44px;
@@ -1367,12 +1398,14 @@ input:checked+.slider::before {
   border-radius: 50%;
   animation: spin .8s linear infinite;
 }
+
 .loader-text {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-sec);
   letter-spacing: .3px;
 }
+
 /* [/LOADER-OVERLAY] */
 
 /* [SCROLLBAR] ════════════════════════════════ */
