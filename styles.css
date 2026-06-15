@@ -799,26 +799,33 @@ button, input, select, textarea {
 }
 
 .nav-registrar {
-  color: var(--blue);
+  color: #fff;
+  flex: 0 0 auto;          /* 🔑 não estica como os outros */
+  padding: 6px 14px;
 }
 
 .nav-registrar .nav-icon {
   background: var(--blue);
   color: #fff;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  flex-shrink: 0;
+  border-radius: 12px;     /* 🔲 quadrado de cantos suaves */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1;
   box-shadow: 0 4px 14px rgba(108, 143, 255, .5);
   margin-bottom: 2px;
-  transition: transform .15s;
+  transition: transform .15s, background .2s;
 }
 
 .nav-registrar:active .nav-icon {
-  transform: scale(.9);
+  transform: scale(.92);
+  background: var(--blue-dark);
 }
 /* [/BOTTOM-NAV] */
 
