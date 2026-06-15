@@ -8,59 +8,57 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <title>Abastecimentos</title>
 
-  <!-- CSS -->
+  <!-- [HEAD-LINKS] -->
   <link rel="stylesheet" href="styles.css">
-
-  <!-- Ícone (Android / navegador) -->
   <link rel="icon" type="image/svg+xml" href="icon.svg">
-
-  <!-- Ícone (iPhone - tela inicial) -->
   <link rel="apple-touch-icon" href="icon.svg">
-
-  <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json">
+  <!-- ⬇️ FALTAVA ISTO (ícones dos carros) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- [/HEAD-LINKS] -->
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     SPLASH / LOADING
-══════════════════════════════════════════ -->
+<!-- [SPLASH] ════════════════════════════════ -->
 <div id="splash" class="splash">
   <div class="splash-logo">⛽</div>
   <div class="splash-title">Abastecimentos</div>
   <div class="splash-spinner"></div>
 </div>
-<!-- ══════════════════════════════════════════
-     TELA DE SELEÇÃO DE USUÁRIO
-══════════════════════════════════════════ -->
+<!-- [/SPLASH] -->
+
+<!-- [USER-SELECT] ═════════════════════════════ -->
 <div id="user-select" class="user-select">
   <div class="us-logo">⛽</div>
   <div class="us-title">Abastecimentos</div>
   <div class="us-subtitle">Quem vai abastecer hoje?</div>
   <div class="us-cards">
-    <button class="us-card" onclick="selectUser('Luccas')">
-<div class="us-avatar car-red">
-  <i class="fa-solid fa-van-shuttle"></i>
-</div>
 
+    <!-- [CARD-LUCCAS] -->
+    <button class="us-card" onclick="selectUser('Luccas')">
+      <div class="us-avatar car-red">
+        <i class="fa-solid fa-van-shuttle"></i>
       </div>
       <div class="us-name">Luccas</div>
       <div class="us-tag">IDEA</div>
     </button>
-    <button class="us-card" onclick="selectUser('Josy')">
-<div class="us-avatar car-silver">
-  <i class="fa-solid fa-car-side"></i>
-</div>
+    <!-- [/CARD-LUCCAS] -->
 
+    <!-- [CARD-JOSY] -->
+    <button class="us-card" onclick="selectUser('Josy')">
+      <div class="us-avatar car-silver">
+        <i class="fa-solid fa-car-side"></i>
+      </div>
       <div class="us-name">Josy</div>
       <div class="us-tag">LOGAN</div>
     </button>
+    <!-- [/CARD-JOSY] -->
+
   </div>
 </div>
+<!-- [/USER-SELECT] -->
 
-<!-- ══════════════════════════════════════════
-     PAGE: HOME
-══════════════════════════════════════════ -->
+<!-- [PAGE-HOME] ═══════════════════════════════ -->
 <div id="page-home" class="page active">
   <div class="header">
     <div class="header-top">
@@ -72,6 +70,8 @@
       <span class="header-badge" id="badge-mes">—</span>
     </div>
   </div>
+
+  <!-- [HOME-STATS] -->
   <div class="stats">
     <div class="stat-card">
       <div class="stat-value blue"  id="s-mes">—</div>
@@ -86,17 +86,20 @@
       <div class="stat-label">R$/L<br>Médio</div>
     </div>
   </div>
+  <!-- [/HOME-STATS] -->
+
+  <!-- [HOME-LIST] -->
   <div class="content">
     <div class="section-title">Histórico</div>
     <div id="list">
       <div class="loading"><div class="loading-spinner"></div>Carregando registros...</div>
     </div>
   </div>
+  <!-- [/HOME-LIST] -->
 </div>
+<!-- [/PAGE-HOME] -->
 
-<!-- ══════════════════════════════════════════
-     PAGE: ANALYTICS
-══════════════════════════════════════════ -->
+<!-- [PAGE-ANALYTICS] ══════════════════════════ -->
 <div id="page-analytics" class="page">
   <div class="analytics-header">
     <h1>📊 Análise</h1>
@@ -112,10 +115,9 @@
     <div id="monthly-list"></div>
   </div>
 </div>
+<!-- [/PAGE-ANALYTICS] -->
 
-<!-- ══════════════════════════════════════════
-     PAGE: ADMIN
-══════════════════════════════════════════ -->
+<!-- [PAGE-ADMIN] ══════════════════════════════ -->
 <div id="page-admin" class="page">
   <div class="admin-header">
     <h1>⚙️ Administração</h1>
@@ -131,12 +133,15 @@
     </div>
   </div>
 </div>
+<!-- [/PAGE-ADMIN] -->
 
-<!-- FAB + BOTTOM NAV -->
+<!-- [FAB] -->
 <button class="fab" onclick="openModal()">
   <span style="font-size:1.15rem;line-height:1">＋</span> Registrar
 </button>
+<!-- [/FAB] -->
 
+<!-- [BOTTOM-NAV] ══════════════════════════════ -->
 <nav class="bottom-nav">
   <button class="nav-item active" id="nav-home"      onclick="switchTab('home')">
     <span class="nav-icon">⛽</span>Início
@@ -148,10 +153,9 @@
     <span class="nav-icon">⚙️</span>Admin
   </button>
 </nav>
+<!-- [/BOTTOM-NAV] -->
 
-<!-- ══════════════════════════════════════════
-     MODAL — FORM (novo / editar registro)
-══════════════════════════════════════════ -->
+<!-- [MODAL-FORM] ══════════════════════════════ -->
 <div class="overlay" id="overlay" onclick="bgClick(event)">
   <div class="modal">
     <div class="drag-bar"></div>
@@ -164,11 +168,14 @@
     <form id="form" onsubmit="submitForm(event)">
       <input type="hidden" id="f-id">
 
+      <!-- [FORM-DATA] -->
       <div class="form-group">
         <label class="form-label">📅 Data e Hora <span class="req">*</span></label>
         <input type="datetime-local" class="form-control" id="f-data" required>
       </div>
+      <!-- [/FORM-DATA] -->
 
+      <!-- [FORM-COMB-PARCIAL] -->
       <div class="grid-2">
         <div class="form-group">
           <label class="form-label">⛽ Combustível</label>
@@ -191,7 +198,9 @@
           </div>
         </div>
       </div>
+      <!-- [/FORM-COMB-PARCIAL] -->
 
+      <!-- [FORM-LITROS-VALOR] -->
       <div class="grid-2">
         <div class="form-group">
           <label class="form-label">💧 Litros <span class="req">*</span></label>
@@ -206,16 +215,19 @@
                  inputmode="decimal" required oninput="calcPreco()">
         </div>
       </div>
+      <!-- [/FORM-LITROS-VALOR] -->
 
+      <!-- [FORM-PRECOL] -->
       <div class="form-group">
         <label class="form-label">🧮 Preço por Litro — calculado</label>
         <input type="text" class="form-control calc" id="f-precol"
                readonly placeholder="Preencha litros e valor acima ↑">
       </div>
+      <!-- [/FORM-PRECOL] -->
 
+      <!-- [FORM-HODOMETRO] -->
       <hr class="divider">
       <div class="section-sub">📍 Hodômetro</div>
-
       <div class="grid-2">
         <div class="form-group">
           <label class="form-label">📍 KM Total <span class="req">*</span></label>
@@ -228,10 +240,11 @@
                  step="0.1" min="0" placeholder="0.0" inputmode="decimal">
         </div>
       </div>
+      <!-- [/FORM-HODOMETRO] -->
 
+      <!-- [FORM-POSTO] -->
       <hr class="divider">
       <div class="section-sub">🏪 Posto</div>
-
       <div class="posto-scroll" id="posto-picker">
         <span style="color:var(--muted);font-size:0.82rem">Carregando postos...</span>
       </div>
@@ -242,6 +255,7 @@
         <button type="button" class="btn-inline btn-inline-save"   onclick="saveInlineAddPosto()">✓</button>
         <button type="button" class="btn-inline btn-inline-cancel" onclick="cancelInlineAddPosto()">✕</button>
       </div>
+      <!-- [/FORM-POSTO] -->
 
       <button type="submit" class="btn-submit" id="btn-salvar" style="margin-top:20px">
         ✅ Salvar Abastecimento
@@ -249,10 +263,9 @@
     </form>
   </div>
 </div>
+<!-- [/MODAL-FORM] -->
 
-<!-- ══════════════════════════════════════════
-     MODAL — POSTO (add / editar)
-══════════════════════════════════════════ -->
+<!-- [MODAL-POSTO] ═════════════════════════════ -->
 <div class="overlay" id="posto-overlay" onclick="bgClickPosto(event)">
   <div class="modal" style="max-height:55vh">
     <div class="drag-bar"></div>
@@ -272,8 +285,9 @@
     </button>
   </div>
 </div>
+<!-- [/MODAL-POSTO] -->
 
-<!-- CONFIRM — Excluir Registro -->
+<!-- [CONFIRM-RECORD] ══════════════════════════ -->
 <div class="confirm-overlay" id="confirm-record-overlay">
   <div class="confirm-box">
     <div class="confirm-icon">🗑️</div>
@@ -285,8 +299,9 @@
     </div>
   </div>
 </div>
+<!-- [/CONFIRM-RECORD] -->
 
-<!-- CONFIRM — Excluir Posto -->
+<!-- [CONFIRM-POSTO] ═══════════════════════════ -->
 <div class="confirm-overlay" id="confirm-posto-overlay">
   <div class="confirm-box">
     <div class="confirm-icon">🏪</div>
@@ -301,10 +316,16 @@
     </div>
   </div>
 </div>
+<!-- [/CONFIRM-POSTO] -->
 
+<!-- [TOAST] -->
 <div class="toast" id="toast"></div>
+<!-- [/TOAST] -->
 
+<!-- [SCRIPTS] -->
 <script src="shim.js"></script>
 <script src="script.js"></script>
+<!-- [/SCRIPTS] -->
+
 </body>
 </html>
