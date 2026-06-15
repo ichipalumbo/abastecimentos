@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <title>⛽ Abastecimentos</title>
-  <?!= include('styles'); ?>
+  <link rel="stylesheet" href="styles.css">
   <link rel="manifest" href='data:application/json,{"name":"Abastecimentos","short_name":"Abastec","start_url":".","display":"standalone","background_color":"%230e0e1a","theme_color":"%230e0e1a","icons":[{"src":"https://cdn-icons-png.flaticon.com/192/2972/2972146.png","sizes":"192x192","type":"image/png"}]}'>
 
 </head>
@@ -303,6 +303,7 @@
 
 <div class="toast" id="toast"></div>
 
-<?!= include('script'); ?>
+<script src="shim.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
