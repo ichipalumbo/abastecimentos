@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,326 +14,333 @@
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <link rel="apple-touch-icon" href="icon.svg">
   <link rel="manifest" href="manifest.json">
-  <!-- ⬇️ FALTAVA ISTO (ícones dos carros) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
   <!-- [/HEAD-LINKS] -->
 </head>
+
 <body>
 
-<!-- [SPLASH] ════════════════════════════════ -->
-<div id="splash" class="splash">
-  <div class="splash-logo">⛽</div>
-  <div class="splash-title">Abastecimentos</div>
-  <div class="splash-spinner"></div>
-</div>
-<!-- [/SPLASH] -->
-
-<!-- [LOADER-OVERLAY] -->
-<div id="loader-overlay" class="loader-overlay">
-  <div class="loader-spinner"></div>
-  <div class="loader-text">Carregando dados...</div>
-</div>
-<!-- [/LOADER-OVERLAY] -->
-
-<!-- [USER-SELECT] ═════════════════════════════ -->
-<div id="user-select" class="user-select">
-  <div class="us-logo">⛽</div>
-  <div class="us-title">Abastecimentos</div>
-  <div class="us-subtitle">Quem vai abastecer hoje?</div>
-  <div class="us-cards">
-
-    <!-- [CARD-LUCCAS] -->
-    <button class="us-card" onclick="selectUser('Luccas')">
-      <div class="us-avatar car-red">
-        <i class="fa-solid fa-van-shuttle"></i>
-      </div>
-      <div class="us-name">Luccas</div>
-      <div class="us-tag">IDEA</div>
-    </button>
-    <!-- [/CARD-LUCCAS] -->
-
-    <!-- [CARD-JOSY] -->
-    <button class="us-card" onclick="selectUser('Josy')">
-      <div class="us-avatar car-silver">
-        <i class="fa-solid fa-car-side"></i>
-      </div>
-      <div class="us-name">Josy</div>
-      <div class="us-tag">LOGAN</div>
-    </button>
-    <!-- [/CARD-JOSY] -->
-
+  <!-- [SPLASH] ════════════════════════════════ -->
+  <div id="splash" class="splash">
+    <div class="splash-logo">⛽</div>
+    <div class="splash-title">Abastecimentos</div>
+    <div class="splash-spinner"></div>
   </div>
-</div>
-<!-- [/USER-SELECT] -->
+  <!-- [/SPLASH] -->
 
-<!-- [PAGE-HOME] ═══════════════════════════════ -->
-<div id="page-home" class="page active">
-  <div class="header">
-    <div class="header-top">
-      <div>
-        <h1 id="home-title">⛽ Abastecimentos</h1>
-        <p class="header-sub" id="subtitle">Carregando dados...</p>
-        <button class="btn-switch-user" onclick="logout()">🔄 Trocar usuário</button>
-      </div>
-      <span class="header-badge" id="badge-mes">—</span>
-    </div>
+  <!-- [LOADER-OVERLAY] -->
+  <div id="loader-overlay" class="loader-overlay">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Carregando dados...</div>
   </div>
+  <!-- [/LOADER-OVERLAY] -->
 
-  <!-- [HOME-STATS] -->
-  <div class="stats">
-    <div class="stat-card">
-      <div class="stat-value blue"  id="s-mes">—</div>
-      <div class="stat-label">Gasto<br>no Mês</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value green" id="s-kml">—</div>
-      <div class="stat-label">Média<br>km/L</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value amber" id="s-preco">—</div>
-      <div class="stat-label">R$/L<br>Médio</div>
-    </div>
-  </div>
-  <!-- [/HOME-STATS] -->
+  <!-- [USER-SELECT] ═════════════════════════════ -->
+  <div id="user-select" class="user-select">
+    <div class="us-logo">⛽</div>
+    <div class="us-title">Abastecimentos</div>
+    <div class="us-subtitle">Quem vai abastecer hoje?</div>
+    <div class="us-cards">
 
-  <!-- [HOME-LIST] -->
-  <div class="content">
-    <div class="section-title">Histórico</div>
-    <div id="list">
-      <div class="loading"><div class="loading-spinner"></div>Carregando registros...</div>
-    </div>
-  </div>
-  <!-- [/HOME-LIST] -->
-</div>
-<!-- [/PAGE-HOME] -->
-
-<!-- [PAGE-ANALYTICS] ══════════════════════════ -->
-<div id="page-analytics" class="page">
-  <div class="analytics-header">
-    <h1>📊 Análise</h1>
-    <p>Histórico completo e médias por mês</p>
-  </div>
-  <div class="summary-grid" id="summary-grid">
-    <div class="summary-card" style="grid-column:span 2">
-      <div class="loading" style="padding:30px 0"><div class="loading-spinner"></div></div>
-    </div>
-  </div>
-  <div class="content" style="margin-top:16px">
-    <div class="section-title">Por Mês</div>
-    <div id="monthly-list"></div>
-  </div>
-</div>
-<!-- [/PAGE-ANALYTICS] -->
-
-<!-- [PAGE-ADMIN] ══════════════════════════════ -->
-<div id="page-admin" class="page">
-  <div class="admin-header">
-    <h1>⚙️ Administração</h1>
-    <p>Gerencie os postos cadastrados</p>
-  </div>
-  <div class="content" style="margin-top:20px">
-    <div class="admin-toolbar">
-      <div class="section-title" style="margin-bottom:0">Postos Cadastrados</div>
-      <button class="btn-new-posto" onclick="openAddPosto()">＋ Novo Posto</button>
-    </div>
-    <div id="postos-admin-list">
-      <div class="loading"><div class="loading-spinner"></div></div>
-    </div>
-  </div>
-</div>
-<!-- [/PAGE-ADMIN] -->
-
-<!-- [FAB] -->
-<button class="fab" onclick="openModal()">
-  <span style="font-size:1.15rem;line-height:1">＋</span> Registrar
-</button>
-<!-- [/FAB] -->
-
-<!-- [BOTTOM-NAV] ══════════════════════════════ -->
-<nav class="bottom-nav">
-  <button class="nav-item active" id="nav-home"      onclick="switchTab('home')">
-    <span class="nav-icon">⛽</span>Início
-  </button>
-  <button class="nav-item"        id="nav-analytics" onclick="switchTab('analytics')">
-    <span class="nav-icon">📊</span>Análise
-  </button>
-  <button class="nav-item"        id="nav-admin"     onclick="switchTab('admin')">
-    <span class="nav-icon">⚙️</span>Admin
-  </button>
-</nav>
-<!-- [/BOTTOM-NAV] -->
-
-<!-- [MODAL-FORM] ══════════════════════════════ -->
-<div class="overlay" id="overlay" onclick="bgClick(event)">
-  <div class="modal">
-    <div class="drag-bar"></div>
-    <div class="modal-header">
-      <div class="modal-title" id="modal-title">🛢️ Novo Abastecimento</div>
-      <button type="button" class="btn-close-modal" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-subtitle" id="modal-subtitle"></div>
-
-    <form id="form" onsubmit="submitForm(event)">
-      <input type="hidden" id="f-id">
-
-      <!-- [FORM-DATA] -->
-      <div class="form-group">
-        <label class="form-label">📅 Data e Hora <span class="req">*</span></label>
-        <input type="datetime-local" class="form-control" id="f-data" required>
-      </div>
-      <!-- [/FORM-DATA] -->
-
-      <!-- [FORM-COMB-PARCIAL] -->
-      <div class="grid-2">
-        <div class="form-group">
-          <label class="form-label">⛽ Combustível</label>
-          <select class="form-control" id="f-comb">
-            <option>Gasolina</option>
-            <option>Gasolina Aditivada</option>
-            <option>Etanol</option>
-            <option>Diesel</option>
-            <option>GNV</option>
-          </select>
+      <!-- [CARD-LUCCAS] -->
+      <button class="us-card" onclick="selectUser('Luccas')">
+        <div class="us-avatar car-red">
+          <i class="fa-solid fa-van-shuttle"></i>
         </div>
+        <div class="us-name">Luccas</div>
+        <div class="us-tag">IDEA</div>
+      </button>
+      <!-- [/CARD-LUCCAS] -->
+
+      <!-- [CARD-JOSY] -->
+      <button class="us-card" onclick="selectUser('Josy')">
+        <div class="us-avatar car-silver">
+          <i class="fa-solid fa-car-side"></i>
+        </div>
+        <div class="us-name">Josy</div>
+        <div class="us-tag">LOGAN</div>
+      </button>
+      <!-- [/CARD-JOSY] -->
+
+    </div>
+  </div>
+  <!-- [/USER-SELECT] -->
+
+  <!-- [PAGE-HOME] ═══════════════════════════════ -->
+  <div id="page-home" class="page active">
+    <div class="header">
+      <div class="header-top">
+        <div>
+          <h1 id="home-title">⛽ Abastecimentos</h1>
+          <p class="header-sub" id="subtitle">Carregando dados...</p>
+          <button class="btn-switch-user" onclick="logout()">🔄 Trocar usuário</button>
+        </div>
+        <span class="header-badge" id="badge-mes">—</span>
+      </div>
+    </div>
+
+    <!-- [HOME-STATS] -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value blue" id="s-mes">—</div>
+        <div class="stat-label">Gasto<br>no Mês</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value green" id="s-kml">—</div>
+        <div class="stat-label">Média<br>km/L</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value amber" id="s-preco">—</div>
+        <div class="stat-label">R$/L<br>Médio</div>
+      </div>
+    </div>
+    <!-- [/HOME-STATS] -->
+
+    <!-- [HOME-LIST] -->
+    <div class="content">
+      <div class="section-title">Histórico</div>
+      <div id="list">
+        <div class="loading">
+          <div class="loading-spinner"></div>Carregando registros...
+        </div>
+      </div>
+    </div>
+    <!-- [/HOME-LIST] -->
+  </div>
+  <!-- [/PAGE-HOME] -->
+
+  <!-- [PAGE-ANALYTICS] ══════════════════════════ -->
+  <div id="page-analytics" class="page">
+    <div class="analytics-header">
+      <h1>📊 Análise</h1>
+      <p>Histórico completo e médias por mês</p>
+    </div>
+    <div class="summary-grid" id="summary-grid">
+      <div class="summary-card" style="grid-column:span 2">
+        <div class="loading" style="padding:30px 0">
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+    </div>
+    <div class="content" style="margin-top:16px">
+      <div class="section-title">Por Mês</div>
+      <div id="monthly-list"></div>
+    </div>
+  </div>
+  <!-- [/PAGE-ANALYTICS] -->
+
+  <!-- [PAGE-ADMIN] ══════════════════════════════ -->
+  <div id="page-admin" class="page">
+    <div class="admin-header">
+      <h1>⚙️ Administração</h1>
+      <p>Gerencie os postos cadastrados</p>
+    </div>
+    <div class="content" style="margin-top:20px">
+      <div class="admin-toolbar">
+        <div class="section-title" style="margin-bottom:0">Postos Cadastrados</div>
+        <button class="btn-new-posto" onclick="openAddPosto()">＋ Novo Posto</button>
+      </div>
+      <div id="postos-admin-list">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- [/PAGE-ADMIN] -->
+
+  <!-- [FAB] -->
+  <button class="fab" onclick="openModal()">
+    <span style="font-size:1.15rem;line-height:1">+</span> Registrar
+  </button>
+  <!-- [/FAB] -->
+
+  <!-- [BOTTOM-NAV] ══════════════════════════════ -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+      <span class="nav-icon">⛽</span>Início
+    </button>
+    <button class="nav-item" id="nav-analytics" onclick="switchTab('analytics')">
+      <span class="nav-icon">📊</span>Análise
+    </button>
+    <button class="nav-item" id="nav-admin" onclick="switchTab('admin')">
+      <span class="nav-icon">⚙️</span>Admin
+    </button>
+  </nav>
+  <!-- [/BOTTOM-NAV] -->
+
+  <!-- [MODAL-FORM] ══════════════════════════════ -->
+  <div class="overlay" id="overlay" onclick="bgClick(event)">
+    <div class="modal">
+      <div class="drag-bar"></div>
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">🛢️ Novo Abastecimento</div>
+        <button type="button" class="btn-close-modal" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-subtitle" id="modal-subtitle"></div>
+
+      <form id="form" onsubmit="submitForm(event)">
+        <input type="hidden" id="f-id">
+
+        <!-- [FORM-DATA] -->
         <div class="form-group">
-          <label class="form-label">Parcial?</label>
-          <div class="toggle-wrap">
-            <span class="toggle-label">Parcial</span>
-            <label class="switch">
-              <input type="checkbox" id="f-parcial">
-              <span class="slider"></span>
-            </label>
+          <label class="form-label">📅 Data e Hora <span class="req">*</span></label>
+          <input type="datetime-local" class="form-control" id="f-data" required>
+        </div>
+        <!-- [/FORM-DATA] -->
+
+        <!-- [FORM-COMB-PARCIAL] -->
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">⛽ Combustível</label>
+            <select class="form-control" id="f-comb">
+              <option>Gasolina</option>
+              <option>Gasolina Aditivada</option>
+              <option>Etanol</option>
+              <option>Diesel</option>
+              <option>GNV</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Parcial?</label>
+            <div class="toggle-wrap">
+              <span class="toggle-label">Parcial</span>
+              <label class="switch">
+                <input type="checkbox" id="f-parcial">
+                <span class="slider"></span>
+              </label>
+            </div>
           </div>
         </div>
-      </div>
-      <!-- [/FORM-COMB-PARCIAL] -->
+        <!-- [/FORM-COMB-PARCIAL] -->
 
-      <!-- [FORM-LITROS-VALOR] -->
-      <div class="grid-2">
-        <div class="form-group">
-          <label class="form-label">💧 Litros <span class="req">*</span></label>
-          <input type="number" class="form-control" id="f-litros"
-                 step="0.01" min="0.01" placeholder="0.00"
-                 inputmode="decimal" required oninput="calcPreco()">
+        <!-- [FORM-LITROS-VALOR] -->
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">💧 Litros <span class="req">*</span></label>
+            <input type="number" class="form-control" id="f-litros" step="0.01" min="0.01" placeholder="0.00"
+              inputmode="decimal" required oninput="calcPreco()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">💰 Valor Total R$ <span class="req">*</span></label>
+            <input type="number" class="form-control" id="f-valor" step="0.01" min="0.01" placeholder="0.00"
+              inputmode="decimal" required oninput="calcPreco()">
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">💰 Valor Total R$ <span class="req">*</span></label>
-          <input type="number" class="form-control" id="f-valor"
-                 step="0.01" min="0.01" placeholder="0.00"
-                 inputmode="decimal" required oninput="calcPreco()">
-        </div>
-      </div>
-      <!-- [/FORM-LITROS-VALOR] -->
+        <!-- [/FORM-LITROS-VALOR] -->
 
-      <!-- [FORM-PRECOL] -->
+        <!-- [FORM-PRECOL] -->
+        <div class="form-group">
+          <label class="form-label">🧮 Preço por Litro — calculado</label>
+          <input type="text" class="form-control calc" id="f-precol" readonly
+            placeholder="Preencha litros e valor acima ↑">
+        </div>
+        <!-- [/FORM-PRECOL] -->
+
+        <!-- [FORM-HODOMETRO] -->
+        <hr class="divider">
+        <div class="section-sub">📍 Hodômetro</div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">📍 KM Total <span class="req">*</span></label>
+            <input type="number" class="form-control" id="f-kmtotal" step="1" min="0" placeholder="000000"
+              inputmode="numeric" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">🛣️ KM Trip</label>
+            <input type="number" class="form-control" id="f-kmtrip" step="0.1" min="0" placeholder="0.0"
+              inputmode="decimal">
+          </div>
+        </div>
+        <!-- [/FORM-HODOMETRO] -->
+
+        <!-- [FORM-POSTO] -->
+        <hr class="divider">
+        <div class="section-sub">🏪 Posto</div>
+        <div class="posto-scroll" id="posto-picker">
+          <span style="color:var(--muted);font-size:0.82rem">Carregando postos...</span>
+        </div>
+        <div class="inline-add-posto" id="inline-add-posto">
+          <input type="text" class="form-control" id="inline-posto-input" placeholder="Nome do novo posto..."
+            autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();saveInlineAddPosto();}">
+          <button type="button" class="btn-inline btn-inline-save" onclick="saveInlineAddPosto()">✓</button>
+          <button type="button" class="btn-inline btn-inline-cancel" onclick="cancelInlineAddPosto()">✕</button>
+        </div>
+        <!-- [/FORM-POSTO] -->
+
+        <button type="submit" class="btn-submit" id="btn-salvar" style="margin-top:20px">
+          ✅ Salvar Abastecimento
+        </button>
+      </form>
+    </div>
+  </div>
+  <!-- [/MODAL-FORM] -->
+
+  <!-- [MODAL-POSTO] ═════════════════════════════ -->
+  <div class="overlay" id="posto-overlay" onclick="bgClickPosto(event)">
+    <div class="modal" style="max-height:55vh">
+      <div class="drag-bar"></div>
+      <div class="modal-header">
+        <div class="modal-title" id="posto-modal-title">🏪 Novo Posto</div>
+        <button type="button" class="btn-close-modal" onclick="closePostoModal()">✕</button>
+      </div>
+      <div style="margin-bottom:20px"></div>
       <div class="form-group">
-        <label class="form-label">🧮 Preço por Litro — calculado</label>
-        <input type="text" class="form-control calc" id="f-precol"
-               readonly placeholder="Preencha litros e valor acima ↑">
+        <label class="form-label">Nome do Posto</label>
+        <input type="text" class="form-control" id="posto-nome-input" placeholder="Ex: Posto Shell Av. Paulista"
+          autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();savePostoModal();}">
       </div>
-      <!-- [/FORM-PRECOL] -->
-
-      <!-- [FORM-HODOMETRO] -->
-      <hr class="divider">
-      <div class="section-sub">📍 Hodômetro</div>
-      <div class="grid-2">
-        <div class="form-group">
-          <label class="form-label">📍 KM Total <span class="req">*</span></label>
-          <input type="number" class="form-control" id="f-kmtotal"
-                 step="1" min="0" placeholder="000000" inputmode="numeric" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">🛣️ KM Trip</label>
-          <input type="number" class="form-control" id="f-kmtrip"
-                 step="0.1" min="0" placeholder="0.0" inputmode="decimal">
-        </div>
-      </div>
-      <!-- [/FORM-HODOMETRO] -->
-
-      <!-- [FORM-POSTO] -->
-      <hr class="divider">
-      <div class="section-sub">🏪 Posto</div>
-      <div class="posto-scroll" id="posto-picker">
-        <span style="color:var(--muted);font-size:0.82rem">Carregando postos...</span>
-      </div>
-      <div class="inline-add-posto" id="inline-add-posto">
-        <input type="text" class="form-control" id="inline-posto-input"
-               placeholder="Nome do novo posto..." autocomplete="off"
-               onkeydown="if(event.key==='Enter'){event.preventDefault();saveInlineAddPosto();}">
-        <button type="button" class="btn-inline btn-inline-save"   onclick="saveInlineAddPosto()">✓</button>
-        <button type="button" class="btn-inline btn-inline-cancel" onclick="cancelInlineAddPosto()">✕</button>
-      </div>
-      <!-- [/FORM-POSTO] -->
-
-      <button type="submit" class="btn-submit" id="btn-salvar" style="margin-top:20px">
-        ✅ Salvar Abastecimento
+      <button type="button" class="btn-submit" id="btn-salvar-posto" onclick="savePostoModal()">
+        ✅ Adicionar Posto
       </button>
-    </form>
-  </div>
-</div>
-<!-- [/MODAL-FORM] -->
-
-<!-- [MODAL-POSTO] ═════════════════════════════ -->
-<div class="overlay" id="posto-overlay" onclick="bgClickPosto(event)">
-  <div class="modal" style="max-height:55vh">
-    <div class="drag-bar"></div>
-    <div class="modal-header">
-      <div class="modal-title" id="posto-modal-title">🏪 Novo Posto</div>
-      <button type="button" class="btn-close-modal" onclick="closePostoModal()">✕</button>
-    </div>
-    <div style="margin-bottom:20px"></div>
-    <div class="form-group">
-      <label class="form-label">Nome do Posto</label>
-      <input type="text" class="form-control" id="posto-nome-input"
-             placeholder="Ex: Posto Shell Av. Paulista" autocomplete="off"
-             onkeydown="if(event.key==='Enter'){event.preventDefault();savePostoModal();}">
-    </div>
-    <button type="button" class="btn-submit" id="btn-salvar-posto" onclick="savePostoModal()">
-      ✅ Adicionar Posto
-    </button>
-  </div>
-</div>
-<!-- [/MODAL-POSTO] -->
-
-<!-- [CONFIRM-RECORD] ══════════════════════════ -->
-<div class="confirm-overlay" id="confirm-record-overlay">
-  <div class="confirm-box">
-    <div class="confirm-icon">🗑️</div>
-    <div class="confirm-title">Excluir registro?</div>
-    <div class="confirm-text" id="confirm-record-text">Esta ação não pode ser desfeita.</div>
-    <div class="confirm-btns">
-      <button class="btn-cancel"      onclick="closeConfirmRecord()">Cancelar</button>
-      <button class="btn-confirm-del" onclick="confirmDeleteRecord()">Excluir</button>
     </div>
   </div>
-</div>
-<!-- [/CONFIRM-RECORD] -->
+  <!-- [/MODAL-POSTO] -->
 
-<!-- [CONFIRM-POSTO] ═══════════════════════════ -->
-<div class="confirm-overlay" id="confirm-posto-overlay">
-  <div class="confirm-box">
-    <div class="confirm-icon">🏪</div>
-    <div class="confirm-title">Remover posto?</div>
-    <div class="confirm-text">
-      Remover <strong id="confirm-posto-name"></strong>?<br>
-      Os registros existentes não serão afetados.
-    </div>
-    <div class="confirm-btns">
-      <button class="btn-cancel"      onclick="closeConfirmPosto()">Cancelar</button>
-      <button class="btn-confirm-del" onclick="confirmDeletePosto()">Remover</button>
+  <!-- [CONFIRM-RECORD] ══════════════════════════ -->
+  <div class="confirm-overlay" id="confirm-record-overlay">
+    <div class="confirm-box">
+      <div class="confirm-icon">🗑️</div>
+      <div class="confirm-title">Excluir registro?</div>
+      <div class="confirm-text" id="confirm-record-text">Esta ação não pode ser desfeita.</div>
+      <div class="confirm-btns">
+        <button class="btn-cancel" onclick="closeConfirmRecord()">Cancelar</button>
+        <button class="btn-confirm-del" onclick="confirmDeleteRecord()">Excluir</button>
+      </div>
     </div>
   </div>
-</div>
-<!-- [/CONFIRM-POSTO] -->
+  <!-- [/CONFIRM-RECORD] -->
 
-<!-- [TOAST] -->
-<div class="toast" id="toast"></div>
-<!-- [/TOAST] -->
+  <!-- [CONFIRM-POSTO] ═══════════════════════════ -->
+  <div class="confirm-overlay" id="confirm-posto-overlay">
+    <div class="confirm-box">
+      <div class="confirm-icon">🏪</div>
+      <div class="confirm-title">Remover posto?</div>
+      <div class="confirm-text">
+        Remover <strong id="confirm-posto-name"></strong>?<br>
+        Os registros existentes não serão afetados.
+      </div>
+      <div class="confirm-btns">
+        <button class="btn-cancel" onclick="closeConfirmPosto()">Cancelar</button>
+        <button class="btn-confirm-del" onclick="confirmDeletePosto()">Remover</button>
+      </div>
+    </div>
+  </div>
+  <!-- [/CONFIRM-POSTO] -->
 
-<!-- [SCRIPTS] -->
-<script src="shim.js"></script>
-<script src="script.js"></script>
-<!-- [/SCRIPTS] -->
+  <!-- [TOAST] -->
+  <div class="toast" id="toast"></div>
+  <!-- [/TOAST] -->
+
+  <!-- [SCRIPTS] -->
+  <script src="shim.js"></script>
+  <script src="script.js"></script>
+  <!-- [/SCRIPTS] -->
 
 </body>
+
 </html>
