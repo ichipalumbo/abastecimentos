@@ -1255,3 +1255,18 @@
   0%,100%{ transform:scale(1);    opacity:1;  }
   50%    { transform:scale(1.12); opacity:.7; }
 }
+/* ══════════ ÍCONES DOS CARROS (Font Awesome) ══════════ */
+.us-avatar i{
+  font-size:46px;
+  line-height:1;
+}
+
+/* cor vermelha (Luccas) */
+.us-avatar.car-red i{
+  color:#e74c3c;
+}
+
+/* cor prata (Josy) */
+.us-avatar.car-silver i{
+  color:#bdc3c7;
+}
