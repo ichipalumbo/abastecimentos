@@ -454,11 +454,14 @@ function confirmDeleteRecord() {
 function submitForm(e) {
   e.preventDefault();
 
-  // ✅ Valida KM Total (obrigatório p/ cálculos)
-  if (!document.getElementById('f-kmtotal').value) {
-    showToast('⚠️ Informe o KM Total (hodômetro)', '');
-    return;
-  }
+  // ✅ Validações ANTES de enviar (evita travar o botão)
+  const litros = parseDecimal(document.getElementById('f-litros').value);
+  const valor  = parseDecimal(document.getElementById('f-valor').value);
+  const kmTot  = parseDecimal(document.getElementById('f-kmtotal').value);
+
+  if (litros <= 0) { showToast('⚠️ Litros inválido', ''); return; }
+  if (valor  <= 0) { showToast('⚠️ Valor inválido', '');  return; }
+  if (kmTot  <= 0) { showToast('⚠️ Informe o KM Total', ''); return; }
 
   const btn = document.getElementById('btn-salvar');
   btn.disabled = true; btn.textContent = '⏳ Salvando...';
@@ -468,10 +471,9 @@ function submitForm(e) {
     data:        document.getElementById('f-data').value,
     combustivel: document.getElementById('f-comb').value,
     parcial:     document.getElementById('f-parcial').checked,
-    litros:      +document.getElementById('f-litros').value,
-    valor:       +document.getElementById('f-valor').value,
-    kmTotal:     +document.getElementById('f-kmtotal').value || '',
-    // ❌ kmTrip removido — backend calcula sozinho
+    litros:      litros,        // ✅ já validado
+    valor:       valor,         // ✅ já validado
+    kmTotal:     kmTot,         // ✅ já validado
     posto:       selectedPostoNome
   };
 
@@ -654,5 +656,15 @@ function hideLoader() {
   if (el) el.classList.remove('active');
 }
 /* [/LOADER-OVERLAY] */
+
+/* [PARSE-DECIMAL] — aceita vírgula OU ponto, sempre retorna número */
+function parseDecimal(valor) {
+  if (valor === null || valor === undefined || valor === '') return 0;
+  // troca vírgula por ponto e remove espaços
+  const limpo = String(valor).trim().replace(',', '.');
+  const n = parseFloat(limpo);
+  return isNaN(n) ? 0 : n;
+}
+/* [/PARSE-DECIMAL] */
 
 /* [/HELPERS] */
