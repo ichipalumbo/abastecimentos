@@ -9,6 +9,8 @@ let selectedPostoNome  = '';
 let pendingDeleteId    = null;
 let pendingDeletePostoId = null;
 let editingPostoId     = null;
+let pendingLoads = 0;
+
 /* [/STATE] */
 
 /* [INIT] ═════════════════════════════════════ */
@@ -34,7 +36,17 @@ function selectUser(user) {
   document.getElementById('user-select').classList.add('hidden');
   document.getElementById('home-title').textContent =
     `⛽ ${user === 'Josy' ? '💜' : '💙'} ${user}`;
+
+  // ⬇️ LIMPA dados antigos (mata o "fantasma")
+  records = []; postos = []; selectedPostoNome = ''; analyticsBuilt = false;
+  document.getElementById('list').innerHTML =
+    `<div class="loading"><div class="loading-spinner"></div>Carregando registros...</div>`;
+  document.getElementById('s-mes').textContent   = '—';
+  document.getElementById('s-kml').textContent   = '—';
+  document.getElementById('s-preco').textContent = '—';
+
   switchTab('home');
+  showLoader('Carregando dados de ' + user + '...');   // ⬅️ mensagem personalizada
   loadRecords();
   loadPostos();
 }
@@ -62,29 +74,41 @@ function switchTab(tab) {
 
 /* [LOAD-DATA] ════════════════════════════════ */
 function loadRecords() {
+  pendingLoads++;
+  showLoader();
   google.script.run
     .withSuccessHandler(data => {
       records = data; analyticsBuilt = false;
       renderStats(data); renderList(data);
       if (currentTab === 'analytics') renderAnalytics(data);
+      checkLoadsDone();   // ⬅️
     })
     .withFailureHandler(err => {
       document.getElementById('list').innerHTML =
         `<div class="empty"><div class="empty-icon">❌</div>
          <p style="color:var(--red)">Erro ao carregar:<br><small>${err.message}</small></p></div>`;
+      checkLoadsDone();   // ⬅️
     })
     .getRecords(currentUser);
 }
 
 function loadPostos() {
+  pendingLoads++;
   google.script.run
     .withSuccessHandler(data => {
       postos = data;
       renderPostoPicker();
       renderAdminPostos();
+      checkLoadsDone();   // ⬅️
     })
-    .withFailureHandler(() => {})
+    .withFailureHandler(() => { checkLoadsDone(); })   // ⬅️
     .getPostos(currentUser);
+}
+
+/* esconde o overlay só quando tudo terminou */
+function checkLoadsDone() {
+  pendingLoads = Math.max(0, pendingLoads - 1);
+  if (pendingLoads === 0) hideLoader();
 }
 /* [/LOAD-DATA] */
 
@@ -554,4 +578,18 @@ function showToast(msg, type) {
   el.textContent = msg; el.className = `toast show ${type||''}`;
   setTimeout(() => el.className = 'toast', 3200);
 }
+/* [LOADER-OVERLAY] — controla o overlay de loading */
+function showLoader(texto) {
+  const el = document.getElementById('loader-overlay');
+  if (!el) return;
+  if (texto) el.querySelector('.loader-text').textContent = texto;
+  el.classList.add('active');
+}
+
+function hideLoader() {
+  const el = document.getElementById('loader-overlay');
+  if (el) el.classList.remove('active');
+}
+/* [/LOADER-OVERLAY] */
+
 /* [/HELPERS] */
