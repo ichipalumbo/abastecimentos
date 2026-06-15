@@ -18,7 +18,10 @@ let editingPostoId     = null;
 ══════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   setNow();
-  // Sempre mostra a tela de seleção (não restaura usuário automaticamente)
+  setTimeout(() => {
+    const splash = document.getElementById('splash');
+    if (splash) splash.classList.add('hide');
+  }, 1200);
 });
 
 /* ══════════════════════════════════════════════
