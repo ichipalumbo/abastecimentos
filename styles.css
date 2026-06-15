@@ -96,9 +96,15 @@ body {
 .user-select.hidden { display: none; }
 
 .us-logo { font-size: 3rem; margin-bottom: 8px; }
-.us-title { font-size: 1.6rem; font-weight: 800; color: #fff; }
+
+.us-title {
+  font-size: 1.6rem; font-weight: 800;
+  color: #fff;
+}
 .us-subtitle {
-  font-size: 0.9rem; color: var(--text-sec); margin-bottom: 44px;
+  font-size: 0.9rem;
+  color: var(--text-sec);
+  margin-bottom: 44px;
 }
 .us-cards { display: flex; gap: 18px; }
 
@@ -112,15 +118,29 @@ body {
   cursor: pointer; width: 150px;
   transition: transform .18s, border-color .2s, box-shadow .2s;
 }
-.us-card:active { transform: scale(.95); }
+.us-card:active {
+  transform: scale(.95);
+  border-color: var(--blue);
+}
 
 .us-avatar {
   width: 96px; height: 96px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
 }
-.us-name { font-size: 1.15rem; font-weight: 800; }
-.us-tag { font-size: 0.72rem; color: var(--muted); }
+
+/* ⬇️ AQUI ESTAVA O PROBLEMA — nome sem cor */
+.us-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text);   /* ✅ agora fica claro e legível */
+}
+.us-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-sec);   /* ✅ um pouco mais claro que antes */
+}
 
   /* [CARD-COLORS] — cores dos carros */
   .us-avatar.car-red,
@@ -128,19 +148,10 @@ body {
     background: linear-gradient(145deg, #322a52 0%, #241e3a 100%);
     border: 1px solid var(--border);
   }
-  .us-avatar.car-red    { color: #e74c3c; } /* Fiat Idea vermelho */
-  .us-avatar.car-silver { color: #bdc3c7; } /* Renault Logan prata */
-
-  /* ícones Font Awesome dentro do avatar */
   .us-avatar i { font-size: 46px; line-height: 1; }
-  .us-avatar.car-red i    { color: #e74c3c; }
-  .us-avatar.car-silver i { color: #bdc3c7; }
+  .us-avatar.car-red    i { color: #ff5a4d; } /* vermelho vibrante */
+  .us-avatar.car-silver i { color: #d4d9e4; } /* prata claro */
   /* [/CARD-COLORS] */
-
-  /* [LEGADO] — classes não usadas (pode apagar) */
-  .us-avatar.male   { background: var(--blue-dim);   color: var(--blue); }
-  .us-avatar.female { background: var(--purple-dim); color: var(--purple); }
-  /* [/LEGADO] */
 
 .btn-switch-user {
   background: rgba(255, 255, 255, .06);
@@ -153,6 +164,7 @@ body {
 }
 .btn-switch-user:active { background: var(--card-hover); }
 /* [/USER-SELECT] */
+
 
 /* [PAGES] ════════════════════════════════════ */
 .page {
