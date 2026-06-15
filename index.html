@@ -153,24 +153,23 @@
   </div>
   <!-- [/PAGE-ADMIN] -->
 
-  <!-- [FAB] -->
-  <button class="fab" onclick="openModal()">
-    <span style="font-size:1.3rem; font-weight:400; line-height:1">+</span> Registrar
-  </button>
-  <!-- [/FAB] -->
-
   <!-- [BOTTOM-NAV] ══════════════════════════════ -->
-  <nav class="bottom-nav">
-    <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
-      <span class="nav-icon">⛽</span>Início
-    </button>
-    <button class="nav-item" id="nav-analytics" onclick="switchTab('analytics')">
-      <span class="nav-icon">📊</span>Análise
-    </button>
-    <button class="nav-item" id="nav-admin" onclick="switchTab('admin')">
-      <span class="nav-icon">⚙️</span>Admin
-    </button>
-  </nav>
+<nav class="bottom-nav">
+  <button class="nav-item nav-registrar" onclick="openModal()">
+    <span class="nav-icon">➕</span>Registrar
+  </button>
+
+  <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+    <span class="nav-icon">⛽</span>Início
+  </button>
+  <button class="nav-item" id="nav-analytics" onclick="switchTab('analytics')">
+    <span class="nav-icon">📊</span>Análise
+  </button>
+  <button class="nav-item" id="nav-admin" onclick="switchTab('admin')">
+    <span class="nav-icon">⚙️</span>Admin
+  </button>
+</nav>
+
   <!-- [/BOTTOM-NAV] -->
 
   <!-- [MODAL-FORM] ══════════════════════════════ -->

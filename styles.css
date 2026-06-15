@@ -798,6 +798,28 @@ button, input, select, textarea {
   filter: drop-shadow(0 0 6px rgba(108, 143, 255, .6));
 }
 
+.nav-registrar {
+  color: var(--blue);
+}
+
+.nav-registrar .nav-icon {
+  background: var(--blue);
+  color: #fff;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 14px rgba(108, 143, 255, .5);
+  margin-bottom: 2px;
+  transition: transform .15s;
+}
+
+.nav-registrar:active .nav-icon {
+  transform: scale(.9);
+}
 /* [/BOTTOM-NAV] */
 
 /* [MODAL] ════════════════════════════════════ */
@@ -1343,33 +1365,3 @@ input:checked+.slider::before {
 }
 
 /* [/SCROLLBAR] */
-
-/* [FAB] ══════════════════════════════════════ */
-.fab {
-  position: fixed;
-  bottom: calc(var(--nav-h) + var(--safe-b) + 16px);
-  right: 18px;
-  background: var(--blue);
-  color: #fff;
-  border: none;
-  border-radius: 30px;
-  padding: 18px 28px;          /* ⬆️ um tiquinho maior */
-  font-family: 'Inter', sans-serif;  /* ✅ fonte coesa */
-  font-size: 1.15rem;          /* ⬆️ aumentado (era 0.95rem) */
-  font-weight: 600;            /* 600 fica elegante (era 700) */
-  letter-spacing: .2px;        /* respiro sutil entre letras */
-  box-shadow: 0 8px 30px rgba(108, 143, 255, .45);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 200;
-  transition: transform .15s, background .2s;
-}
-
-.fab:active {
-  transform: scale(.95);
-  background: var(--blue-dark);
-}
-
-/* [/FAB] */
