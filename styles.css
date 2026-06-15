@@ -1324,19 +1324,11 @@ input:checked+.slider::before {
 
 /* [/TOAST] */
 
-/* [SCROLLBAR] ════════════════════════════════ */
-::-webkit-scrollbar {
-  width: 0;
-}
-
-/* [/SCROLLBAR] */
-
 /* [LOADER-OVERLAY] ═══════════════════════════ */
 .loader-overlay {
   position: fixed;
   inset: 0;
   z-index: 700;
-  /* acima de tudo, abaixo da splash (9999) */
   background: rgba(14, 14, 26, .82);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -1349,13 +1341,10 @@ input:checked+.slider::before {
   pointer-events: none;
   transition: opacity .25s ease;
 }
-
 .loader-overlay.active {
   opacity: 1;
   pointer-events: all;
-  /* bloqueia cliques enquanto carrega */
 }
-
 .loader-overlay .loader-spinner {
   width: 44px;
   height: 44px;
@@ -1364,12 +1353,17 @@ input:checked+.slider::before {
   border-radius: 50%;
   animation: spin .8s linear infinite;
 }
-
 .loader-text {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-sec);
   letter-spacing: .3px;
 }
-
 /* [/LOADER-OVERLAY] */
+
+/* [SCROLLBAR] ════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 0;
+}
+
+/* [/SCROLLBAR] */
