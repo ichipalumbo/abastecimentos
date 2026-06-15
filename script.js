@@ -18,8 +18,7 @@ let editingPostoId     = null;
 ══════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   setNow();
-  const saved = localStorage.getItem('fuelapp_user');
-  if (saved === 'Luccas' || saved === 'Josy') selectUser(saved);
+  // Sempre mostra a tela de seleção (não restaura usuário automaticamente)
 });
 
 /* ══════════════════════════════════════════════
