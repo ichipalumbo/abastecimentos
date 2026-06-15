@@ -759,9 +759,11 @@ button, input, select, textarea {
   color: #fff;
   border: none;
   border-radius: 30px;
-  padding: 15px 22px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  padding: 18px 28px;          /* ⬆️ um tiquinho maior */
+  font-family: 'Inter', sans-serif;  /* ✅ fonte coesa */
+  font-size: 1.15rem;          /* ⬆️ aumentado (era 0.95rem) */
+  font-weight: 600;            /* 600 fica elegante (era 700) */
+  letter-spacing: .2px;        /* respiro sutil entre letras */
   box-shadow: 0 8px 30px rgba(108, 143, 255, .45);
   cursor: pointer;
   display: flex;
@@ -1372,6 +1374,3 @@ input:checked+.slider::before {
 
 /* [/SCROLLBAR] */
 
-.fab {
-  font-family: 'Inter', sans-serif !important;
-}
