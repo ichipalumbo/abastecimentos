@@ -14,6 +14,17 @@ let sortOrder          = 'desc';   // 'desc' = recente primeiro, 'asc' = antigo 
 let lastRefreshTs      = null;
 const CACHE_PREFIX     = 'fuelapp_cache';
 const CACHE_TTL_MS     = 5 * 60 * 1000; // 5 minutos
+let recentlyAddedId    = null; // usado para animação "novo registro"
+
+/* [UTILS] ═════════════════════════════════════ */
+function debounce(fn, wait = 300) {
+  let t;
+  return function(...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
+/* [/UTILS] */
 
 /* [/STATE] */
 
@@ -102,6 +113,9 @@ function switchTab(tab) {
 
 function refreshData() {
   if (!currentUser) return;
+  // evita múltiplos refreshs rápidos
+  if (Date.now() - (window._lastManualRefresh || 0) < 1200) return;
+  window._lastManualRefresh = Date.now();
   showToast('🔄 Forçando atualização...', '');
   loadRecords(true);
   loadPostos(true);
@@ -125,6 +139,11 @@ function loadRecords(forceRefresh = false) {
 
   pendingLoads++;
   if (!cache || forceRefresh) showLoader(forceRefresh ? 'Atualizando registros...' : 'Carregando registros...');
+  // mostra skeleton inline para melhor percepção de carregamento
+  if (!cache || forceRefresh) {
+    const el = document.getElementById('list');
+    if (el) el.innerHTML = generateListSkeleton();
+  }
   google.script.run
     .withSuccessHandler(data => {
       records = data; analyticsBuilt = false;
@@ -268,6 +287,9 @@ function renderList(data) {
     </div>`;
     return;
   }
+  // If dataset is large, use chunked rendering to avoid blocking main thread
+  const TOTAL = data.length;
+  if (TOTAL > 80) return chunkedRenderList(data);
   // ✅ Ordena por data de acordo com sortOrder
   const sorted = [...data].sort((a, b) => {
     const dateA = new Date(a['Data']);
@@ -317,7 +339,7 @@ function renderList(data) {
       const parcial = !isFull(r);
 
       return `
-        <div class="record-card">
+        <div class="record-card" data-id="${r['ID']}">
           <div class="record-main">
             <div class="record-left">
               <div class="record-date">${dStr} • ${tStr}</div>
@@ -344,8 +366,134 @@ function renderList(data) {
 
     return header + cards;
   }).join('');
+
+  // small entrance animation for newly added record
+  if (recentlyAddedId) {
+    requestAnimationFrame(() => {
+      const node = el.querySelector(`.record-card[data-id="${recentlyAddedId}"]`);
+      if (node) {
+        node.classList.add('added');
+        setTimeout(() => node.classList.remove('added'), 2200);
+      }
+      recentlyAddedId = null;
+    });
+  }
 }
 /* [/LIST] */
+
+function chunkedRenderList(data) {
+  const el = document.getElementById('list');
+  if (!el) return;
+  el.innerHTML = ''; // clear then append in chunks
+  const sorted = [...data].sort((a, b) => {
+    const dateA = new Date(a['Data']);
+    const dateB = new Date(b['Data']);
+    return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+  });
+  const groups = sorted.reduce((acc, r) => {
+    const d     = new Date(r['Data']);
+    const group = capitalize(d.toLocaleDateString('pt-BR', { month:'long', year:'numeric' }));
+    if (!acc[group]) acc[group] = [];
+    acc[group].push(r);
+    return acc;
+  }, {});
+
+  const keys = Object.keys(groups);
+  let i = 0;
+  function appendNext() {
+    if (i >= keys.length) {
+      // after all appended, handle added animation
+      if (recentlyAddedId) {
+        const node = el.querySelector(`.record-card[data-id="${recentlyAddedId}"]`);
+        if (node) { node.classList.add('added'); setTimeout(() => node.classList.remove('added'), 2200); }
+        recentlyAddedId = null;
+      }
+      return;
+    }
+    const group = keys[i++];
+    const rows = groups[group];
+    const totalGasto  = rows.reduce((sum, r) => sum + (+r['Valor'] || 0), 0);
+    const totalLitros = rows.reduce((sum, r) => sum + (+r['Litros'] || 0), 0);
+    const precoArr    = rows.filter(r => +r['Litros'] && +r['Valor']).map(r => (+r['Valor'] || 0) / (+r['Litros'] || 1));
+    const avgPreco    = precoArr.length ? precoArr.reduce((a, b) => a + b, 0) / precoArr.length : 0;
+    const kmlArr      = rows.filter(r => isFull(r) && +r['KM/L Trip'] > 0).map(r => +r['KM/L Trip']);
+    const avgKml      = kmlArr.length ? kmlArr.reduce((a, b) => a + b, 0) / kmlArr.length : 0;
+
+    const fragment = document.createRange().createContextualFragment(`
+      <div class="month-divider">
+        <div class="month-divider-label">${group}</div>
+        <div class="month-divider-meta">
+          <span class="month-meta">${formatBRL(totalGasto)}</span>
+          <span class="month-meta">${formatNumber(totalLitros, 1)} L</span>
+          <span class="month-meta">${avgPreco ? formatBRL(avgPreco) : '—'}</span>
+          <span class="month-meta">${avgKml ? formatNumber(avgKml, 1) + ' km/L' : '—'}</span>
+        </div>
+      </div>
+    `);
+
+    rows.forEach((r, idx) => {
+      const d      = new Date(r['Data']);
+      const dStr   = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
+      const tStr   = d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+      const posto  = r['Posto']            || 'Posto não informado';
+      const tipo   = r['Tipo Combustível'] || '';
+      const valor  = +r['Valor']           || 0;
+      const litros = +r['Litros']          || 0;
+      const kml    = +r['KM/L Trip']       || 0;
+      const kmTrip = +r['KM_Trip']         || 0;
+      const precoL = litros ? (valor / litros) : 0;
+      const parcial = !isFull(r);
+      const globalIdx = records.findIndex(rr => String(rr['ID']) === String(r['ID']));
+      const cardHtml = `
+        <div class="record-card" data-id="${r['ID']}">
+          <div class="record-main">
+            <div class="record-left">
+              <div class="record-date">${dStr} • ${tStr}</div>
+              <div class="record-posto">${posto}</div>
+              <div class="chips">
+                ${tipo    ? `<span class="chip blue">${tipo}</span>`                       : ''}
+                ${parcial ? `<span class="chip amber">⚠️ Parcial</span>`                  : ''}
+                ${kml     ? `<span class="chip green">⚡ ${formatNumber(kml, 1)} km/L</span>`    : ''}
+                ${kmTrip  ? `<span class="chip purple">🛣️ ${formatNumber(kmTrip, 0)} km</span>` : ''}
+                ${precoL  ? `<span class="chip amber">R$ ${formatNumber(precoL, 2)}/L</span>`    : ''}
+              </div>
+            </div>
+            <div class="record-right">
+              <div class="record-valor">${formatBRL(valor)}</div>
+              <div class="record-litros">${formatNumber(litros, 2)} L</div>
+            </div>
+          </div>
+          <div class="record-actions">
+            <button class="btn-action btn-edit"   onclick="openEdit(${globalIdx})">✏️ Editar</button>
+            <button class="btn-action btn-delete" onclick="askDelete(${globalIdx})">🗑️ Excluir</button>
+          </div>
+        </div>`;
+      fragment.appendChild(document.createRange().createContextualFragment(cardHtml));
+    });
+
+    el.appendChild(fragment);
+    // schedule next chunk during idle or next tick
+    if ('requestIdleCallback' in window) requestIdleCallback(appendNext, {timeout: 500}); else setTimeout(appendNext, 40);
+  }
+  appendNext();
+}
+
+/* [POLISH HELPERS] — skeleton generator for perceived performance */
+function generateListSkeleton() {
+  const months = 2;
+  const perMonth = 3;
+  let html = '<div class="skeleton-list">';
+  for (let m=0;m<months;m++) {
+    html += '<div class="skeleton-month">';
+    html += '<div class="skeleton-header"></div>';
+    for (let i=0;i<perMonth;i++) html += '<div class="skeleton-card"></div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+/* [/POLISH HELPERS] */
 
 /* [POSTO-PICKER] ═════════════════════════════ */
 function renderPostoPicker() {
@@ -647,6 +795,8 @@ function submitForm(e) {
       btn.disabled = false;
       btn.textContent = editMode ? '💾 Salvar Alterações' : '✅ Salvar Abastecimento';
       if (res.success) {
+        // marca para animar o registro recém-criado após reload
+        if (!editMode && res.id) recentlyAddedId = res.id;
         if (editMode) {
           const id = document.getElementById('f-id').value;
           const idx = records.findIndex(r => String(r['ID']) === String(id));
@@ -678,6 +828,29 @@ function submitForm(e) {
     [fn](currentUser, record);
 }
 /* [/SUBMIT-FORM] */
+
+  // Optimistic insert helper: append new record locally and schedule background sync
+  function optimisticInsertRecord(res, record) {
+    if (!res || !res.id) return;
+    const obj = {
+      'ID': res.id,
+      'Data': record.data,
+      'Tipo Combustível': record.combustivel || 'Gasolina',
+      'Litros': record.litros || 0,
+      'Valor': record.valor || 0,
+      'KM_Total': record.kmTotal || '',
+      'Posto': record.posto || '',
+      'Parcial?': record.parcial || false
+    };
+    // prepend locally
+    records.unshift(obj);
+    setCachedData(currentUser, 'records', records);
+    renderStats(records);
+    renderList(records);
+    recentlyAddedId = res.id;
+    // background reconcile: refresh from server after short delay
+    setTimeout(() => loadRecords(true), 4000);
+  }
 
 /* [ANALYTICS] ════════════════════════════════ */
 function renderAnalytics(data) {
