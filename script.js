@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 1200);
 
   // // ⬇️ AUTO-LOGIN: lembra o último usuário (remova este bloco se não quiser)
-  // const saved = localStorage.getItem('fuelapp_user');
-  // if (saved) selectUser(saved);
+  const saved = localStorage.getItem('fuelapp_user');
+  if (saved) selectUser(saved);
 });
 /* [/INIT] */
 
@@ -53,6 +53,8 @@ function selectUser(user) {
   document.getElementById('s-kml').textContent   = '—';
   document.getElementById('s-preco').textContent = '—';
   updateRefreshMeta(null);
+
+  setLoaderText('Carregando dados...');   // 🔧 troca showLoader por setLoaderText
 
   switchTab('home');
   loadRecords();
@@ -103,9 +105,11 @@ function switchTab(tab) {
 function refreshData() {
   if (!currentUser) return;
   showToast('🔄 Forçando atualização...', '');
+  setLoaderText('Atualizando dados...');   // 🔧 só define o texto, NÃO liga
   loadRecords(true);
   loadPostos(true);
 }
+
 /* [/NAVIGATION] */
 
 /* [LOAD-DATA] ════════════════════════════════ */
@@ -124,7 +128,7 @@ function loadRecords(forceRefresh = false) {
   }
 
   pendingLoads++;
-  if (!cache || forceRefresh) showLoader(forceRefresh ? 'Atualizando registros...' : 'Carregando registros...');
+  if (!cache || forceRefresh) showLoader();   // 🔑 só garante o overlay visível, sem trocar texto
   google.script.run
     .withSuccessHandler(data => {
       records = data; analyticsBuilt = false;
@@ -162,7 +166,7 @@ function loadPostos(forceRefresh = false) {
   }
 
   pendingLoads++;
-  if (!cache || forceRefresh) showLoader(forceRefresh ? 'Atualizando postos...' : 'Carregando postos...');
+  if (!cache || forceRefresh) showLoader();   // 🔑 só garante o overlay visível, sem trocar texto
   google.script.run
     .withSuccessHandler(data => {
       postos = data;
@@ -853,5 +857,11 @@ function parseDecimal(valor) {
   return isNaN(n) ? 0 : n;
 }
 /* [/PARSE-DECIMAL] */
+
+/* define o texto do loader SEM ligar o overlay */
+function setLoaderText(texto) {
+  const el = document.getElementById('loader-overlay');
+  if (el && texto) el.querySelector('.loader-text').textContent = texto;
+}
 
 /* [/HELPERS] */
