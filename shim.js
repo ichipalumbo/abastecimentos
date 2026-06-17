@@ -4,10 +4,12 @@
 ══════════════════════════════════════════════════════════ */
 
 // 🔧 Em produção, o app usa o Apps Script real.
-// Em desenvolvimento local, usa o mock quando aberto em localhost.
+// Em desenvolvimento local, usa o mock quando aberto em localhost, 127.0.0.1 ou quando for forçado por ?mock=1.
 const MOCK_URL      = 'http://localhost:5000/exec';
 const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaw7Hltfk4nYtpCpgf1MlKUD3PrxNs3vT1IJEY33iJ2GJZDwLKKtGoDQF/exec';
-const USE_LOCAL_MOCK = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const localHosts = ['localhost', '127.0.0.1', '[::1]'];
+const urlParams = new URLSearchParams(window.location.search);
+const USE_LOCAL_MOCK = urlParams.get('mock') === '1' || localHosts.includes(window.location.hostname);
 const API_URL = USE_LOCAL_MOCK ? MOCK_URL : APPSCRIPT_URL;
 // 🔑 Mesmo token do Code.gs (o mock aceita esse valor por padrão)
 const API_TOKEN = 'abst_7gK9pQ2xW5nR8tL4vY6mZ3jH';
