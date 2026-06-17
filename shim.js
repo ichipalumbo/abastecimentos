@@ -6,7 +6,7 @@
 // 🔧 Em produção, o app usa o Apps Script real.
 // Em desenvolvimento local, usa o mock quando aberto em localhost, 127.0.0.1 ou quando for forçado por ?mock=1.
 const MOCK_URL      = 'http://localhost:5000/exec';
-const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaw7Hltfk4nYtpCpgf1MlKUD3PrxNs3vT1IJEY33iJ2GJZDwLKKtGoDQF/exec';
+const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaw7Hltfk4nYdXjvUnaeYtpCpgf1MlKUD3PrxNs3vT1IJEY33iJ2GJZDwLKKtGoDQF/exec';
 const localHosts = ['localhost', '127.0.0.1', '[::1]'];
 const urlParams = new URLSearchParams(window.location.search);
 const USE_LOCAL_MOCK = urlParams.get('mock') === '1' || localHosts.includes(window.location.hostname);
