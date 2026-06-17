@@ -31,6 +31,9 @@
   --red-dim: rgba(248, 113, 113, .13);
   --purple: #a78bfa;
   --purple-dim: rgba(167, 139, 250, .13);
+  --blue: #6c8fff;
+  --blue-dim: rgba(108, 143, 255, .14);
+  --blue-dark: #4a6fd8;
   --nav-h: 64px;
   --safe-b: env(safe-area-inset-bottom, 0px);
   --r-sm: 10px;
@@ -284,7 +287,7 @@ textarea {
 /* [HEADERS] ══════════════════════════════════ */
 .header,
 .analytics-header,
-.admin-header {
+.postos-header {
   background: linear-gradient(155deg, #1c1c3a 0%, #0e0e20 100%);
   position: relative;
   overflow: hidden;
@@ -295,7 +298,7 @@ textarea {
 }
 
 .analytics-header,
-.admin-header {
+.postos-header {
   padding: 52px 20px 28px;
 }
 
@@ -322,7 +325,7 @@ textarea {
 }
 
 .analytics-header::before,
-.admin-header::before {
+.postos-header::before {
   content: '';
   position: absolute;
   width: 180px;
@@ -343,7 +346,7 @@ textarea {
 
 .header h1,
 .analytics-header h1,
-.admin-header h1 {
+.postos-header h1 {
   font-size: 1.45rem;
   font-weight: 800;
   color: #fff;
@@ -353,7 +356,7 @@ textarea {
 
 .header-sub,
 .analytics-header p,
-.admin-header p {
+.postos-header p {
   font-size: 0.78rem;
   color: var(--text-sec);
   margin-top: 4px;
@@ -437,6 +440,41 @@ textarea {
   padding-left: 2px;
 }
 
+.btn-sort {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text-sec);
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .18s ease;
+}
+
+.btn-sort:active {
+  background: var(--card-hover);
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.refresh-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 8px 12px;
+  font-size: 0.72rem;
+  color: var(--muted);
+  white-space: nowrap;
+  min-width: 180px;
+  text-align: right;
+}
+
+.refresh-card strong {
+  color: var(--text);
+}
+
 /* [/CONTENT] */
 
 /* [RECORD-CARDS] ═════════════════════════════ */
@@ -462,7 +500,7 @@ textarea {
 }
 
 .record-date {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   color: var(--muted);
   margin-bottom: 4px;
 }
@@ -473,6 +511,41 @@ textarea {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.month-divider {
+  margin: 20px 0 10px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.month-divider-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.month-divider-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.month-meta {
+  font-size: 0.72rem;
+  color: var(--muted);
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 .chips {
@@ -667,8 +740,8 @@ textarea {
 
 /* [/MONTH-CARDS] */
 
-/* [ADMIN] ════════════════════════════════════ */
-.admin-toolbar {
+/* [POSTOS] ═══════════════════════════════════ */
+.postos-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -695,7 +768,7 @@ textarea {
   transform: scale(.96);
 }
 
-.posto-admin-card {
+.posto-card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r);
@@ -708,7 +781,7 @@ textarea {
   box-shadow: var(--shadow);
 }
 
-.posto-admin-name {
+.posto-name {
   font-size: 0.92rem;
   font-weight: 600;
   flex: 1;
@@ -718,7 +791,7 @@ textarea {
   white-space: nowrap;
 }
 
-.posto-admin-btns {
+.posto-btns {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
@@ -753,7 +826,7 @@ textarea {
   color: var(--red);
 }
 
-/* [/ADMIN] */
+/* [/POSTOS] */
 
 /* [BOTTOM-NAV] ═══════════════════════════════ */
 .bottom-nav {

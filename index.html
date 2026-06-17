@@ -102,7 +102,16 @@
 
     <!-- [HOME-LIST] -->
     <div class="content">
-      <div class="section-title">Histórico</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+        <div>
+          <div class="section-title" style="margin-bottom:0">Histórico</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <div class="refresh-card" id="refresh-meta">Última atualização: —</div>
+          <button class="btn-sort" id="btn-sort" onclick="toggleSortOrder()" title="Ordenar">⬇️ Recente</button>
+          <button class="btn-sort" id="btn-refresh" onclick="refreshData()" title="Atualizar">🔄 Atualizar</button>
+        </div>
+      </div>
       <div id="list">
         <div class="loading">
           <div class="loading-spinner"></div>Carregando registros...
@@ -133,25 +142,25 @@
   </div>
   <!-- [/PAGE-ANALYTICS] -->
 
-  <!-- [PAGE-ADMIN] ══════════════════════════════ -->
-  <div id="page-admin" class="page">
-    <div class="admin-header">
-      <h1>⚙️ Administração</h1>
-      <p>Gerencie os postos cadastrados</p>
+  <!-- [PAGE-POSTOS] ═════════════════════════════ -->
+  <div id="page-postos" class="page">
+    <div class="postos-header">
+      <h1>🏪 Postos</h1>
+      <p>Gerencie seus postos cadastrados</p>
     </div>
     <div class="content" style="margin-top:20px">
-      <div class="admin-toolbar">
+      <div class="postos-toolbar">
         <div class="section-title" style="margin-bottom:0">Postos Cadastrados</div>
         <button class="btn-new-posto" onclick="openAddPosto()">+ Novo Posto</button>
       </div>
-      <div id="postos-admin-list">
+      <div id="postos-list">
         <div class="loading">
           <div class="loading-spinner"></div>
         </div>
       </div>
     </div>
   </div>
-  <!-- [/PAGE-ADMIN] -->
+  <!-- [/PAGE-POSTOS] -->
 
   <!-- [BOTTOM-NAV] ══════════════════════════════ -->
   <nav class="bottom-nav">
@@ -161,8 +170,8 @@
     <button class="nav-item" id="nav-analytics" onclick="switchTab('analytics')">
       <span class="nav-icon">📊</span>Análise
     </button>
-    <button class="nav-item" id="nav-admin" onclick="switchTab('admin')">
-      <span class="nav-icon">⚙️</span>Admin
+    <button class="nav-item" id="nav-postos" onclick="switchTab('postos')">
+      <span class="nav-icon">🏪</span>Postos
     </button>
     <button class="nav-item nav-registrar" onclick="openModal()">
       <span class="nav-icon"></span>

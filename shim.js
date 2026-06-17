@@ -3,9 +3,11 @@
    (GitHub Pages → Apps Script)
 ══════════════════════════════════════════════════════════ */
 
-// 🔧 TROQUE pela SUA URL /exec real:
-const API_URL   = 'https://script.google.com/macros/s/AKfycbyaw7Hltfk4nYdXjvUnaeYtpCpgf1MlKUD3PrxNs3vT1IJEY33iJ2GJZDwLKKtGoDQF/exec';
-// 🔑 Mesmo token do Code.gs:
+// 🔧 Para desenvolvimento local, aponte para o mock server: http://localhost:5000/exec
+// Defina `LOCAL_MOCK=true` abaixo para usar o mock automaticamente.
+const LOCAL_MOCK = true;
+const API_URL   = LOCAL_MOCK ? 'http://localhost:5000/exec' : 'https://script.google.com/macros/s/AKfycbyaw7Hltfk4nYdXjvUnaeYtpCpgf1MlKUD3PrxNs3vT1IJEY33iJ2GJZDwLKKtGoDQF/exec';
+// 🔑 Mesmo token do Code.gs (o mock aceita esse valor por padrão)
 const API_TOKEN = 'abst_7gK9pQ2xW5nR8tL4vY6mZ3jH';
 
 // Mapeia cada função → action + nomes dos argumentos (na ordem)
