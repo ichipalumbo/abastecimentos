@@ -38,9 +38,6 @@ function loadRecords(forceRefresh = false) {
     .getRecords(currentUser);
 }
 
-    .getPostos(currentUser);
-}
-
 /* esconde o overlay só quando tudo terminou */
 function checkLoadsDone() {
   pendingLoads = Math.max(0, pendingLoads - 1);
