@@ -21,7 +21,7 @@ O app original usa Google Apps Script para backend, mas o repositório também i
 
 - `index.html` - interface principal da aplicação
 - `styles.css` - estilos visuais e layout
-- `script.js` - lógica do app, carregamento de dados, renderização, cache e controle de navegação
+- `js/` - módulos do frontend separados por responsabilidade (estado, inicialização, navegação, controllers, views, cache, feedback e utilitários)
 - `shim.js` - adaptador que emula `google.script.run` e envia requisições para o backend correto
 - `mock/server.js` - servidor de mock Express para desenvolvimento local
 - `mock/mock-data.json` - dados de exemplo usados pelo mock backend
