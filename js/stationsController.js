@@ -49,8 +49,6 @@ function saveInlineAddPosto() {
 }
 /* [/POSTO-PICKER] */
 
-}
-
 function openAddPosto() {
   editingPostoId = null;
   document.getElementById('posto-nome-input').value        = '';
