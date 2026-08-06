@@ -52,6 +52,17 @@ npm start
 - Não inclua chaves secretas ou tokens sensíveis neste repositório. O token atual em `shim.js` é só para desenvolvimento/local.
 - Se for publicar o app online, verifique se `shim.js` não está apontando para `localhost`.
 
+## Validação local
+
+Antes de publicar ou abrir um PR, valide se os scripts referenciados por `index.html` existem e se os arquivos JavaScript carregados pela página passam no parser do Node.js:
+
+```bash
+python3 scripts/check-script-tags.py
+```
+
+O comando ignora URLs externas em `<script src="...">`, falha quando um arquivo local referenciado não existe e também falha com a mensagem do parser quando algum `.js` não possui sintaxe válida.
+
+
 ## Contato
 
 - Projeto mantido por Luccas
