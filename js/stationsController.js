@@ -1,3 +1,37 @@
+/* [POSTOS-DATA] ═════════════════════════════ */
+function loadPostos(forceRefresh = false) {
+  if (!currentUser) return;
+
+  const cache = !forceRefresh ? getCachedData(currentUser, 'postos') : null;
+  if (cache && cache.data) {
+    postos = cache.data;
+    renderPostoPicker();
+    renderAdminPostos();
+    if (!forceRefresh && isCacheFresh(cache)) {
+      return;
+    }
+  }
+
+  pendingLoads++;
+  if (!cache || forceRefresh) showLoader();   // 🔑 só garante o overlay visível, sem trocar texto
+  google.script.run
+    .withSuccessHandler(data => {
+      postos = data;
+      setCachedData(currentUser, 'postos', data);
+      renderPostoPicker();
+      renderAdminPostos();
+      checkLoadsDone();
+    })
+    .withFailureHandler(() => {
+      if (postos.length) {
+        showToast('❌ Erro ao atualizar postos', 'err');
+      }
+      checkLoadsDone();
+    })
+    .getPostos(currentUser);
+}
+/* [/POSTOS-DATA] */
+
 /* [POSTO-PICKER] ═════════════════════════════ */
 function renderPostoPicker() {
   const el = document.getElementById('posto-picker');
