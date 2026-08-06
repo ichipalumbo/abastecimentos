@@ -17,3 +17,4 @@ function renderAdminPostos() {
         <button class="btn-icon btn-icon-delete" onclick="askDeletePosto(${i})">🗑️</button>
       </div>
     </div>`).join('');
+}
