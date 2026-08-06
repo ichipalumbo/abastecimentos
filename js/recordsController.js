@@ -38,26 +38,6 @@ function loadRecords(forceRefresh = false) {
     .getRecords(currentUser);
 }
 
-function loadPostos() {
-  if (!currentUser) return;
-
-  pendingLoads++;
-  google.script.run
-    .withSuccessHandler(data => {
-      postos = data || [];
-      renderPostoPicker();
-      renderAdminPostos();
-      checkLoadsDone();
-    })
-    .withFailureHandler(() => {
-      showToast('❌ Erro ao carregar postos', 'err');
-      renderPostoPicker();
-      renderAdminPostos();
-      checkLoadsDone();
-    })
-    .getPostos(currentUser);
-}
-
 /* esconde o overlay só quando tudo terminou */
 function checkLoadsDone() {
   pendingLoads = Math.max(0, pendingLoads - 1);

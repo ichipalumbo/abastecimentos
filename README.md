@@ -41,6 +41,20 @@ npm start
 
 3. O `shim.js` detecta automaticamente `localhost` e usa o mock backend em vez do Apps Script.
 
+## Verificação antes de PR
+
+Antes de abrir um Pull Request, execute a verificação de sintaxe dos arquivos JavaScript:
+
+```bash
+./scripts/check-js-syntax.sh
+```
+
+O script executa `node --check` para todos os arquivos em `js/*.js`. Se o projeto passar a ter um `package.json`, adicione também o script:
+
+```json
+"check:js": "node --check js/*.js"
+```
+
 ## Como funciona o mock
 
 - Em desenvolvimento local, `shim.js` usa `http://localhost:5000/exec`
