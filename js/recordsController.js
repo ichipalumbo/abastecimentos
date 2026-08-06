@@ -38,36 +38,6 @@ function loadRecords(forceRefresh = false) {
     .getRecords(currentUser);
 }
 
-function loadPostos(forceRefresh = false) {
-  if (!currentUser) return;
-
-  const cache = !forceRefresh ? getCachedData(currentUser, 'postos') : null;
-  if (cache && cache.data && cache.data.length) {
-    postos = cache.data;
-    renderPostoPicker();
-    renderAdminPostos();
-    if (!forceRefresh && isCacheFresh(cache)) {
-      return;
-    }
-  }
-
-  pendingLoads++;
-  if (!cache || forceRefresh) showLoader();
-  google.script.run
-    .withSuccessHandler(data => {
-      postos = data || [];
-      setCachedData(currentUser, 'postos', postos);
-      renderPostoPicker();
-      renderAdminPostos();
-      checkLoadsDone();
-    })
-    .withFailureHandler(() => {
-      showToast('❌ Erro ao carregar postos', 'err');
-      checkLoadsDone();
-    })
-    .getPostos(currentUser);
-}
-
 /* esconde o overlay só quando tudo terminou */
 function checkLoadsDone() {
   pendingLoads = Math.max(0, pendingLoads - 1);
