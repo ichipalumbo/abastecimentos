@@ -202,6 +202,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** o texto é visível junto ao controle em mobile e desktop, não depende de hover e descreve corretamente o efeito observado no histórico/análise.
 
+**Resultados:**
+- Arquivos alterados: `index.html`, `styles.css`.
+- Validação: texto visível foi adicionado imediatamente junto ao controle, com estilo legível e sem alteração da semântica de `Parcial?` ou dos cálculos existentes. `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
+
 ### Etapa 6 — Validar o fluxo completo
 
 **Ação**

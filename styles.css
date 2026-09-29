@@ -79,6 +79,13 @@ textarea {
   font-weight: 600;
 }
 
+.field-hint {
+  margin-top: 6px;
+  color: var(--text-sec);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
 /* [/BASE] */
 
 /* [SPLASH] ═══════════════════════════════════ */
