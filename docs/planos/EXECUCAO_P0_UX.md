@@ -263,10 +263,18 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 ## Fechamento
 
-- [ ] P0.1: contrato de ID confirmado; editar/excluir por ID testados entre meses, ordenações e atualização.
+- [x] P0.1: contrato de ID confirmado; editar/excluir por ID testados entre meses, ordenações e atualização.
 - [x] P0.2: formatos numéricos, foco/mensagens, validação de hodômetro, parcial e criação/edição testados.
 - [x] P0.3: nome acessível e acionamento por teclado/toque testados.
-- [ ] Regressão: salvar, editar, excluir e atualizar o histórico sem alterar registros diferentes do selecionado.
-- [ ] Registrar cenários executados e resultado antes de iniciar melhorias P1/P2.
+- [x] Regressão: salvar, editar, excluir e atualizar o histórico sem alterar registros diferentes do selecionado.
+- [x] Registrar cenários executados e resultado antes de iniciar melhorias P1/P2.
+
+### Resultado consolidado
+
+- **P0.1:** IDs únicos foram confirmados; edição e exclusão por ID foram validadas em grupos mensais distintos, nas duas ordenações, com cancelamento e atualização da lista.
+- **P0.2:** entradas numéricas inválidas foram bloqueadas; foco, mensagens, persistência de valores, flag de parcial, validação cronológica do hodômetro e recuperação após sucesso/erros foram testados em criação e edição.
+- **P0.3:** o botão de registro recebeu nome acessível exato e manteve o acionamento nativo por toque e teclado.
+- **Regressão:** os fluxos de salvar, editar, excluir e atualizar foram cobertos pelos cenários acima; nenhum caso validado alterou registro diferente do selecionado.
+- Commits finais das etapas: `1bf2b0f` (P0.1), `222224f` (P0.2) e `0aeaefa` (P0.3).
 
 O plano não prescreve mudanças no backend de produção. Se os testes revelarem que o backend aceita ou exige formatos incompatíveis com as regras acima, interromper e revisar o contrato antes de alterar o payload ou os dados existentes.
