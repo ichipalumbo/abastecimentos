@@ -188,20 +188,21 @@
 
   <!-- [MODAL-FORM] ══════════════════════════════ -->
   <div class="overlay" id="overlay" onclick="bgClick(event)">
-    <div class="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div class="drag-bar"></div>
       <div class="modal-header">
         <div class="modal-title" id="modal-title">🛢️ Novo Abastecimento</div>
-        <button type="button" class="btn-close-modal" onclick="closeModal()">✕</button>
+        <button type="button" class="btn-close-modal" aria-label="Fechar cadastro" onclick="closeModal()">✕</button>
       </div>
       <div class="modal-subtitle" id="modal-subtitle"></div>
 
       <form id="form" onsubmit="submitForm(event)">
         <input type="hidden" id="f-id">
-
+        <div class="form-fields">
+        <div class="section-sub">Do abastecimento</div>
         <!-- [FORM-DATA] -->
-        <div class="form-group">
-          <label class="form-label">📅 Data e Hora <span class="req">*</span></label>
+        <div class="form-group form-date">
+          <label class="form-label" for="f-data">📅 Data e hora <span class="req">*</span></label>
           <input type="datetime-local" class="form-control" id="f-data" required oninput="calcKm()">
         </div>
         <!-- [/FORM-DATA] -->
@@ -209,7 +210,7 @@
         <!-- [FORM-COMB-PARCIAL] -->
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label">⛽ Combustível</label>
+            <label class="form-label" for="f-comb">⛽ Combustível</label>
             <select class="form-control" id="f-comb">
               <option>Gasolina</option>
               <option>Gasolina Aditivada</option>
@@ -219,10 +220,10 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Parcial?</label>
+            <span class="form-label">Abastecimento parcial?</span>
             <div class="toggle-wrap">
-              <span class="toggle-label">Parcial</span>
-              <label class="switch">
+              <label class="toggle-label" for="f-parcial">Parcial</label>
+              <label class="switch" for="f-parcial">
                 <input type="checkbox" id="f-parcial">
                 <span class="slider"></span>
               </label>
@@ -234,49 +235,45 @@
         <!-- [FORM-LITROS-VALOR] -->
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label">💧 Litros <span class="req">*</span></label>
-            <input type="text" inputmode="decimal" class="form-control" id="f-litros" step="0.01" placeholder="0,00"
-              required oninput="calcPreco();calcKm()">
+            <label class="form-label" for="f-litros">💧 Litros <span class="req">*</span></label>
+            <input type="text" inputmode="decimal" enterkeyhint="next" class="form-control" id="f-litros" placeholder="0,00"
+              required oninput="calcPreco();calcKm()" onkeydown="advanceForm(event, 'f-valor')">
           </div>
           <div class="form-group">
-            <label class="form-label">💰 Valor Total R$ <span class="req">*</span></label>
-            <input type="text" inputmode="decimal" class="form-control" id="f-valor" placeholder="0,00" required
-              oninput="calcPreco()">
+            <label class="form-label" for="f-valor">💰 Valor total R$ <span class="req">*</span></label>
+            <input type="text" inputmode="decimal" enterkeyhint="next" class="form-control" id="f-valor" placeholder="0,00" required
+              oninput="calcPreco()" onkeydown="advanceForm(event, 'f-kmtotal')">
           </div>
         </div>
         <!-- [/FORM-LITROS-VALOR] -->
 
-        <!-- [FORM-PRECOL] -->
-        <div class="form-group">
-          <label class="form-label">🧮 Preço por Litro — calculado</label>
-          <input type="text" class="form-control calc" id="f-precol" readonly
-            placeholder="Preencha litros e valor acima ↑">
-        </div>
-        <!-- [/FORM-PRECOL] -->
-
         <!-- [FORM-HODOMETRO] -->
-        <hr class="divider">
-        <div class="section-sub">📍 Hodômetro</div>
+        <div class="section-sub form-section">Do veículo</div>
         <div class="form-group">
-          <label class="form-label">📍 KM Total <span class="req">*</span></label>
-          <input type="number" class="form-control" id="f-kmtotal" step="1" min="0" placeholder="000000"
-            inputmode="numeric" required oninput="calcKm()">
+          <label class="form-label" for="f-kmtotal">📍 KM total no painel <span class="req">*</span></label>
+          <input type="number" class="form-control" id="f-kmtotal" step="1" min="1" placeholder="000000"
+            inputmode="numeric" enterkeyhint="done" required oninput="calcKm()">
+          <div class="previous-km" id="previous-km" aria-live="polite"></div>
         </div>
-        <div class="grid-2">
+        <div class="calc-heading">Prévia calculada</div>
+        <div class="grid-2 calc-grid">
           <div class="form-group">
-            <label class="form-label">🛣️ KM Rodados — calculado</label>
-            <input type="text" class="form-control calc" id="f-kmtrip" readonly placeholder="Preencha o KM Total ↑">
+            <label class="form-label" for="f-precol">Preço por litro</label>
+            <input type="text" class="form-control calc" id="f-precol" readonly placeholder="—">
           </div>
           <div class="form-group">
-            <label class="form-label">⚡ km/L — prévia</label>
-            <input type="text" class="form-control calc" id="f-kmlprev" readonly placeholder="Estimativa">
+            <label class="form-label" for="f-kmtrip">KM rodados</label>
+            <input type="text" class="form-control calc" id="f-kmtrip" readonly placeholder="—">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="f-kmlprev">Consumo estimado</label>
+            <input type="text" class="form-control calc" id="f-kmlprev" readonly placeholder="—">
           </div>
         </div>
         <!-- [/FORM-HODOMETRO] -->
 
         <!-- [FORM-POSTO] -->
-        <hr class="divider">
-        <div class="section-sub">🏪 Posto</div>
+        <div class="section-sub form-section">🏪 Posto</div>
         <div class="posto-scroll" id="posto-picker">
           <span style="color:var(--muted);font-size:0.82rem">Carregando postos...</span>
         </div>
@@ -287,10 +284,12 @@
           <button type="button" class="btn-inline btn-inline-cancel" onclick="cancelInlineAddPosto()">✕</button>
         </div>
         <!-- [/FORM-POSTO] -->
-
-        <button type="submit" class="btn-submit" id="btn-salvar" style="margin-top:20px">
+        </div>
+        <div class="form-footer">
+        <button type="submit" class="btn-submit" id="btn-salvar">
           ✅ Salvar Abastecimento
         </button>
+        </div>
       </form>
     </div>
   </div>
