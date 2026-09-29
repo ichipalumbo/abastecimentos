@@ -2,7 +2,7 @@
 
 ## Status e decisão
 
-**Status: planejado; implementação ainda não iniciada.** Este é o relatório pré-execução. O objetivo é corrigir a correspondência entre cada cartão do histórico e as ações Editar/Excluir, antes de alterar layout, formulário ou demais itens do [roadmap UI/UX](./2026-09-29-ui-ux-audit.md).
+**Status: implementado e validado localmente em 29/09/2026; ainda não publicado.** Este documento preserva o plano pré-execução abaixo e registra os resultados ao final. O objetivo é corrigir a correspondência entre cada cartão do histórico e as ações Editar/Excluir, antes de alterar layout, formulário ou demais itens do [roadmap UI/UX](./2026-09-29-ui-ux-audit.md).
 
 ## Diagnóstico e risco
 
@@ -46,3 +46,12 @@ O repositório não contém runner de testes nem o diretório `mock/` citado no 
 ## Entrega esperada da execução
 
 Código corrigido, evidência dos testes com os IDs sintéticos em ambas as ordenações, lista de arquivos alterados e registro de eventuais limitações. Atualizar este plano com a data da execução e o resultado somente depois de implementar e verificar; manter a auditoria original como histórico.
+
+## Resultado da execução — 29/09/2026
+
+- `script.js`: os botões agora usam o ID do registro mostrado, não o índice local do mês. Editar, confirmar exclusão e salvar edição exigem um ID único no histórico corrente; IDs ausentes, duplicados e registros removidos são bloqueados com aviso. Trocar de perfil fecha os diálogos pendentes. Respostas atrasadas de carregamento ou mutação não sobrescrevem o perfil recém-selecionado; mutações concluídas após a troca invalidam o cache do perfil original. Uma atualização antiga não substitui dados de uma mais recente.
+- `tests/record-actions.test.js`: seis testes reproduzíveis com `node --test tests\record-actions.test.js`, sem dependências adicionais. Cobrem seis registros embaralhados em três meses nas duas ordens (24 ações verificadas), cancelamento e payload de exclusão simulado, IDs inválidos/obsoletos, troca de perfil com requisições pendentes, respostas de atualização fora de ordem e persistência local da edição no registro selecionado. **Resultado: 6/6 passaram.**
+- Navegador local em 433×762 CSS px: o cartão intermediário abriu e preparou a exclusão do mesmo ID `aug-mid`; seis cartões sintéticos nas duas ordenações também corresponderam aos IDs corretos. Sem overflow horizontal. Os botões Editar/Excluir mantêm altura de cerca de 35 px: ponto de ergonomia já previsto para as fases de UI, não alterado nesta correção de integridade.
+- `node --check script.js`, `node --check tests\record-actions.test.js` e `git diff --check` passaram. Nenhuma exclusão/edição foi enviada ao backend publicado: o navegador local usa dados sintéticos e a API destrutiva foi simulada.
+
+**Limitação:** o backend de produção e o fluxo após implantação não foram testados nesta branch. Repetir inspeção de leitura na versão publicada após o merge/deploy, sem modificar registros reais.

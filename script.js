@@ -7,9 +7,13 @@ let analyticsBuilt     = false;
 let editMode           = false;
 let selectedPostoNome  = '';
 let pendingDeleteId    = null;
+let pendingDeleteUser  = null;
+let editingRecordUser  = null;
 let pendingDeletePostoId = null;
 let editingPostoId     = null;
 let pendingLoads = 0;
+let profileEpoch      = 0;
+let recordsLoadSequence = 0;
 let sortOrder          = 'desc';   // 'desc' = recente primeiro, 'asc' = antigo primeiro
 let lastRefreshTs      = null;
 const CACHE_PREFIX     = 'fuelapp_cache';
@@ -35,6 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* [USER] ═════════════════════════════════════ */
 function selectUser(user) {
+  profileEpoch++;
+  closeModal();
+  closeConfirmRecord();
+  editMode = false;
+  document.getElementById('btn-salvar').disabled = false;
   currentUser = user;
   localStorage.setItem('fuelapp_user', user);
   // Carrega a preferência de ordenação do localStorage
@@ -62,6 +71,11 @@ function selectUser(user) {
 }
 
 function logout() {
+  profileEpoch++;
+  closeModal();
+  closeConfirmRecord();
+  editMode = false;
+  document.getElementById('btn-salvar').disabled = false;
   currentUser    = null;
   records        = [];
   postos         = [];
@@ -115,8 +129,11 @@ function refreshData() {
 /* [LOAD-DATA] ════════════════════════════════ */
 function loadRecords(forceRefresh = false) {
   if (!currentUser) return;
+  const user = currentUser;
+  const epoch = profileEpoch;
+  const request = ++recordsLoadSequence;
 
-  const cache = !forceRefresh ? getCachedData(currentUser, 'records') : null;
+  const cache = !forceRefresh ? getCachedData(user, 'records') : null;
   if (cache && cache.data && cache.data.length) {
     records = cache.data; analyticsBuilt = false;
     renderStats(records); renderList(records);
@@ -131,8 +148,9 @@ function loadRecords(forceRefresh = false) {
   if (!cache || forceRefresh) showLoader();   // 🔑 só garante o overlay visível, sem trocar texto
   google.script.run
     .withSuccessHandler(data => {
+      if (profileEpoch !== epoch || request !== recordsLoadSequence) { checkLoadsDone(); return; }
       records = data; analyticsBuilt = false;
-      setCachedData(currentUser, 'records', data);
+      setCachedData(user, 'records', data);
       lastRefreshTs = Date.now();
       updateRefreshMeta(lastRefreshTs);
       renderStats(data); renderList(data);
@@ -140,6 +158,7 @@ function loadRecords(forceRefresh = false) {
       checkLoadsDone();
     })
     .withFailureHandler(err => {
+      if (profileEpoch !== epoch || request !== recordsLoadSequence) { checkLoadsDone(); return; }
       if (records.length) {
         showToast('❌ Erro ao atualizar registros', 'err');
       } else {
@@ -149,13 +168,15 @@ function loadRecords(forceRefresh = false) {
       }
       checkLoadsDone();
     })
-    .getRecords(currentUser);
+    .getRecords(user);
 }
 
 function loadPostos(forceRefresh = false) {
   if (!currentUser) return;
+  const user = currentUser;
+  const epoch = profileEpoch;
 
-  const cache = !forceRefresh ? getCachedData(currentUser, 'postos') : null;
+  const cache = !forceRefresh ? getCachedData(user, 'postos') : null;
   if (cache && cache.data) {
     postos = cache.data;
     renderPostoPicker();
@@ -169,19 +190,21 @@ function loadPostos(forceRefresh = false) {
   if (!cache || forceRefresh) showLoader();   // 🔑 só garante o overlay visível, sem trocar texto
   google.script.run
     .withSuccessHandler(data => {
+      if (profileEpoch !== epoch) { checkLoadsDone(); return; }
       postos = data;
-      setCachedData(currentUser, 'postos', data);
+      setCachedData(user, 'postos', data);
       renderPostoPicker();
       renderAdminPostos();
       checkLoadsDone();
     })
     .withFailureHandler(() => {
+      if (profileEpoch !== epoch) { checkLoadsDone(); return; }
       if (postos.length) {
         showToast('❌ Erro ao atualizar postos', 'err');
       }
       checkLoadsDone();
     })
-    .getPostos(currentUser);
+    .getPostos(user);
 }
 
 /* esconde o overlay só quando tudo terminou */
@@ -229,6 +252,14 @@ function setCachedData(user, type, data) {
     }));
   } catch (err) {
     // sem cache se localStorage falhar
+  }
+}
+
+function invalidateRecordsCache(user) {
+  try {
+    localStorage.removeItem(getCacheKey(user, 'records'));
+  } catch (err) {
+    showToast('❌ Não foi possível limpar o cache de registros', 'err');
   }
 }
 
@@ -287,6 +318,7 @@ function renderList(data) {
     return acc;
   }, {});
 
+  const displayedRecords = [];
   el.innerHTML = Object.keys(groups).map(group => {
     const rows = groups[group];
     const totalGasto  = rows.reduce((sum, r) => sum + (+r['Valor'] || 0), 0);
@@ -307,7 +339,8 @@ function renderList(data) {
         </div>
       </div>`;
 
-    const cards = rows.map((r, idx) => {
+    const cards = rows.map(r => {
+      displayedRecords.push(r);
       const d      = new Date(r['Data']);
       const dStr   = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
       const tStr   = d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
@@ -340,14 +373,20 @@ function renderList(data) {
             </div>
           </div>
           <div class="record-actions">
-            <button class="btn-action btn-edit"   onclick="openEdit(${idx})">✏️ Editar</button>
-            <button class="btn-action btn-delete" onclick="askDelete(${idx})">🗑️ Excluir</button>
+            <button class="btn-action btn-edit">✏️ Editar</button>
+            <button class="btn-action btn-delete">🗑️ Excluir</button>
           </div>
         </div>`;
     }).join('');
 
     return header + cards;
   }).join('');
+  const renderedUser = currentUser;
+  el.querySelectorAll('.record-card').forEach((card, index) => {
+    const id = displayedRecords[index]['ID'];
+    card.querySelector('.btn-edit').addEventListener('click', () => openEdit(id, renderedUser));
+    card.querySelector('.btn-delete').addEventListener('click', () => askDelete(id, renderedUser));
+  });
 }
 /* [/LIST] */
 
@@ -557,9 +596,25 @@ function openModal() {
   document.getElementById('overlay').classList.add('open');
 }
 
-function openEdit(idx) {
+function findRecordForAction(id, renderedUser) {
+  if (renderedUser !== currentUser || id === null || id === undefined || String(id).trim() === '') {
+    showToast('❌ Registro indisponível. Atualize o histórico.', 'err');
+    return null;
+  }
+  const matches = records.filter(r => r['ID'] !== null && r['ID'] !== undefined &&
+    String(r['ID']) === String(id));
+  if (matches.length !== 1) {
+    showToast('❌ Registro não encontrado ou duplicado. Atualize o histórico.', 'err');
+    return null;
+  }
+  return matches[0];
+}
+
+function openEdit(id, renderedUser = currentUser) {
+  const r = findRecordForAction(id, renderedUser);
+  if (!r) return;
   editMode = true;
-  const r  = records[idx];
+  editingRecordUser = currentUser;
   document.getElementById('f-id').value        = r['ID']               || '';
   document.getElementById('f-data').value      = toLocalDatetimeValue(r['Data']);
   document.getElementById('f-comb').value      = r['Tipo Combustível'] || 'Gasolina';
@@ -577,14 +632,19 @@ function openEdit(idx) {
   document.getElementById('overlay').classList.add('open');
 }
 
-function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+function closeModal() {
+  editingRecordUser = null;
+  document.getElementById('overlay').classList.remove('open');
+}
 function bgClick(e)   { if (e.target === document.getElementById('overlay')) closeModal(); }
 /* [/MODAL-FORM] */
 
 /* [DELETE-RECORD] ════════════════════════════ */
-function askDelete(idx) {
-  const r = records[idx];
+function askDelete(id, renderedUser = currentUser) {
+  const r = findRecordForAction(id, renderedUser);
+  if (!r) return;
   pendingDeleteId = r['ID'];
+  pendingDeleteUser = currentUser;
   const d    = new Date(r['Data']);
   const dStr = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
   document.getElementById('confirm-record-text').textContent =
@@ -594,31 +654,42 @@ function askDelete(idx) {
 
 function closeConfirmRecord() {
   pendingDeleteId = null;
+  pendingDeleteUser = null;
   document.getElementById('confirm-record-overlay').classList.remove('open');
 }
 
 function confirmDeleteRecord() {
-  if (!pendingDeleteId) return;
-  const id = pendingDeleteId;
+  const r = findRecordForAction(pendingDeleteId, pendingDeleteUser);
+  if (!r) {
+    closeConfirmRecord();
+    return;
+  }
+  const id = r['ID'];
+  const user = currentUser;
+  const epoch = profileEpoch;
   closeConfirmRecord();
   showToast('⏳ Excluindo...', '');
   google.script.run
     .withSuccessHandler(res => {
       if (res.success) {
-        records = records.filter(r => String(r['ID']) !== String(id));
-        setCachedData(currentUser, 'records', records);
         showToast('🗑️ Registro excluído', 'ok');
-        loadRecords(true);
+        if (profileEpoch === epoch) {
+          records = records.filter(r => String(r['ID']) !== String(id));
+          setCachedData(user, 'records', records);
+          loadRecords(true);
+        } else invalidateRecordsCache(user);
       } else { showToast('❌ ' + res.error, 'err'); }
     })
     .withFailureHandler(() => showToast('❌ Falha na conexão', 'err'))
-    .deleteRecord(currentUser, id);
+    .deleteRecord(user, id);
 }
 /* [/DELETE-RECORD] */
 
 /* [SUBMIT-FORM] ══════════════════════════════ */
 function submitForm(e) {
   e.preventDefault();
+
+  if (editMode && !findRecordForAction(document.getElementById('f-id').value, editingRecordUser)) return;
 
   // ✅ Validações ANTES de enviar (evita travar o botão)
   const litros = parseDecimal(document.getElementById('f-litros').value);
@@ -645,41 +716,50 @@ function submitForm(e) {
 
   const fn    = editMode ? 'updateRecord' : 'addRecord';
   const msgOk = editMode ? '💾 Alterações salvas!' : '✅ Abastecimento salvo!';
+  const user = currentUser;
+  const wasEditing = editMode;
+  const epoch = profileEpoch;
 
   google.script.run
     .withSuccessHandler(res => {
-      btn.disabled = false;
-      btn.textContent = editMode ? '💾 Salvar Alterações' : '✅ Salvar Abastecimento';
+      if (profileEpoch === epoch) {
+        btn.disabled = false;
+        btn.textContent = wasEditing ? '💾 Salvar Alterações' : '✅ Salvar Abastecimento';
+      }
       if (res.success) {
-        if (editMode) {
-          const id = document.getElementById('f-id').value;
-          const idx = records.findIndex(r => String(r['ID']) === String(id));
+        if (profileEpoch === epoch && wasEditing) {
+          const idx = records.findIndex(r => String(r['ID']) === String(record.id));
           if (idx >= 0) {
-            records[idx]['Data']            = document.getElementById('f-data').value;
-            records[idx]['Tipo Combustível'] = document.getElementById('f-comb').value;
-            records[idx]['Litros']          = litros;
-            records[idx]['Valor']           = valor;
-            records[idx]['KM_Total']        = kmTot;
-            records[idx]['Posto']           = selectedPostoNome;
-            records[idx]['Parcial?']        = document.getElementById('f-parcial').checked;
-            setCachedData(currentUser, 'records', records);
+            records[idx]['Data']            = record.data;
+            records[idx]['Tipo Combustível'] = record.combustivel;
+            records[idx]['Litros']          = record.litros;
+            records[idx]['Valor']           = record.valor;
+            records[idx]['KM_Total']        = record.kmTotal;
+            records[idx]['Posto']           = record.posto;
+            records[idx]['Parcial?']        = record.parcial;
+            setCachedData(user, 'records', records);
           }
         }
-        showToast(msgOk, 'ok'); closeModal();
-        document.getElementById('form').reset();
-        document.getElementById('f-precol').value  = '';
-        document.getElementById('f-kmtrip').value  = '';
-        document.getElementById('f-kmlprev').value = '';
-        selectedPostoNome = '';
-        loadRecords(true);
+        showToast(msgOk, 'ok');
+        if (profileEpoch === epoch) {
+          closeModal();
+          document.getElementById('form').reset();
+          document.getElementById('f-precol').value  = '';
+          document.getElementById('f-kmtrip').value  = '';
+          document.getElementById('f-kmlprev').value = '';
+          selectedPostoNome = '';
+          loadRecords(true);
+        } else invalidateRecordsCache(user);
       } else { showToast('❌ ' + res.error, 'err'); }
     })
     .withFailureHandler(() => {
-      btn.disabled = false;
-      btn.textContent = editMode ? '💾 Salvar Alterações' : '✅ Salvar Abastecimento';
+      if (profileEpoch === epoch) {
+        btn.disabled = false;
+        btn.textContent = wasEditing ? '💾 Salvar Alterações' : '✅ Salvar Abastecimento';
+      }
       showToast('❌ Falha na conexão', 'err');
     })
-    [fn](currentUser, record);
+    [fn](user, record);
 }
 /* [/SUBMIT-FORM] */
 
