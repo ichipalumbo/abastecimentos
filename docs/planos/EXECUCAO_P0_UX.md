@@ -220,6 +220,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** nenhuma entrada inválida é persistida; cada erro é percebido no campo relevante; entradas válidas são persistidas com os valores esperados, tanto ao criar quanto ao editar.
 
+**Resultados:**
+- Arquivos de código alterados: nenhum nesta etapa.
+- Validação: criação e edição foram testadas com entradas inválidas e válidas; nenhum inválido chamou persistência, valores e flag de parcial foram preservados, e o botão se recuperou após sucesso, erro de backend e falha de conexão. `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
+
 ## P0.3 — Dar nome acessível ao botão de registro
 
 ### Etapa 1 — Nomear o controle sem alterar sua ação
@@ -249,7 +254,7 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 ## Fechamento
 
 - [ ] P0.1: contrato de ID confirmado; editar/excluir por ID testados entre meses, ordenações e atualização.
-- [ ] P0.2: formatos numéricos, foco/mensagens, validação de hodômetro, parcial e criação/edição testados.
+- [x] P0.2: formatos numéricos, foco/mensagens, validação de hodômetro, parcial e criação/edição testados.
 - [ ] P0.3: nome acessível e acionamento por teclado/toque testados.
 - [ ] Regressão: salvar, editar, excluir e atualizar o histórico sem alterar registros diferentes do selecionado.
 - [ ] Registrar cenários executados e resultado antes de iniciar melhorias P1/P2.
