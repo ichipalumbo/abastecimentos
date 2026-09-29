@@ -635,6 +635,26 @@ function confirmDeleteRecord() {
 /* [/DELETE-RECORD] */
 
 /* [SUBMIT-FORM] ══════════════════════════════ */
+function clearFieldError(inputId) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(`${inputId}-error`);
+  if (input) {
+    input.classList.remove('field-invalid');
+    input.removeAttribute('aria-invalid');
+  }
+  if (error) error.textContent = '';
+}
+
+function setFieldError(inputId, message) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(`${inputId}-error`);
+  if (input) {
+    input.classList.add('field-invalid');
+    input.setAttribute('aria-invalid', 'true');
+  }
+  if (error) error.textContent = message;
+}
+
 function submitForm(e) {
   e.preventDefault();
 
@@ -643,16 +663,24 @@ function submitForm(e) {
   const valor  = parseDecimal(document.getElementById('f-valor').value);
   const kmTot  = parseDecimal(document.getElementById('f-kmtotal').value);
 
+  clearFieldError('f-litros');
+  clearFieldError('f-valor');
+  clearFieldError('f-kmtotal');
+  const invalidFields = [];
   if (!Number.isFinite(litros) || litros <= 0) {
-    showToast('⚠️ Litros inválido', '');
-    return;
+    setFieldError('f-litros', 'Informe litros como número maior que zero.');
+    invalidFields.push('f-litros');
   }
   if (!Number.isFinite(valor) || valor <= 0) {
-    showToast('⚠️ Valor inválido', '');
-    return;
+    setFieldError('f-valor', 'Informe o valor como número maior que zero.');
+    invalidFields.push('f-valor');
   }
   if (!Number.isFinite(kmTot) || kmTot <= 0 || !Number.isInteger(kmTot)) {
-    showToast('⚠️ Informe um KM Total inteiro e positivo', '');
+    setFieldError('f-kmtotal', 'Informe um KM Total inteiro e positivo.');
+    invalidFields.push('f-kmtotal');
+  }
+  if (invalidFields.length) {
+    document.getElementById(invalidFields[0]).focus();
     return;
   }
 

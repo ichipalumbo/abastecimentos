@@ -66,6 +66,19 @@ textarea {
   /* 🔑 herda a fonte do app */
 }
 
+.form-control.field-invalid {
+  border-color: var(--red);
+  box-shadow: 0 0 0 2px var(--red-dim);
+}
+
+.field-error {
+  min-height: 0;
+  margin-top: 5px;
+  color: var(--red);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
 /* [/BASE] */
 
 /* [SPLASH] ═══════════════════════════════════ */

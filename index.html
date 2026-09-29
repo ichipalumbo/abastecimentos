@@ -236,12 +236,14 @@
           <div class="form-group">
             <label class="form-label">💧 Litros <span class="req">*</span></label>
             <input type="text" inputmode="decimal" class="form-control" id="f-litros" step="0.01" placeholder="0,00"
-              required oninput="calcPreco();calcKm()">
+              aria-describedby="f-litros-error" required oninput="clearFieldError('f-litros');calcPreco();calcKm()">
+            <div class="field-error" id="f-litros-error" role="alert" aria-live="polite"></div>
           </div>
           <div class="form-group">
             <label class="form-label">💰 Valor Total R$ <span class="req">*</span></label>
             <input type="text" inputmode="decimal" class="form-control" id="f-valor" placeholder="0,00" required
-              oninput="calcPreco()">
+              aria-describedby="f-valor-error" oninput="clearFieldError('f-valor');calcPreco()">
+            <div class="field-error" id="f-valor-error" role="alert" aria-live="polite"></div>
           </div>
         </div>
         <!-- [/FORM-LITROS-VALOR] -->
@@ -260,7 +262,8 @@
         <div class="form-group">
           <label class="form-label">📍 KM Total <span class="req">*</span></label>
           <input type="number" class="form-control" id="f-kmtotal" step="1" min="0" placeholder="000000"
-            inputmode="numeric" required oninput="calcKm()">
+          inputmode="numeric" aria-describedby="f-kmtotal-error" required oninput="clearFieldError('f-kmtotal');calcKm()">
+          <div class="field-error" id="f-kmtotal-error" role="alert" aria-live="polite"></div>
         </div>
         <div class="grid-2">
           <div class="form-group">

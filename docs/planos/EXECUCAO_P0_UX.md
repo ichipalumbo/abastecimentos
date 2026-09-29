@@ -166,6 +166,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** cada erro identifica o campo e o formato esperado; submissão move o foco ao primeiro inválido; com teclado e leitor de tela a mensagem é associada/anunciada. Ao corrigir, o estado de erro correspondente é removido.
 
+**Resultados:**
+- Arquivos alterados: `index.html`, `script.js`, `styles.css`.
+- Validação: mensagens associadas por `aria-describedby`/`aria-live`, estado visual e `aria-invalid` foram aplicados; o primeiro campo inválido recebe foco, dados válidos permanecem e a correção remove o erro. `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
+
 ### Etapa 4 — Bloquear odômetro menor ou igual ao anterior
 
 **Ação**
