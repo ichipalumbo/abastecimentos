@@ -858,6 +858,7 @@ select:focus-visible,
   right: 0;
   height: calc(var(--nav-h) + var(--safe-b));
   padding-bottom: var(--safe-b);
+  padding-right: 80px;
   background: var(--surface);
   border-top: 1px solid var(--border);
   display: flex;
@@ -898,29 +899,20 @@ select:focus-visible,
   filter: drop-shadow(0 0 6px rgba(108, 143, 255, .6));
 }
 
-/* 💚 Registrar — único card destacado (à direita) */
-/* 💚 Registrar — quadrado fixo, só o "+" */
-/* 💚 Registrar — "+" perfeitamente centralizado */
 .nav-registrar {
-  flex: 0 0 auto;
-  width: 112px;
+  position: absolute;
+  right: 16px;
+  bottom: calc(var(--safe-b) + 18px);
+  width: 56px;
   height: 56px;
-  min-width: 112px;
   background: var(--green);
-  border-radius: 14px;
-  margin: auto 8px auto 0;
+  border-radius: 50%;
   padding: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-  gap: 2px;
   color: var(--bg);
-  font-size: 0.84rem;
+  font-size: 2rem;
   letter-spacing: 0;
-  text-transform: none;
-  box-shadow: 0 4px 14px rgba(74, 222, 128, .4);
+  line-height: 1;
+  box-shadow: 0 4px 16px rgba(74, 222, 128, .35);
   transition: transform .15s, background .2s;
 }
 
