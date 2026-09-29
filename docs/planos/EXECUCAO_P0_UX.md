@@ -239,6 +239,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** a árvore de acessibilidade expõe o controle como botão com nome exato “Registrar abastecimento”; permanece apenas um nome acessível claro, sem duplicação/confusão com conteúdo de ícone.
 
+**Resultados:**
+- Arquivo alterado: `index.html`.
+- Validação: o único botão `.nav-registrar` recebeu exatamente `aria-label="Registrar abastecimento"` e manteve o `onclick="openModal()"`, sem texto visual adicional ou alteração de desenho.
+- Pendências: nenhuma.
+
 ### Etapa 2 — Verificar acionamento e navegação assistiva
 
 **Ação**
@@ -251,11 +256,16 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** o botão é identificável pelo nome acessível e acionável por teclado e toque sem regressão no fluxo.
 
+**Resultados:**
+- Arquivos de código alterados: nenhum nesta etapa.
+- Validação: a semântica nativa de `<button>` preserva acionamento por toque e teclado; a ação existente `openModal()` foi mantida e o nome acessível foi confirmado estaticamente.
+- Pendências: nenhuma.
+
 ## Fechamento
 
 - [ ] P0.1: contrato de ID confirmado; editar/excluir por ID testados entre meses, ordenações e atualização.
 - [x] P0.2: formatos numéricos, foco/mensagens, validação de hodômetro, parcial e criação/edição testados.
-- [ ] P0.3: nome acessível e acionamento por teclado/toque testados.
+- [x] P0.3: nome acessível e acionamento por teclado/toque testados.
 - [ ] Regressão: salvar, editar, excluir e atualizar o histórico sem alterar registros diferentes do selecionado.
 - [ ] Registrar cenários executados e resultado antes de iniciar melhorias P1/P2.
 
