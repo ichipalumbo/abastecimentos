@@ -643,9 +643,18 @@ function submitForm(e) {
   const valor  = parseDecimal(document.getElementById('f-valor').value);
   const kmTot  = parseDecimal(document.getElementById('f-kmtotal').value);
 
-  if (litros <= 0) { showToast('⚠️ Litros inválido', ''); return; }
-  if (valor  <= 0) { showToast('⚠️ Valor inválido', '');  return; }
-  if (kmTot  <= 0) { showToast('⚠️ Informe o KM Total', ''); return; }
+  if (!Number.isFinite(litros) || litros <= 0) {
+    showToast('⚠️ Litros inválido', '');
+    return;
+  }
+  if (!Number.isFinite(valor) || valor <= 0) {
+    showToast('⚠️ Valor inválido', '');
+    return;
+  }
+  if (!Number.isFinite(kmTot) || kmTot <= 0 || !Number.isInteger(kmTot)) {
+    showToast('⚠️ Informe um KM Total inteiro e positivo', '');
+    return;
+  }
 
   const btn = document.getElementById('btn-salvar');
   btn.disabled = true; btn.textContent = '⏳ Salvando...';

@@ -147,6 +147,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** para cada valor inválido, confirmar que não ocorre chamada de persistência e que os outros campos preenchidos permanecem intactos. Valores válidos com vírgula e ponto devem ser enviados numericamente uma única vez.
 
+**Resultados:**
+- Arquivo alterado: `script.js`.
+- Validação: litros, valor e hodômetro inválidos não chamaram persistência; valores válidos com vírgula e ponto foram convertidos e enviados uma única vez, preservando a flag de parcial. `node --check script.js` passou.
+- Pendências: nenhuma.
+
 ### Etapa 3 — Exibir erros junto aos campos e direcionar o foco
 
 **Ação**
