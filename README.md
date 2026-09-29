@@ -26,6 +26,7 @@ O app original usa Google Apps Script para backend, mas o repositório também i
 - `mock/server.js` - servidor de mock Express para desenvolvimento local
 - `mock/mock-data.json` - dados de exemplo usados pelo mock backend
 - `manifest.json` - configuração da PWA
+- `docs/reports/` - auditorias e planos de execução datados (`AAAA-MM-DD-assunto.md`)
 
 ## Uso local
 
