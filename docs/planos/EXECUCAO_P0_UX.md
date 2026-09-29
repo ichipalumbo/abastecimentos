@@ -66,6 +66,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** testar ID existente, ausente e inexistente. Os casos inválidos não podem abrir edição nem confirmação de outro abastecimento; o caso válido deve preencher os dados do registro cujo ID foi acionado.
 
+**Resultados:**
+- Arquivo alterado: `script.js`.
+- Validação: testes de comportamento com ID válido, vazio e inexistente passaram para edição e exclusão; IDs inválidos exibem feedback e não abrem formulário/diálogo nem deixam exclusão pendente. `node --check script.js` passou.
+- Pendências: nenhuma.
+
 ### Etapa 4 — Preservar o ID até concluir a exclusão e edição
 
 **Ação**

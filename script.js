@@ -558,9 +558,14 @@ function openModal() {
 }
 
 function openEdit(id) {
-  editMode = true;
+  editMode = false;
+  if (id === null || id === undefined || String(id).trim() === '') {
+    showToast('❌ Registro não encontrado', 'err');
+    return;
+  }
   const r  = records.find(rec => String(rec['ID']) === String(id));
   if (!r) { showToast('❌ Registro não encontrado', 'err'); return; }
+  editMode = true;
   document.getElementById('f-id').value        = r['ID']               || '';
   document.getElementById('f-data').value      = toLocalDatetimeValue(r['Data']);
   document.getElementById('f-comb').value      = r['Tipo Combustível'] || 'Gasolina';
@@ -584,6 +589,11 @@ function bgClick(e)   { if (e.target === document.getElementById('overlay')) clo
 
 /* [DELETE-RECORD] ════════════════════════════ */
 function askDelete(id) {
+  pendingDeleteId = null;
+  if (id === null || id === undefined || String(id).trim() === '') {
+    showToast('❌ Registro não encontrado', 'err');
+    return;
+  }
   const r = records.find(rec => String(rec['ID']) === String(id));
   if (!r) { showToast('❌ Registro não encontrado', 'err'); return; }
   pendingDeleteId = r['ID'];
