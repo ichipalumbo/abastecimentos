@@ -617,6 +617,12 @@ function confirmDeleteRecord() {
   google.script.run
     .withSuccessHandler(res => {
       if (res.success) {
+        const exists = records.some(r => String(r['ID']) === String(id));
+        if (!exists) {
+          showToast('❌ Registro não está mais disponível', 'err');
+          loadRecords(true);
+          return;
+        }
         records = records.filter(r => String(r['ID']) !== String(id));
         setCachedData(currentUser, 'records', records);
         showToast('🗑️ Registro excluído', 'ok');
@@ -655,17 +661,18 @@ function submitForm(e) {
     posto:       selectedPostoNome
   };
 
-  const fn    = editMode ? 'updateRecord' : 'addRecord';
-  const msgOk = editMode ? '💾 Alterações salvas!' : '✅ Abastecimento salvo!';
+  const isEdit = editMode;
+  const editId = record.id;
+  const fn    = isEdit ? 'updateRecord' : 'addRecord';
+  const msgOk = isEdit ? '💾 Alterações salvas!' : '✅ Abastecimento salvo!';
 
   google.script.run
     .withSuccessHandler(res => {
       btn.disabled = false;
-      btn.textContent = editMode ? '💾 Salvar Alterações' : '✅ Salvar Abastecimento';
+      btn.textContent = isEdit ? '💾 Salvar Alterações' : '✅ Salvar Abastecimento';
       if (res.success) {
-        if (editMode) {
-          const id = document.getElementById('f-id').value;
-          const idx = records.findIndex(r => String(r['ID']) === String(id));
+        if (isEdit) {
+          const idx = records.findIndex(r => String(r['ID']) === String(editId));
           if (idx >= 0) {
             records[idx]['Data']            = document.getElementById('f-data').value;
             records[idx]['Tipo Combustível'] = document.getElementById('f-comb').value;
@@ -675,6 +682,10 @@ function submitForm(e) {
             records[idx]['Posto']           = selectedPostoNome;
             records[idx]['Parcial?']        = document.getElementById('f-parcial').checked;
             setCachedData(currentUser, 'records', records);
+          } else {
+            showToast('❌ Registro não está mais disponível', 'err');
+            loadRecords(true);
+            return;
           }
         }
         showToast(msgOk, 'ok'); closeModal();
@@ -688,7 +699,7 @@ function submitForm(e) {
     })
     .withFailureHandler(() => {
       btn.disabled = false;
-      btn.textContent = editMode ? '💾 Salvar Alterações' : '✅ Salvar Abastecimento';
+      btn.textContent = isEdit ? '💾 Salvar Alterações' : '✅ Salvar Abastecimento';
       showToast('❌ Falha na conexão', 'err');
     })
     [fn](currentUser, record);

@@ -84,6 +84,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** após editar ou excluir um cartão, comparar IDs e dados antes/depois: só o ID escolhido pode mudar/desaparecer. Cancelar a confirmação não deve excluir nenhum registro.
 
+**Resultados:**
+- Arquivo alterado: `script.js`.
+- Validação: o ID de exclusão é capturado antes de fechar a confirmação e usado diretamente na chamada `deleteRecord`; a edição captura o ID do formulário antes da chamada e localiza o registro por esse ID. Se o registro desaparecer antes da resposta, o app exibe erro e recarrega os dados, sem simular sucesso. `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
+
 ### Etapa 5 — Regressão de agrupamento e ordenação
 
 **Ação**
