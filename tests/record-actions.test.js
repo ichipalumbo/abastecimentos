@@ -33,6 +33,8 @@ function app() {
       elements.set(id, {
         value: '',
         textContent: '',
+        style: {},
+        focus() { this.focused = true; },
         classList: { add() {}, remove() {} },
         reset() { this.value = ''; },
         querySelector() { return { textContent: '' }; }
@@ -50,7 +52,8 @@ function app() {
       requests.push({ user, id });
       operations.push({ kind: 'delete', success: this.success });
     },
-    updateRecord(user, record) { operations.push({ kind: 'update', user, record, success: this.success }); },
+    updateRecord(user, record) { operations.push({ kind: 'update', user, record, success: this.success, failure: this.failure }); },
+    addRecord(user, record) { operations.push({ kind: 'add', user, record, success: this.success, failure: this.failure }); },
     getRecords(user) { operations.push({ kind: 'records', user, success: this.success }); },
     getPostos(user) { operations.push({ kind: 'postos', user, success: this.success }); }
   };
@@ -195,4 +198,30 @@ test('a successful edit updates only the selected record before refreshing', () 
   assert.equal(a.data.find(r => r['ID'] === 'aug-2')['Valor'], 75);
   assert.equal(a.data.find(r => r['ID'] === 'aug-1')['Valor'], 50);
   assert.equal(a.operations.at(-1).kind, 'records');
+});
+
+test('the form shows previous mileage and does not submit malformed amounts', () => {
+  const a = app();
+  a.run('document.getElementById("f-data").value = "2026-09-29T12:00"; document.getElementById("f-litros").value = "12,5"');
+  a.run('calcKm()');
+  assert.match(a.elements.get('previous-km').textContent, /600 km/);
+  a.elements.get('f-litros').value = '12abc';
+  a.run('document.getElementById("f-valor").value = "60"; document.getElementById("f-kmtotal").value = "650"');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.elements.get('f-litros').focused, true);
+  assert.equal(a.operations.length, 0);
+  assert.match(a.elements.get('toast').textContent, /Litros/);
+});
+
+test('a failed save retains the entered data for retry', () => {
+  const a = app();
+  a.run('document.getElementById("f-litros").value = "12,5"; document.getElementById("f-valor").value = "60"; document.getElementById("f-kmtotal").value = "650"');
+  a.run('submitForm({ preventDefault() {} })');
+  const add = a.operations.find(op => op.kind === 'add');
+  assert.equal(add.record.litros, 12.5);
+  add.failure(new Error('offline'));
+  assert.equal(a.elements.get('f-litros').value, '12,5');
+  assert.equal(a.elements.get('f-valor').value, '60');
+  assert.equal(a.elements.get('btn-salvar').disabled, false);
+  assert.match(a.elements.get('toast').textContent, /Falha na conexão/);
 });

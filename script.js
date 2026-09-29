@@ -24,6 +24,18 @@ const CACHE_TTL_MS     = 5 * 60 * 1000; // 5 minutos
 /* [INIT] ═════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   setNow();
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', positionFormSheet);
+    window.visualViewport.addEventListener('scroll', positionFormSheet);
+  }
+  document.getElementById('form').addEventListener('focusin', e => {
+    if (e.target.closest('.form-fields')) {
+      setTimeout(() => e.target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), 150);
+    }
+  });
+  document.getElementById('form').addEventListener('invalid', e => {
+    showToast('⚠️ Confira ' + (e.target.labels?.[0]?.textContent.trim() || 'o campo obrigatório'), 'err');
+  }, true);
 
   // Esconde a splash
   setTimeout(() => {
@@ -582,6 +594,23 @@ function toLocalDatetimeValue(iso) {
   return new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 }
 
+function positionFormSheet() {
+  const overlay = document.getElementById('overlay');
+  if (typeof window === 'undefined' || !window.visualViewport || !overlay.classList.contains('open')) return;
+  overlay.style.top = `${window.visualViewport.offsetTop}px`;
+  overlay.style.height = `${window.visualViewport.height}px`;
+  const active = document.activeElement;
+  if (active?.closest('.form-fields')) {
+    active.scrollIntoView({ block: 'nearest' });
+  }
+}
+
+function advanceForm(event, nextId) {
+  if (event.key !== 'Enter' || event.isComposing) return;
+  event.preventDefault();
+  document.getElementById(nextId).focus();
+}
+
 function openModal() {
   editMode = false; selectedPostoNome = '';
   document.getElementById('f-id').value = '';
@@ -592,8 +621,9 @@ function openModal() {
   document.getElementById('modal-title').textContent    = '🛢️ Novo Abastecimento';
   document.getElementById('modal-subtitle').textContent = '';
   document.getElementById('btn-salvar').textContent     = '✅ Salvar Abastecimento';
-  cancelInlineAddPosto(); setNow(); renderPostoPicker();
+  cancelInlineAddPosto(); setNow(); renderPostoPicker(); calcKm();
   document.getElementById('overlay').classList.add('open');
+  positionFormSheet();
 }
 
 function findRecordForAction(id, renderedUser) {
@@ -630,11 +660,15 @@ function openEdit(id, renderedUser = currentUser) {
   document.getElementById('modal-subtitle').textContent = `ID: ${r['ID']} • ${dStr}`;
   document.getElementById('btn-salvar').textContent     = '💾 Salvar Alterações';
   document.getElementById('overlay').classList.add('open');
+  positionFormSheet();
 }
 
 function closeModal() {
   editingRecordUser = null;
-  document.getElementById('overlay').classList.remove('open');
+  const overlay = document.getElementById('overlay');
+  overlay.classList.remove('open');
+  overlay.style.top = '';
+  overlay.style.height = '';
 }
 function bgClick(e)   { if (e.target === document.getElementById('overlay')) closeModal(); }
 /* [/MODAL-FORM] */
@@ -696,9 +730,18 @@ function submitForm(e) {
   const valor  = parseDecimal(document.getElementById('f-valor').value);
   const kmTot  = parseDecimal(document.getElementById('f-kmtotal').value);
 
-  if (litros <= 0) { showToast('⚠️ Litros inválido', ''); return; }
-  if (valor  <= 0) { showToast('⚠️ Valor inválido', '');  return; }
-  if (kmTot  <= 0) { showToast('⚠️ Informe o KM Total', ''); return; }
+  for (const [id, value, label, decimal] of [
+    ['f-litros', litros, 'Litros', true],
+    ['f-valor', valor, 'Valor total', true],
+    ['f-kmtotal', kmTot, 'KM total', false]
+  ]) {
+    const input = document.getElementById(id);
+    const valid = decimal ? /^\d+(?:[.,]\d+)?$/.test(String(input.value).trim()) : Number.isInteger(value);
+    if (valid && value > 0) continue;
+    showToast(`⚠️ Confira ${label}`, 'err');
+    input.focus();
+    return;
+  }
 
   const btn = document.getElementById('btn-salvar');
   btn.disabled = true; btn.textContent = '⏳ Salvando...';
@@ -740,7 +783,7 @@ function submitForm(e) {
             setCachedData(user, 'records', records);
           }
         }
-        showToast(msgOk, 'ok');
+        showToast(`${msgOk} ${formatNumber(litros, 2)} L • ${formatBRL(valor)} • ${formatNumber(kmTot, 0)} km`, 'ok');
         if (profileEpoch === epoch) {
           closeModal();
           document.getElementById('form').reset();
@@ -864,12 +907,7 @@ function calcKm() {
   const litros  = parseDecimal(document.getElementById('f-litros').value) || 0;
   const dataVal = document.getElementById('f-data').value;
   const editId  = document.getElementById('f-id').value;
-
-  if (kmTotal <= 0 || !dataVal) {
-    kmTripEl.value  = '';
-    kmlPrevEl.value = '';
-    return;
-  }
+  const previousEl = document.getElementById('previous-km');
 
   // 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora)
   const dataAtual = new Date(dataVal).getTime();
@@ -883,6 +921,15 @@ function calcKm() {
       prevTime = t; prevKmTotal = km;
     }
   });
+
+  previousEl.textContent = prevKmTotal === null ? 'Sem hodômetro anterior' :
+    `Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km`;
+
+  if (kmTotal <= 0 || !dataVal) {
+    kmTripEl.value  = '';
+    kmlPrevEl.value = '';
+    return;
+  }
 
   // 🛣️ KM Rodados
   if (prevKmTotal === null) {
