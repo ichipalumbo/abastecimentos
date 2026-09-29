@@ -129,6 +129,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** a análise sintática deve aceitar `12`, `12,5`, `12.5` e `0` como números completos; rejeitar vazio, `-1`, `12abc`, `1,2,3`, `1.2.3` e `1.234,56`. A regra de negócio por campo deve rejeitar zero e qualquer valor não positivo no envio, conforme a etapa seguinte.
 
+**Resultados:**
+- Arquivo alterado: `script.js`.
+- Validação: `parseDecimal` aceita números completos com ponto/vírgula, rejeita entradas vazias, texto adicional, sinais e separadores repetidos, e retorna `NaN` para inválidos; `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
+
 ### Etapa 2 — Validar litros, valor e hodômetro antes de enviar
 
 **Ação**

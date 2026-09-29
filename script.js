@@ -871,13 +871,13 @@ function hideLoader() {
 }
 /* [/LOADER-OVERLAY] */
 
-/* [PARSE-DECIMAL] — aceita vírgula OU ponto, sempre retorna número */
+/* [PARSE-DECIMAL] — aceita somente um número decimal completo */
 function parseDecimal(valor) {
-  if (valor === null || valor === undefined || valor === '') return 0;
-  // troca vírgula por ponto e remove espaços
-  const limpo = String(valor).trim().replace(',', '.');
-  const n = parseFloat(limpo);
-  return isNaN(n) ? 0 : n;
+  if (valor === null || valor === undefined) return NaN;
+  const limpo = String(valor).trim();
+  if (!/^\d+(?:[.,]\d*)?$/.test(limpo)) return NaN;
+  const n = Number(limpo.replace(',', '.'));
+  return Number.isFinite(n) ? n : NaN;
 }
 /* [/PARSE-DECIMAL] */
 
