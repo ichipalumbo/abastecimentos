@@ -102,6 +102,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** edição, confirmação, cancelamento e exclusão sempre correspondem ao cartão acionado nos cenários acima. Nenhum outro ID sofre alteração.
 
+**Resultados:**
+- Arquivos de código alterados: nenhum.
+- Validação: com registros em janeiro e fevereiro, os dois sentidos de ordenação, edição e exclusão localizaram os IDs acionados; o cancelamento limpou a exclusão pendente. A falha de conexão exibiu erro e preservou os registros, sem simular sucesso.
+- Pendências: nenhuma.
+
 ## P0.2 — Validar dados do formulário antes de salvar
 
 ### Regras numéricas propostas
