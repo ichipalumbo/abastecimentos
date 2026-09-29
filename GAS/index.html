@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="theme-color" content="#0f1117"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Abastecimentos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    --bg:       #0c0e14;
+    --surface:  #13161f;
+    --card:     #1a1e2a;
+    --border:   #252b3b;
+    --accent:   #4d8ef0;
+    --green:    #34c77b;
+    --orange:   #f5a623;
+    --red:      #e05555;
+    --text:     #eceef5;
+    --muted:    #6b7494;
+    --r:        16px;
+    --font:     'Inter', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { font-size: 16px; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100dvh; }
+
+  /* LOADING */
+  #loading-bar { position: fixed; top: 0; left: 0; height: 3px; width: 0%; background: var(--accent); z-index: 999; transition: width .3s; border-radius: 0 2px 2px 0; }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+    background: var(--card); border: 1px solid var(--border); color: var(--text);
+    padding: 12px 22px; border-radius: 24px; font-size: 14px; font-weight: 500;
+    z-index: 999; opacity: 0; transition: opacity .25s; pointer-events: none;
+    white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  }
+  #toast.show { opacity: 1; }
+  #toast.erro { border-color: var(--red); color: var(--red); }
+  #toast.ok   { border-color: var(--green); color: var(--green); }
+
+  /* HEADER */
+  header {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 14px 20px 0; position: sticky; top: 0; z-index: 100;
+  }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
+  .logo-icon { font-size: 22px; }
+  .logo-text { color: var(--text); }
+  .logo-text span { color: var(--accent); }
+
+  .btn-sync {
+    background: var(--card); border: 1px solid var(--border); color: var(--muted);
+    border-radius: 10px; width: 38px; height: 38px; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: color .15s;
+  }
+  .btn-sync.sincronizando { color: var(--accent); animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TABS */
+  .tabs { display: flex; }
+  .tab {
+    flex: 1; padding: 12px 0; text-align: center; font-size: 14px; font-weight: 600;
+    color: var(--muted); border: none; background: none; cursor: pointer;
+    border-bottom: 2px solid transparent; transition: color .15s, border-color .15s;
+    letter-spacing: .1px;
+  }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  main { padding: 16px 16px 110px; max-width: 480px; margin: 0 auto; }
+
+  /* SYNC STATUS */
+  .sync-bar {
+    display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500;
+    color: var(--muted); padding: 10px 14px; margin-bottom: 16px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+  .sync-dot.ok      { background: var(--green); }
+  .sync-dot.erro    { background: var(--red); }
+  .sync-dot.pendente { background: var(--orange); }
+
+  /* MÊS LABEL */
+  .mes-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--muted); margin: 20px 0 8px; padding-left: 2px;
+  }
+  .mes-label:first-child { margin-top: 0; }
+
+  /* RECORD CARD */
+  .record-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 16px; margin-bottom: 10px; cursor: pointer; position: relative;
+    transition: border-color .15s, transform .1s;
+  }
+  .record-card:active { transform: scale(.98); border-color: var(--accent); }
+
+  .rc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .rc-left {}
+  .rc-valor { font-size: 22px; font-weight: 800; color: var(--text); white-space: nowrap; }
+  .rc-data  { font-size: 13px; color: var(--muted); font-weight: 500; margin-bottom: 2px; }
+  .rc-posto { font-size: 13px; color: var(--text); font-weight: 500; }
+
+  .rc-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .pill {
+    display: flex; align-items: center; gap: 5px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 12px; font-size: 13px; font-weight: 500; color: var(--muted);
+  }
+  .pill b { color: var(--text); font-weight: 700; }
+  .pill.kml b { color: var(--green); }
+  .pill.preco b { color: var(--orange); }
+
+  .pending-dot {
+    position: absolute; top: 14px; right: 14px;
+    width: 8px; height: 8px; border-radius: 50%; background: var(--orange);
+  }
+
+  /* SUMMARY CARDS */
+  .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .sum-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; }
+  .sum-card.wide { grid-column: 1 / -1; }
+  .sum-label { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .sum-val   { font-size: 26px; font-weight: 800; }
+  .sum-val.green  { color: var(--green); }
+  .sum-val.accent { color: var(--accent); }
+  .sum-val.orange { color: var(--orange); }
+
+  /* MES SUMMARY CARD */
+  .mes-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; margin-bottom: 10px; }
+  .mes-card-top { display: flex; justify-content: space-between; align-items: center; }
+  .mes-card-nome { font-size: 15px; font-weight: 700; }
+  .mes-card-valor { font-size: 18px; font-weight: 800; }
+  .mes-card-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* FAB — botão flutuante */
+  .fab {
+    position: fixed; bottom: 28px; right: 20px; z-index: 200;
+    background: var(--accent); color: #fff; border: none; border-radius: 20px;
+    padding: 16px 24px; font-size: 17px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+    box-shadow: 0 6px 24px rgba(77,142,240,.45); transition: transform .15s, box-shadow .15s;
+  }
+  .fab:active { transform: scale(.95); box-shadow: 0 2px 10px rgba(77,142,240,.3); }
+  .fab-icon { font-size: 22px; line-height: 1; }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 64px 20px; color: var(--muted); }
+  .empty-icon { font-size: 52px; margin-bottom: 14px; }
+  .empty-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .empty-sub { font-size: 14px; }
+
+  /* MODAL OVERLAY */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 300; align-items: flex-end; justify-content: center; }
+  .overlay.open { display: flex; }
+
+  /* MODAL SHEET */
+  .modal {
+    background: var(--surface); border-radius: 24px 24px 0 0;
+    padding: 0 0 env(safe-area-inset-bottom, 24px);
+    width: 100%; max-width: 480px;
+    border-top: 1px solid var(--border);
+    animation: slideUp .22s cubic-bezier(.25,.46,.45,.94);
+    max-height: 92dvh; overflow-y: auto;
+  }
+  @keyframes slideUp { from { transform: translateY(60px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+
+  .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 14px auto 0; }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 8px; }
+  .modal-title  { font-size: 18px; font-weight: 800; }
+  .btn-close    { background: var(--card); border: 1px solid var(--border); color: var(--muted); border-radius: 50%; width: 34px; height: 34px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+  /* FORM */
+  .form-body { padding: 8px 20px 20px; }
+  .form-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-row.single { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .4px; text-transform: uppercase; }
+
+  input, select {
+    background: var(--card); border: 1.5px solid var(--border); border-radius: 12px;
+    color: var(--text); font-size: 16px; padding: 13px 14px; width: 100%;
+    outline: none; transition: border-color .15s; -webkit-appearance: none;
+    font-family: var(--font); font-weight: 500;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  input::placeholder { color: var(--muted); font-weight: 400; }
+  select option { background: var(--card); }
+
+  /* TOGGLE */
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px;
+  }
+  .toggle-label { font-size: 15px; font-weight: 500; }
+  .toggle { position: relative; width: 50px; height: 28px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; inset: 0; background: var(--border); border-radius: 14px; cursor: pointer; transition: background .2s; }
+  .slider:before { content:''; position:absolute; width:22px; height:22px; border-radius:50%; background:#fff; top:3px; left:3px; transition:transform .2s; }
+  .toggle input:checked + .slider { background: var(--accent); }
+  .toggle input:checked + .slider:before { transform: translateX(22px); }
+
+  /* BUTTONS */
+  .btn-salvar {
+    width: 100%; background: var(--accent); color: #fff; border: none;
+    border-radius: 14px; padding: 16px; font-size: 17px; font-weight: 700;
+    cursor: pointer; margin-top: 16px; font-family: var(--font);
+    transition: opacity .15s; letter-spacing: -.1px;
+  }
+  .btn-salvar:disabled { opacity: .45; cursor: default; }
+  .btn-salvar:active:not(:disabled) { opacity: .8; }
+
+  .btn-excluir {
+    width: 100%; background: transparent; color: var(--red); border: 1.5px solid var(--red);
+    border-radius: 14px; padding: 14px; font-size: 15px; font-weight: 600;
+    cursor: pointer; margin-top: 10px; font-family: var(--font);
+    transition: background .15s;
+  }
+  .btn-excluir:active { background: rgba(224,85,85,.1); }
+
+  .divider { height: 1px; background: var(--border); margin: 4px 0 16px; }
+</style>
+</head>
+<body>
+<div id="loading-bar"></div>
+<div id="toast"></div>
+
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <span class="logo-icon">⛽</span>
+      <span class="logo-text">Abas<span>tec</span></span>
+    </div>
+    <button class="btn-sync" id="btn-sync" onclick="sincronizar()" title="Sincronizar">↻</button>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="mudarAba('registros', this)">Registros</button>
+    <button class="tab" onclick="mudarAba('resumo', this)">Resumo</button>
+  </div>
+</header>
+
+<main id="main-content"></main>
+
+<!-- FAB -->
+<button class="fab" onclick="abrirNovo()">
+  <span class="fab-icon">＋</span> Abastecer
+</button>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="fecharSeForaModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modal-titulo">Novo abastecimento</div>
+      <button class="btn-close" onclick="fecharModal()">✕</button>
+    </div>
+    <div class="form-body">
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">Data *</div>
+          <input type="date" id="f-data"/>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Combustível</div>
+          <select id="f-tipo">
+            <option>Gasolina</option>
+            <option>Etanol</option>
+            <option>Diesel</option>
+            <option>GNV</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">Litros *</div>
+          <input type="number" id="f-litros" placeholder="30.5" step="0.01" inputmode="decimal"/>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Total (R$) *</div>
+          <input type="number" id="f-valor" placeholder="190.00" step="0.01" inputmode="decimal"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">KM rodados</div>
+          <input type="number" id="f-kmtrip" placeholder="220" step="0.1" inputmode="decimal"/>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Odômetro</div>
+          <input type="number" id="f-kmtotal" placeholder="90500" inputmode="numeric"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">KM/h médio</div>
+          <input type="number" id="f-kmh" placeholder="15" inputmode="numeric"/>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Posto</div>
+          <input type="text" id="f-posto" placeholder="Nome do posto" list="postos-lista" autocomplete="off"/>
+          <datalist id="postos-lista"></datalist>
+        </div>
+      </div>
+      <div class="form-row single">
+        <div class="toggle-row">
+          <span class="toggle-label">Abastecimento parcial?</span>
+          <label class="toggle"><input type="checkbox" id="f-parcial"/><span class="slider"></span></label>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <button class="btn-salvar" id="btn-salvar" onclick="salvar()">Salvar</button>
+      <button class="btn-excluir" id="btn-excluir" style="display:none" onclick="excluir()">Excluir registro</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────────
+// Comunicação via google.script.run (hospedado no Apps Script)
+const STORAGE_KEY = 'abastec_cache_v2';
+const PENDING_KEY = 'abastec_pending_v2';
+
+// ── ESTADO ───────────────────────────────────────────────────
+let registros = [];
+let pendentes = []; // operações offline aguardando sync
+let abaAtual = 'registros';
+let editandoId = null;
+let syncStatus = 'idle'; // idle | ok | erro | sincronizando
+
+// ── INIT ─────────────────────────────────────────────────────
+function init() {
+  // Carrega cache local
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) registros = JSON.parse(raw);
+  } catch(e) {}
+  try {
+    const raw = localStorage.getItem(PENDING_KEY);
+    if (raw) pendentes = JSON.parse(raw);
+  } catch(e) {}
+
+  // Event delegation para cards — mais confiável em touch
+  document.getElementById('main-content').addEventListener('click', function(e) {
+    const card = e.target.closest('.record-card[data-id]');
+    if (card) abrirEditar(card.dataset.id);
+  });
+
+  renderizar();
+  sincronizar();
+}
+
+// ── UTILS ────────────────────────────────────────────────────
+function uid() { return Math.random().toString(36).slice(2,10); }
+
+function fmtData(iso) {
+  if (!iso) return '–';
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function fmtMes(iso) {
+  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const [y,m] = iso.split('-');
+  return `${meses[parseInt(m)-1]} ${y}`;
+}
+
+function ordenado() {
+  return [...registros].sort((a,b) => (b.data||'').localeCompare(a.data||''));
+}
+
+function postosUnicos() {
+  return [...new Set(registros.map(r => r.posto).filter(Boolean))];
+}
+
+function salvarCache() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(registros)); } catch(e) {}
+  try { localStorage.setItem(PENDING_KEY, JSON.stringify(pendentes)); } catch(e) {}
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, tipo='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + tipo;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = '', 3000);
+}
+
+// ── LOADING BAR ──────────────────────────────────────────────
+function setLoading(pct) {
+  const bar = document.getElementById('loading-bar');
+  bar.style.width = pct + '%';
+  if (pct >= 100) setTimeout(() => bar.style.width = '0%', 400);
+}
+
+// ── NORMALIZA registro vindo do Sheets ───────────────────────
+function normalizar(obj) {
+  // Converte data — pode vir como string ISO, objeto Date, ou MM/DD/YYYY
+  let dataRaw = obj['Data'] || obj['data'] || '';
+  let data = '';
+
+  if (dataRaw instanceof Date) {
+    // google.script.run pode retornar Date objects
+    const y = dataRaw.getFullYear();
+    const m = String(dataRaw.getMonth() + 1).padStart(2, '0');
+    const d = String(dataRaw.getDate()).padStart(2, '0');
+    data = `${y}-${m}-${d}`;
+  } else if (typeof dataRaw === 'string' && dataRaw) {
+    if (/^\d{4}-\d{2}-\d{2}/.test(dataRaw)) {
+      data = dataRaw.slice(0, 10);
+    } else {
+      const partes = dataRaw.split(' ')[0].split('/');
+      if (partes.length === 3) {
+        const [a, b, c] = partes;
+        if (parseInt(a) > 12) {
+          data = `${c}-${b.padStart(2,'0')}-${a.padStart(2,'0')}`;
+        } else {
+          data = `${c}-${a.padStart(2,'0')}-${b.padStart(2,'0')}`;
+        }
+      }
+    }
+  }
+
+  // Usa ?? em vez de || para não perder valores zero
+  const get = (a, b) => (a !== undefined && a !== '' && a !== null) ? a : b;
+
+  return {
+    id:              obj['ID']    || obj['id']    || uid(),
+    data,
+    kmL:             parseFloatSafe(get(obj['KM/L Trip'], obj['kmL'])),
+    kmH:             parseFloatSafe(get(obj['KM_H'],      obj['kmH'])),
+    kmTrip:          parseFloatSafe(get(obj['KM_Trip'],   obj['kmTrip'])),
+    kmTotal:         parseFloatSafe(get(obj['KM_Total'],  obj['kmTotal'])),
+    litros:          parseFloatSafe(get(obj['Litros'],    obj['litros'])),
+    valor:           parseFloatSafe(get(obj['Valor'],     obj['valor'])),
+    parcial:         !!(obj['Parcial?'] === true || obj['Parcial?'] === 'TRUE' || obj['parcial']),
+    posto:           obj['Posto'] || obj['posto'] || '',
+    tipoCombustivel: obj['Tipo Combustível'] || obj['tipoCombustivel'] || 'Gasolina',
+  };
+}
+
+function parseFloatSafe(v) {
+  const n = parseFloat(v);
+  return isNaN(n) ? null : n;
+}
+
+// Converte registro interno → formato Sheets
+function paraSheets(r) {
+  return {
+    'ID': r.id,
+    'Data': r.data,
+    'KM/L Trip': r.kmL ?? '',
+    'KM_H': r.kmH ?? '',
+    'KM_Trip': r.kmTrip ?? '',
+    'KM_Total': r.kmTotal ?? '',
+    'Litros': r.litros,
+    'Valor': r.valor,
+    'Parcial?': r.parcial,
+    'Posto': r.posto,
+    'Tipo Combustível': r.tipoCombustivel,
+  };
+}
+
+// ── SINCRONIZAÇÃO ────────────────────────────────────────────
+function sincronizar() {
+  if (syncStatus === 'sincronizando') return;
+  syncStatus = 'sincronizando';
+  atualizarBtnSync();
+  setLoading(30);
+
+  const enviarPendentes = () => {
+    if (pendentes.length === 0) { buscarRegistros(); return; }
+    const op = pendentes[0];
+    google.script.run
+      .withSuccessHandler(() => { pendentes.shift(); salvarCache(); enviarPendentes(); })
+      .withFailureHandler(() => { syncStatus = 'erro'; setLoading(100); toast('Sem conexão com o Drive', 'erro'); atualizarBtnSync(); renderizar(); })
+      .executarOperacao(op);
+  };
+
+  const buscarRegistros = () => {
+    setLoading(60);
+    google.script.run
+      .withSuccessHandler(resultado => {
+        registros = (resultado || []).map(normalizar);
+        salvarCache(); syncStatus = 'ok'; setLoading(100);
+        toast('Sincronizado ✓', 'ok');
+        atualizarBtnSync(); renderizar();
+      })
+      .withFailureHandler(() => {
+        syncStatus = 'erro'; setLoading(100);
+        toast('Sem conexão — dados locais', 'erro');
+        atualizarBtnSync(); renderizar();
+      })
+      .getRegistros();
+  };
+
+  enviarPendentes();
+}
+
+function atualizarBtnSync() {
+  const btn = document.getElementById('btn-sync');
+  if (!btn) return;
+  btn.className = 'btn-sync' + (syncStatus === 'sincronizando' ? ' sincronizando' : '');
+  btn.textContent = syncStatus === 'sincronizando' ? '↻' : '↻';
+}
+
+// ── OPERAÇÃO COM FALLBACK OFFLINE ────────────────────────────
+function operacao(acao, registro) {
+  const op = { acao, registro: paraSheets(registro) };
+  google.script.run
+    .withSuccessHandler(() => {
+      toast(acao === 'excluir' ? 'Excluído ✓' : 'Salvo no Drive ✓', 'ok');
+    })
+    .withFailureHandler(() => {
+      pendentes.push(op);
+      salvarCache();
+      toast('Salvo localmente (sync pendente)', '');
+    })
+    .executarOperacao(op);
+}
+
+// ── ABAS ─────────────────────────────────────────────────────
+function mudarAba(aba, el) {
+  abaAtual = aba;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderizar();
+}
+
+// ── RENDER ───────────────────────────────────────────────────
+function renderizar() {
+  document.getElementById('main-content').innerHTML =
+    abaAtual === 'registros' ? htmlRegistros() : htmlResumo();
+  atualizarBtnSync();
+}
+
+function statusSyncHtml() {
+  const temPendentes = pendentes.length > 0;
+  const dot = temPendentes ? 'pendente' : (syncStatus === 'ok' ? 'ok' : syncStatus === 'erro' ? 'erro' : '');
+  const msg = temPendentes
+    ? `${pendentes.length} registro(s) aguardando sync`
+    : syncStatus === 'ok' ? 'Sincronizado com o Google Drive'
+    : syncStatus === 'erro' ? 'Sem conexão com o Drive'
+    : 'Conectando...';
+  return `<div class="sync-bar"><div class="sync-dot ${dot}"></div>${msg}</div>`;
+}
+
+function htmlRegistros() {
+  if (!registros.length) return `
+    ${statusSyncHtml()}
+    <div class="empty">
+      <div class="empty-icon">⛽</div>
+      <div class="empty-title">Nenhum abastecimento</div>
+      <div class="empty-sub">Toque em Abastecer para começar</div>
+    </div>`;
+
+  const lista = ordenado();
+  let html = statusSyncHtml();
+  let mesAtual = '';
+
+  lista.forEach(r => {
+    const mes = fmtMes(r.data);
+    if (mes !== mesAtual) {
+      mesAtual = mes;
+      html += `<div class="mes-label">${mes}</div>`;
+    }
+    const preco = r.valor && r.litros ? (r.valor / r.litros).toFixed(3) : null;
+    const isPendente = pendentes.some(p => p.registro['ID'] === r.id);
+    html += `
+    <div class="record-card" data-id="${r.id}">
+      ${isPendente ? '<div class="pending-dot"></div>' : ''}
+      <div class="rc-top">
+        <div class="rc-left">
+          <div class="rc-data">${fmtData(r.data)}${r.parcial ? ' · parcial' : ''}</div>
+          <div class="rc-posto">${r.posto || r.tipoCombustivel}</div>
+        </div>
+        <div class="rc-valor">R$&nbsp;${r.valor?.toFixed(2) ?? '–'}</div>
+      </div>
+      <div class="rc-pills">
+        ${r.kmL   ? `<div class="pill kml">⚡ <b>${r.kmL.toFixed(1)}</b> km/L</div>` : ''}
+        ${r.litros ? `<div class="pill">🪣 <b>${r.litros.toFixed(1)}</b> L</div>` : ''}
+        ${preco   ? `<div class="pill preco">💰 <b>R$&nbsp;${preco}</b>/L</div>` : ''}
+        ${r.kmTrip ? `<div class="pill">📍 <b>${r.kmTrip.toFixed(0)}</b> km</div>` : ''}
+      </div>
+    </div>`;
+  });
+  return html;
+}
+
+function htmlResumo() {
+  if (!registros.length) return `${statusSyncHtml()}<div class="empty"><div>Sem dados ainda.</div></div>`;
+
+  const totalGasto = registros.reduce((s,r) => s + (r.valor||0), 0);
+  const totalLitros = registros.reduce((s,r) => s + (r.litros||0), 0);
+  const kmlValidos = registros.filter(r => r.kmL).map(r => r.kmL);
+  const kmlMedio = kmlValidos.length ? kmlValidos.reduce((a,b)=>a+b,0)/kmlValidos.length : null;
+  const kmlMax = kmlValidos.length ? Math.max(...kmlValidos) : null;
+  const precoMedio = totalLitros > 0 ? totalGasto / totalLitros : null;
+
+  const porMes = {};
+  registros.forEach(r => {
+    const mes = r.data?.slice(0,7);
+    if (!mes) return;
+    if (!porMes[mes]) porMes[mes] = { gasto: 0, litros: 0, qtd: 0 };
+    porMes[mes].gasto += r.valor || 0;
+    porMes[mes].litros += r.litros || 0;
+    porMes[mes].qtd++;
+  });
+
+  const meses = Object.keys(porMes).sort().reverse();
+  const nomes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+  const mesHtml = meses.map(m => {
+    const d = porMes[m];
+    const [y,mo] = m.split('-');
+    return `
+    <div class="mes-card">
+      <div class="mes-card-top">
+        <div>
+          <div class="mes-card-nome">${nomes[parseInt(mo)-1]} ${y}</div>
+          <div class="mes-card-sub">${d.qtd} abastecimento${d.qtd>1?'s':''}</div>
+        </div>
+        <div class="mes-card-valor">R$&nbsp;${d.gasto.toFixed(2)}</div>
+      </div>
+      <div class="rc-pills" style="margin-top:10px">
+        <div class="pill">🪣 <b>${d.litros.toFixed(1)}</b> L</div>
+        ${d.litros>0?`<div class="pill preco">💰 <b>R$&nbsp;${(d.gasto/d.litros).toFixed(3)}</b>/L</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+  ${statusSyncHtml()}
+  <div class="sum-grid">
+    <div class="sum-card"><div class="sum-label">Total gasto</div><div class="sum-val orange">R$&nbsp;${totalGasto.toFixed(0)}</div></div>
+    <div class="sum-card"><div class="sum-label">Total litros</div><div class="sum-val accent">${totalLitros.toFixed(0)}&nbsp;L</div></div>
+    <div class="sum-card"><div class="sum-label">KM/L médio</div><div class="sum-val green">${kmlMedio ? kmlMedio.toFixed(1) : '–'}</div></div>
+    <div class="sum-card"><div class="sum-label">Melhor KM/L</div><div class="sum-val green">${kmlMax ? kmlMax.toFixed(1) : '–'}</div></div>
+    <div class="sum-card wide"><div class="sum-label">Preço médio por litro</div><div class="sum-val accent">R$&nbsp;${precoMedio ? precoMedio.toFixed(3) : '–'}</div></div>
+  </div>
+  <div class="mes-label">Por mês</div>${mesHtml}`;
+}
+
+// ── MODAL ────────────────────────────────────────────────────
+function abrirNovo() {
+  editandoId = null;
+  document.getElementById('modal-titulo').textContent = 'Novo Abastecimento';
+  document.getElementById('btn-excluir').style.display = 'none';
+  document.getElementById('btn-salvar').textContent = 'Salvar';
+  document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-tipo').value = 'Gasolina';
+  ['f-litros','f-valor','f-kmtrip','f-kmtotal','f-kmh','f-posto'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-parcial').checked = false;
+  atualizarDatalist();
+  document.getElementById('overlay').classList.add('open');
+}
+
+function abrirEditar(id) {
+  const r = registros.find(x => x.id === id);
+  if (!r) return;
+  editandoId = id;
+  document.getElementById('modal-titulo').textContent = 'Editar Abastecimento';
+  document.getElementById('btn-excluir').style.display = 'block';
+  document.getElementById('btn-salvar').textContent = 'Atualizar';
+  document.getElementById('f-data').value = r.data || '';
+  document.getElementById('f-tipo').value = r.tipoCombustivel || 'Gasolina';
+  document.getElementById('f-litros').value = r.litros ?? '';
+  document.getElementById('f-valor').value = r.valor ?? '';
+  document.getElementById('f-kmtrip').value = r.kmTrip ?? '';
+  document.getElementById('f-kmtotal').value = r.kmTotal ?? '';
+  document.getElementById('f-kmh').value = r.kmH ?? '';
+  document.getElementById('f-posto').value = r.posto ?? '';
+  document.getElementById('f-parcial').checked = !!r.parcial;
+  atualizarDatalist();
+  document.getElementById('overlay').classList.add('open');
+}
+
+function fecharModal() { document.getElementById('overlay').classList.remove('open'); }
+function fecharSeForaModal(e) { if (e.target === document.getElementById('overlay')) fecharModal(); }
+function atualizarDatalist() {
+  document.getElementById('postos-lista').innerHTML =
+    postosUnicos().map(p => `<option value="${p}"></option>`).join('');
+}
+
+// ── SALVAR ───────────────────────────────────────────────────
+async function salvar() {
+  const data = document.getElementById('f-data').value;
+  const litros = parseFloat(document.getElementById('f-litros').value);
+  const valor = parseFloat(document.getElementById('f-valor').value);
+  if (!data || isNaN(litros) || isNaN(valor)) { alert('Preencha: Data, Litros e Valor.'); return; }
+
+  const kmTrip = parseFloat(document.getElementById('f-kmtrip').value) || null;
+  const kmL = kmTrip && litros ? parseFloat((kmTrip / litros).toFixed(2)) : null;
+
+  const rec = {
+    id: editandoId || uid(),
+    data, litros, valor, kmTrip, kmL,
+    tipoCombustivel: document.getElementById('f-tipo').value,
+    kmTotal: parseFloat(document.getElementById('f-kmtotal').value) || null,
+    kmH: parseFloat(document.getElementById('f-kmh').value) || null,
+    posto: document.getElementById('f-posto').value.trim(),
+    parcial: document.getElementById('f-parcial').checked,
+  };
+
+  const btn = document.getElementById('btn-salvar');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+
+  // Atualiza local imediatamente
+  if (editandoId) {
+    const idx = registros.findIndex(r => r.id === editandoId);
+    if (idx >= 0) registros[idx] = rec;
+  } else {
+    registros.push(rec);
+  }
+  salvarCache();
+  fecharModal();
+  renderizar();
+
+  // Envia pro Drive em background
+  await operacao(editandoId ? 'atualizar' : 'adicionar', rec);
+
+  btn.disabled = false;
+  btn.textContent = editandoId ? 'Atualizar' : 'Salvar';
+}
+
+async function excluir() {
+  if (!editandoId) return;
+  if (!confirm('Excluir este abastecimento?')) return;
+  const rec = registros.find(r => r.id === editandoId);
+  registros = registros.filter(r => r.id !== editandoId);
+  salvarCache();
+  fecharModal();
+  renderizar();
+  if (rec) await operacao('excluir', rec);
+}
+
+// ── START ────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
