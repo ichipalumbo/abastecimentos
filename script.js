@@ -14,6 +14,7 @@ let editingPostoId     = null;
 let pendingLoads = 0;
 let profileEpoch      = 0;
 let recordsLoadSequence = 0;
+const dialogTriggers = new Map();
 let sortOrder          = 'desc';   // 'desc' = recente primeiro, 'asc' = antigo primeiro
 let lastRefreshTs      = null;
 const CACHE_PREFIX     = 'fuelapp_cache';
@@ -24,6 +25,7 @@ const CACHE_TTL_MS     = 5 * 60 * 1000; // 5 minutos
 /* [INIT] ═════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   setNow();
+  document.addEventListener('keydown', handleDialogKeydown);
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', positionFormSheet);
     window.visualViewport.addEventListener('scroll', positionFormSheet);
@@ -49,11 +51,54 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 /* [/INIT] */
 
+function showDialog(id, focusSelector) {
+  const overlay = document.getElementById(id);
+  dialogTriggers.set(id, document.activeElement);
+  overlay.classList.add('open');
+  setTimeout(() => {
+    if (overlay.classList.contains('open')) overlay.querySelector(focusSelector)?.focus?.();
+  }, 0);
+}
+
+function hideDialog(id) {
+  const overlay = document.getElementById(id);
+  if (!overlay.classList.contains('open')) return;
+  overlay.classList.remove('open');
+  dialogTriggers.get(id)?.focus?.();
+  dialogTriggers.delete(id);
+}
+
+function handleDialogKeydown(e) {
+  const id = ['confirm-record-overlay', 'confirm-posto-overlay', 'posto-overlay', 'overlay']
+    .find(id => document.getElementById(id).classList.contains('open'));
+  if (!id) return;
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    ({ 'confirm-record-overlay': closeConfirmRecord, 'confirm-posto-overlay': closeConfirmPosto,
+       'posto-overlay': closePostoModal, overlay: closeModal })[id]();
+    return;
+  }
+  if (e.key !== 'Tab') return;
+  const focusable = [...document.getElementById(id).querySelectorAll('button:not(:disabled), input:not([type="hidden"]):not(:disabled), select:not(:disabled)')]
+    .filter(el => el.getClientRects().length);
+  if (!focusable.length) return;
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (!document.getElementById(id).contains(document.activeElement)) {
+    e.preventDefault(); first.focus();
+  } else if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault(); last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault(); first.focus();
+  }
+}
+
 /* [USER] ═════════════════════════════════════ */
 function selectUser(user) {
   profileEpoch++;
   closeModal();
   closeConfirmRecord();
+  closePostoModal();
+  closeConfirmPosto();
   editMode = false;
   document.getElementById('btn-salvar').disabled = false;
   currentUser = user;
@@ -86,6 +131,8 @@ function logout() {
   profileEpoch++;
   closeModal();
   closeConfirmRecord();
+  closePostoModal();
+  closeConfirmPosto();
   editMode = false;
   document.getElementById('btn-salvar').disabled = false;
   currentUser    = null;
@@ -123,6 +170,8 @@ function switchTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.page').forEach(p     => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.bottom-nav .nav-item:not(.nav-registrar)').forEach(n =>
+    n.setAttribute('aria-current', n.id === 'nav-' + tab ? 'page' : 'false'));
   document.getElementById('page-' + tab).classList.add('active');
   document.getElementById('nav-'  + tab).classList.add('active');
   if (tab === 'analytics' && records.length && !analyticsBuilt) renderAnalytics(records);
@@ -395,9 +444,15 @@ function renderList(data) {
   }).join('');
   const renderedUser = currentUser;
   el.querySelectorAll('.record-card').forEach((card, index) => {
-    const id = displayedRecords[index]['ID'];
-    card.querySelector('.btn-edit').addEventListener('click', () => openEdit(id, renderedUser));
-    card.querySelector('.btn-delete').addEventListener('click', () => askDelete(id, renderedUser));
+    const record = displayedRecords[index];
+    const id = record['ID'];
+    const context = `${record['Posto'] || 'posto não informado'}, ${new Date(record['Data']).toLocaleDateString('pt-BR')}`;
+    const edit = card.querySelector('.btn-edit');
+    const remove = card.querySelector('.btn-delete');
+    edit.setAttribute('aria-label', `Editar abastecimento: ${context}`);
+    remove.setAttribute('aria-label', `Excluir abastecimento: ${context}`);
+    edit.addEventListener('click', () => openEdit(id, renderedUser));
+    remove.addEventListener('click', () => askDelete(id, renderedUser));
   });
 }
 /* [/LIST] */
@@ -468,10 +523,14 @@ function renderAdminPostos() {
     <div class="posto-card">
       <div class="posto-name">🏪 ${p.nome}</div>
       <div class="posto-btns">
-        <button class="btn-icon btn-icon-edit"   onclick="openEditPosto(${i})">✏️</button>
-        <button class="btn-icon btn-icon-delete" onclick="askDeletePosto(${i})">🗑️</button>
+        <button class="btn-icon btn-icon-edit" aria-label="Editar posto" onclick="openEditPosto(${i})">✏️</button>
+        <button class="btn-icon btn-icon-delete" aria-label="Remover posto" onclick="askDeletePosto(${i})">🗑️</button>
       </div>
     </div>`).join('');
+  el.querySelectorAll('.posto-card').forEach((card, i) => {
+    card.querySelector('.btn-icon-edit').setAttribute('aria-label', `Editar posto ${postos[i].nome}`);
+    card.querySelector('.btn-icon-delete').setAttribute('aria-label', `Remover posto ${postos[i].nome}`);
+  });
 }
 
 function openAddPosto() {
@@ -479,7 +538,7 @@ function openAddPosto() {
   document.getElementById('posto-nome-input').value        = '';
   document.getElementById('posto-modal-title').textContent = '🏪 Novo Posto';
   document.getElementById('btn-salvar-posto').textContent  = '✅ Adicionar Posto';
-  document.getElementById('posto-overlay').classList.add('open');
+  showDialog('posto-overlay', '.btn-close-modal');
   setTimeout(() => document.getElementById('posto-nome-input').focus(), 350);
 }
 
@@ -489,13 +548,13 @@ function openEditPosto(idx) {
   document.getElementById('posto-nome-input').value        = p.nome;
   document.getElementById('posto-modal-title').textContent = '✏️ Editar Posto';
   document.getElementById('btn-salvar-posto').textContent  = '💾 Salvar Alterações';
-  document.getElementById('posto-overlay').classList.add('open');
+  showDialog('posto-overlay', '.btn-close-modal');
   setTimeout(() => document.getElementById('posto-nome-input').focus(), 350);
 }
 
 function closePostoModal() {
   editingPostoId = null;
-  document.getElementById('posto-overlay').classList.remove('open');
+  hideDialog('posto-overlay');
 }
 
 function bgClickPosto(e) {
@@ -554,12 +613,12 @@ function askDeletePosto(idx) {
   const p = postos[idx];
   pendingDeletePostoId = p.id;
   document.getElementById('confirm-posto-name').textContent = p.nome;
-  document.getElementById('confirm-posto-overlay').classList.add('open');
+  showDialog('confirm-posto-overlay', '.btn-cancel');
 }
 
 function closeConfirmPosto() {
   pendingDeletePostoId = null;
-  document.getElementById('confirm-posto-overlay').classList.remove('open');
+  hideDialog('confirm-posto-overlay');
 }
 
 function confirmDeletePosto() {
@@ -622,7 +681,7 @@ function openModal() {
   document.getElementById('modal-subtitle').textContent = '';
   document.getElementById('btn-salvar').textContent     = '✅ Salvar Abastecimento';
   cancelInlineAddPosto(); setNow(); renderPostoPicker(); calcKm();
-  document.getElementById('overlay').classList.add('open');
+  showDialog('overlay', '.btn-close-modal');
   positionFormSheet();
 }
 
@@ -659,14 +718,14 @@ function openEdit(id, renderedUser = currentUser) {
   document.getElementById('modal-title').textContent    = '✏️ Editar Abastecimento';
   document.getElementById('modal-subtitle').textContent = `ID: ${r['ID']} • ${dStr}`;
   document.getElementById('btn-salvar').textContent     = '💾 Salvar Alterações';
-  document.getElementById('overlay').classList.add('open');
+  showDialog('overlay', '.btn-close-modal');
   positionFormSheet();
 }
 
 function closeModal() {
   editingRecordUser = null;
   const overlay = document.getElementById('overlay');
-  overlay.classList.remove('open');
+  hideDialog('overlay');
   overlay.style.top = '';
   overlay.style.height = '';
 }
@@ -683,13 +742,13 @@ function askDelete(id, renderedUser = currentUser) {
   const dStr = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
   document.getElementById('confirm-record-text').textContent =
     `${r['Posto'] || 'Posto não informado'} • ${dStr}\n\nEsta ação não pode ser desfeita.`;
-  document.getElementById('confirm-record-overlay').classList.add('open');
+  showDialog('confirm-record-overlay', '.btn-cancel');
 }
 
 function closeConfirmRecord() {
   pendingDeleteId = null;
   pendingDeleteUser = null;
-  document.getElementById('confirm-record-overlay').classList.remove('open');
+  hideDialog('confirm-record-overlay');
 }
 
 function confirmDeleteRecord() {
@@ -958,6 +1017,8 @@ function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
 function showToast(msg, type) {
   const el = document.getElementById('toast');
+  el.setAttribute('role', type === 'err' ? 'alert' : 'status');
+  el.setAttribute('aria-live', type === 'err' ? 'assertive' : 'polite');
   el.textContent = msg; el.className = `toast show ${type||''}`;
   setTimeout(() => el.className = 'toast', 3200);
 }

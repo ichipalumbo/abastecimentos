@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0e0e1a">
   <meta name="mobile-web-app-capable" content="yes"> <!-- 🆕 padrão moderno -->
   <meta name="apple-mobile-web-app-capable" content="yes"> <!-- 🍎 mantém p/ iOS antigo -->
@@ -90,15 +90,15 @@
     <div class="stats">
       <div class="stat-card">
         <div class="stat-value blue" id="s-mes">—</div>
-        <div class="stat-label">Gasto<br>no Mês</div>
+        <div class="stat-label">Gasto<br>no mês</div>
       </div>
       <div class="stat-card">
         <div class="stat-value green" id="s-kml">—</div>
-        <div class="stat-label">Média<br>km/L</div>
+        <div class="stat-label">Média km/L<br>geral</div>
       </div>
       <div class="stat-card">
         <div class="stat-value amber" id="s-preco">—</div>
-        <div class="stat-label">R$/L<br>Médio</div>
+        <div class="stat-label">R$/L médio<br>geral</div>
       </div>
     </div>
     <!-- [/HOME-STATS] -->
@@ -169,7 +169,7 @@
 
   <!-- [BOTTOM-NAV] ══════════════════════════════ -->
   <nav class="bottom-nav">
-    <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+    <button class="nav-item active" id="nav-home" aria-current="page" onclick="switchTab('home')">
       <span class="nav-icon">⛽</span>Início
     </button>
     <button class="nav-item" id="nav-analytics" onclick="switchTab('analytics')">
@@ -178,8 +178,8 @@
     <button class="nav-item" id="nav-postos" onclick="switchTab('postos')">
       <span class="nav-icon">🏪</span>Postos
     </button>
-    <button class="nav-item nav-registrar" onclick="openModal()">
-      <span class="nav-icon"></span>
+    <button class="nav-item nav-registrar" onclick="openModal()" aria-label="Registrar abastecimento">
+      <span aria-hidden="true">＋</span> Registrar
     </button>
 
   </nav>
@@ -188,7 +188,7 @@
 
   <!-- [MODAL-FORM] ══════════════════════════════ -->
   <div class="overlay" id="overlay" onclick="bgClick(event)">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
       <div class="drag-bar"></div>
       <div class="modal-header">
         <div class="modal-title" id="modal-title">🛢️ Novo Abastecimento</div>
@@ -279,9 +279,9 @@
         </div>
         <div class="inline-add-posto" id="inline-add-posto">
           <input type="text" class="form-control" id="inline-posto-input" placeholder="Nome do novo posto..."
-            autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();saveInlineAddPosto();}">
-          <button type="button" class="btn-inline btn-inline-save" onclick="saveInlineAddPosto()">✓</button>
-          <button type="button" class="btn-inline btn-inline-cancel" onclick="cancelInlineAddPosto()">✕</button>
+            aria-label="Nome do novo posto" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();saveInlineAddPosto();}">
+          <button type="button" class="btn-inline btn-inline-save" aria-label="Adicionar posto" onclick="saveInlineAddPosto()">✓</button>
+          <button type="button" class="btn-inline btn-inline-cancel" aria-label="Cancelar novo posto" onclick="cancelInlineAddPosto()">✕</button>
         </div>
         <!-- [/FORM-POSTO] -->
         </div>
@@ -297,15 +297,15 @@
 
   <!-- [MODAL-POSTO] ═════════════════════════════ -->
   <div class="overlay" id="posto-overlay" onclick="bgClickPosto(event)">
-    <div class="modal" style="max-height:55vh">
+    <div class="modal" style="max-height:55vh" role="dialog" aria-modal="true" aria-labelledby="posto-modal-title" tabindex="-1">
       <div class="drag-bar"></div>
       <div class="modal-header">
         <div class="modal-title" id="posto-modal-title">🏪 Novo Posto</div>
-        <button type="button" class="btn-close-modal" onclick="closePostoModal()">✕</button>
+        <button type="button" class="btn-close-modal" aria-label="Fechar posto" onclick="closePostoModal()">✕</button>
       </div>
       <div style="margin-bottom:20px"></div>
       <div class="form-group">
-        <label class="form-label">Nome do Posto</label>
+        <label class="form-label" for="posto-nome-input">Nome do Posto</label>
         <input type="text" class="form-control" id="posto-nome-input" placeholder="Ex: Posto Shell Av. Paulista"
           autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();savePostoModal();}">
       </div>
@@ -318,9 +318,9 @@
 
   <!-- [CONFIRM-RECORD] ══════════════════════════ -->
   <div class="confirm-overlay" id="confirm-record-overlay">
-    <div class="confirm-box">
+    <div class="confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="confirm-record-title" aria-describedby="confirm-record-text" tabindex="-1">
       <div class="confirm-icon">🗑️</div>
-      <div class="confirm-title">Excluir registro?</div>
+      <div class="confirm-title" id="confirm-record-title">Excluir registro?</div>
       <div class="confirm-text" id="confirm-record-text">Esta ação não pode ser desfeita.</div>
       <div class="confirm-btns">
         <button class="btn-cancel" onclick="closeConfirmRecord()">Cancelar</button>
@@ -332,10 +332,10 @@
 
   <!-- [CONFIRM-POSTO] ═══════════════════════════ -->
   <div class="confirm-overlay" id="confirm-posto-overlay">
-    <div class="confirm-box">
+    <div class="confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="confirm-posto-title" aria-describedby="confirm-posto-text" tabindex="-1">
       <div class="confirm-icon">🏪</div>
-      <div class="confirm-title">Remover posto?</div>
-      <div class="confirm-text">
+      <div class="confirm-title" id="confirm-posto-title">Remover posto?</div>
+      <div class="confirm-text" id="confirm-posto-text">
         Remover <strong id="confirm-posto-name"></strong>?<br>
         Os registros existentes não serão afetados.
       </div>
@@ -348,7 +348,7 @@
   <!-- [/CONFIRM-POSTO] -->
 
   <!-- [TOAST] -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <!-- [/TOAST] -->
 
   <!-- [SCRIPTS] -->
