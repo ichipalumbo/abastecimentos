@@ -340,8 +340,8 @@ function renderList(data) {
             </div>
           </div>
           <div class="record-actions">
-            <button class="btn-action btn-edit"   onclick="openEdit(${idx})">✏️ Editar</button>
-            <button class="btn-action btn-delete" onclick="askDelete(${idx})">🗑️ Excluir</button>
+            <button class="btn-action btn-edit"   onclick="openEdit('${r.ID}')">✏️ Editar</button>
+            <button class="btn-action btn-delete" onclick="askDelete('${r.ID}')">🗑️ Excluir</button>
           </div>
         </div>`;
     }).join('');
@@ -557,9 +557,10 @@ function openModal() {
   document.getElementById('overlay').classList.add('open');
 }
 
-function openEdit(idx) {
+function openEdit(id) {
   editMode = true;
-  const r  = records[idx];
+  const r  = records.find(rec => String(rec['ID']) === String(id));
+  if (!r) { showToast('❌ Registro não encontrado', 'err'); return; }
   document.getElementById('f-id').value        = r['ID']               || '';
   document.getElementById('f-data').value      = toLocalDatetimeValue(r['Data']);
   document.getElementById('f-comb').value      = r['Tipo Combustível'] || 'Gasolina';
@@ -582,8 +583,9 @@ function bgClick(e)   { if (e.target === document.getElementById('overlay')) clo
 /* [/MODAL-FORM] */
 
 /* [DELETE-RECORD] ════════════════════════════ */
-function askDelete(idx) {
-  const r = records[idx];
+function askDelete(id) {
+  const r = records.find(rec => String(rec['ID']) === String(id));
+  if (!r) { showToast('❌ Registro não encontrado', 'err'); return; }
   pendingDeleteId = r['ID'];
   const d    = new Date(r['Data']);
   const dStr = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
