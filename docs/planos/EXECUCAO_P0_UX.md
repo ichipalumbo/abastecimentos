@@ -35,6 +35,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** a etapa só passa se o ID puder identificar univocamente cada registro e o contrato de update/delete aceitar esse valor. Ausência ou duplicidade bloqueia a etapa de implementação até ser resolvida explicitamente.
 
+**Resultados:**
+- Arquivos lidos: `mock/mock-data.json`, `mock/server.js`, `script.js`.
+- Validação: IDs são strings únicas (ex: "r11"). Backend (`updateRecord`, `deleteRecord`) usa `String(r.ID) === String(id)`, garantindo compatibilidade.
+- Pendências: nenhuma.
+
 ### Etapa 2 — Transportar o ID a partir do cartão
 
 **Ação**
