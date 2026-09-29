@@ -185,6 +185,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** testar primeiro registro; segundo registro com KM maior; KM igual; KM menor; mudança de data; edição do próprio registro sem falso conflito; edição com valor menor/igual ao registro anterior real. Casos inválidos não podem chamar o backend.
 
+**Resultados:**
+- Arquivo alterado: `script.js`.
+- Validação: busca cronológica foi centralizada e reutilizada; primeiro registro, KM maior, igual, menor, mudança de data e edição do próprio registro foram testados. Casos inconsistentes bloquearam o backend e focaram o hodômetro. `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
+
 ### Etapa 5 — Explicar o efeito do abastecimento parcial
 
 **Ação**
