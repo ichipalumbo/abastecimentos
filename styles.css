@@ -916,11 +916,13 @@ select:focus-visible,
   border-radius: 50%;
   padding: 0;
   color: var(--bg);
-  font-size: 2rem;
-  line-height: 1;
   z-index: 301;
   box-shadow: 0 10px 24px rgba(0, 0, 0, .45), 0 2px 8px rgba(74, 222, 128, .25);
   transition: transform .15s, background .2s;
+}
+
+.nav-registrar svg {
+  display: block;
 }
 
 .nav-registrar:active {
