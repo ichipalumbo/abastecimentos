@@ -264,7 +264,7 @@ select:focus-visible,
 .page {
   display: none;
   min-height: 100vh;
-  padding-bottom: calc(var(--nav-h) + var(--safe-b) + 24px);
+  padding-bottom: calc(var(--nav-h) + var(--safe-b) + 88px);
   animation: fadeIn .22s ease;
 }
 
@@ -857,8 +857,7 @@ select:focus-visible,
   left: 0;
   right: 0;
   height: calc(var(--nav-h) + var(--safe-b));
-  padding-bottom: var(--safe-b);
-  padding-right: 80px;
+  padding: 4px 4px var(--safe-b);
   background: var(--surface);
   border-top: 1px solid var(--border);
   display: flex;
@@ -869,6 +868,7 @@ select:focus-visible,
 
 .nav-item {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -882,8 +882,9 @@ select:focus-visible,
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .6px;
-  padding: 8px 4px;
-  transition: color .2s;
+  padding: 6px 4px;
+  border-radius: var(--r-sm);
+  transition: color .2s, background .2s;
 }
 
 .nav-icon {
@@ -893,6 +894,7 @@ select:focus-visible,
 
 .nav-item.active {
   color: var(--blue);
+  background: var(--blue-dim);
 }
 
 .nav-item.active .nav-icon {
@@ -900,19 +902,24 @@ select:focus-visible,
 }
 
 .nav-registrar {
-  position: absolute;
-  right: 16px;
-  bottom: calc(var(--safe-b) + 18px);
+  position: fixed;
+  right: 24px;
+  bottom: calc(var(--nav-h) + var(--safe-b) + 16px);
   width: 56px;
   height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
   background: var(--green);
   border-radius: 50%;
   padding: 0;
   color: var(--bg);
   font-size: 2rem;
-  letter-spacing: 0;
   line-height: 1;
-  box-shadow: 0 4px 16px rgba(74, 222, 128, .35);
+  z-index: 301;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .45), 0 2px 8px rgba(74, 222, 128, .25);
   transition: transform .15s, background .2s;
 }
 

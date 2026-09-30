@@ -168,7 +168,7 @@
   <!-- [/PAGE-POSTOS] -->
 
   <!-- [BOTTOM-NAV] ══════════════════════════════ -->
-  <nav class="bottom-nav">
+  <nav class="bottom-nav" aria-label="Navegação principal">
     <button class="nav-item active" id="nav-home" aria-current="page" onclick="switchTab('home')">
       <span class="nav-icon">⛽</span>Início
     </button>
@@ -178,11 +178,10 @@
     <button class="nav-item" id="nav-postos" onclick="switchTab('postos')">
       <span class="nav-icon">🏪</span>Postos
     </button>
-    <button class="nav-item nav-registrar" onclick="openModal()" aria-label="Registrar abastecimento">
-      <span aria-hidden="true">＋</span>
-    </button>
-
   </nav>
+  <button class="nav-registrar" onclick="openModal()" aria-label="Registrar abastecimento">
+    <span aria-hidden="true">+</span>
+  </button>
 
   <!-- [/BOTTOM-NAV] -->
 
