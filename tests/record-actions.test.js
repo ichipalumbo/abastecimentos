@@ -43,6 +43,7 @@ function app() {
           values: new Set(),
           add(name) { this.values.add(name); },
           remove(name) { this.values.delete(name); },
+          toggle(name, force) { if (force) this.add(name); else this.remove(name); },
           contains(name) { return this.values.has(name); }
         },
         reset() { this.value = ''; },
@@ -224,6 +225,7 @@ test('a successful edit updates only the selected record before refreshing', () 
 
 test('the form shows previous mileage and does not submit malformed amounts', () => {
   const a = app();
+  a.elements.set('f-comb', { value: 'Gasolina' });
   a.run('document.getElementById("f-data").value = "2026-09-29T12:00"; document.getElementById("f-litros").value = "12,5"');
   a.run('calcKm()');
   assert.match(a.elements.get('previous-km').textContent, /600 km/);
@@ -237,6 +239,7 @@ test('the form shows previous mileage and does not submit malformed amounts', ()
 
 test('a failed save retains the entered data for retry', () => {
   const a = app();
+  a.elements.set('f-comb', { value: 'Gasolina' });
   a.run('document.getElementById("f-litros").value = "12,5"; document.getElementById("f-valor").value = "60"; document.getElementById("f-kmtotal").value = "650"');
   a.run('submitForm({ preventDefault() {} })');
   const add = a.operations.find(op => op.kind === 'add');
@@ -246,4 +249,48 @@ test('a failed save retains the entered data for retry', () => {
   assert.equal(a.elements.get('f-valor').value, '60');
   assert.equal(a.elements.get('btn-salvar').disabled, false);
   assert.match(a.elements.get('toast').textContent, /Falha na conexão/);
+});
+
+test('recent choices are scoped to the current profile and require an explicit tap', () => {
+  const a = app();
+  a.elements.set('f-comb', { value: '', options: [{ value: '' }, { value: 'Gasolina' }], focus() { this.focused = true; } });
+  a.run('postos = [{ nome: "Aug-1" }, { nome: "Sep-1" }, { nome: "Sep-2" }]; renderPostoPicker(); renderRecentFuel()');
+  assert.match(a.elements.get('posto-picker').innerHTML, /Sep-1[\s\S]*Sep-2[\s\S]*Aug-1/);
+  assert.equal(a.elements.get('recent-fuel').hidden, false);
+  assert.equal(a.elements.get('f-comb').value, '');
+  assert.equal(a.run('selectedPostoNome'), '');
+  a.run('useRecentFuel(); selectPosto(1)');
+  assert.equal(a.elements.get('f-comb').value, 'Gasolina');
+  assert.equal(a.run('selectedPostoNome'), 'Sep-1');
+  a.run('records = []; selectedPostoNome = ""; renderPostoPicker(); renderRecentFuel()');
+  assert.equal(a.elements.get('recent-fuel').hidden, true);
+  assert.equal(a.elements.get('recent-postos-label').hidden, true);
+});
+
+test('fuel selection is required before sending a new record', () => {
+  const a = app();
+  a.run('document.getElementById("f-litros").value = "10"; document.getElementById("f-valor").value = "50"; document.getElementById("f-kmtotal").value = "700"');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.elements.get('f-comb').focused, true);
+  assert.equal(a.operations.length, 0);
+});
+
+test('monthly trends show up to six chronological months with an explicit metric', () => {
+  const a = app();
+  a.data[0]['KM/L Trip'] = 12.5;
+  a.run('renderAnalytics(data)');
+  const chart = a.elements.get('trend-chart');
+  assert.match(chart.innerHTML, /jul\. de 26[\s\S]*ago\. de 26[\s\S]*set\. de 26/);
+  assert.match(chart.innerHTML, /R\$/);
+  a.run('selectTrendMetric("price")');
+  assert.match(chart.innerHTML, /\/L/);
+  assert.equal(a.elements.get('trend-price').classList.contains('active'), true);
+  a.run('selectTrendMetric("efficiency")');
+  assert.match(chart.innerHTML, /km\/L/);
+  a.run('renderAnalytics(Array.from({ length: 8 }, (_, i) => ({ Data: `2026-${String(i + 1).padStart(2, "0")}-15T12:00:00`, Valor: 50, Litros: 10, "Parcial?": false })))');
+  assert.equal((chart.innerHTML.match(/class="trend-row"/g) || []).length, 6);
+  assert.doesNotMatch(chart.innerHTML, /jan\. de 26|fev\. de 26/);
+  assert.match(chart.innerHTML, /<span class="trend-value">—<\/span>/);
+  a.run('renderAnalytics([])');
+  assert.match(chart.innerHTML, /Registre um abastecimento/);
 });
