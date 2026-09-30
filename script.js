@@ -285,7 +285,12 @@ function isFull(r) {
 }
 
 function getCacheKey(user, type) {
-  return `${CACHE_PREFIX}_${user}_${type}`;
+  const location = typeof window !== 'undefined' && window.location;
+  const params = location && new URLSearchParams(location.search);
+  const isMock = location && (['127.0.0.1', 'localhost', '[::1]'].includes(location.hostname) ||
+    location.protocol === 'file:' || params.get('mock') === '1');
+  const scenario = isMock ? params.get('scenario') || 'default' : null;
+  return `${CACHE_PREFIX}_${user}_${type}${scenario ? `_mock_${scenario}` : ''}`;
 }
 
 function getCachedData(user, type) {

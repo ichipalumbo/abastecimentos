@@ -3,15 +3,26 @@
    (GitHub Pages → Apps Script)
 ══════════════════════════════════════════════════════════ */
 
-// 🔧 Em produção, o app usa o Apps Script real.
-// Em desenvolvimento local, usa o mock quando aberto em localhost, 127.0.0.1 ou quando for forçado por ?mock=1.
-const MOCK_URL      = 'http://localhost:5000/exec';
+// O servidor local serve frontend e API na mesma origem. file:// e ?mock=1
+// falham no mock indisponível, mas nunca encaminham escritas para produção.
 const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaw7Hltfk4nYdXjvUnaeYtpCpgf1MlKUD3PrxNs3vT1IJEY33iJ2GJZDwLKKtGoDQF/exec';
 const localHosts = ['localhost', '127.0.0.1', '[::1]'];
 const urlParams = new URLSearchParams(window.location.search);
-const USE_LOCAL_MOCK = urlParams.get('mock') === '1' || localHosts.includes(window.location.hostname);
-const API_URL = USE_LOCAL_MOCK ? MOCK_URL : APPSCRIPT_URL;
-// 🔑 Mesmo token do Code.gs (o mock aceita esse valor por padrão)
+const USE_LOCAL_MOCK = urlParams.get('mock') === '1' || window.location.protocol === 'file:' ||
+  localHosts.includes(window.location.hostname);
+const mockScenario = urlParams.get('scenario') || 'default';
+const mockOrigin = localHosts.includes(window.location.hostname) && window.location.port === '5000'
+  ? window.location.origin : 'http://127.0.0.1:5000';
+const API_URL = USE_LOCAL_MOCK
+  ? `${mockOrigin}/exec?scenario=${encodeURIComponent(mockScenario)}`
+  : APPSCRIPT_URL;
+if (USE_LOCAL_MOCK) document.documentElement.classList.add('mock-mode');
+if (USE_LOCAL_MOCK && urlParams.get('reset') === '1') {
+  for (const key of Object.keys(localStorage)) {
+    if (key.startsWith('fuelapp_cache_')) localStorage.removeItem(key);
+  }
+}
+// Mesmo token do Code.gs; o mock local ignora credenciais.
 const API_TOKEN = 'abst_7gK9pQ2xW5nR8tL4vY6mZ3jH';
 
 // Mapeia cada função → action + nomes dos argumentos (na ordem)
@@ -46,9 +57,17 @@ google.script.run = (function () {
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         })
-          .then(r => r.json())
+          .then(async r => {
+            const data = await r.json();
+            if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
+            return data;
+          })
           .then(data => { if (onSuccess) onSuccess(data); })
-          .catch(err => { if (onFailure) onFailure(err); });
+          .catch(err => {
+            if (onFailure) onFailure(USE_LOCAL_MOCK && err instanceof TypeError
+              ? new Error('Mock local indisponível. Inicie node dev\\mock\\server.js.')
+              : err);
+          });
       };
     });
     return runner;
