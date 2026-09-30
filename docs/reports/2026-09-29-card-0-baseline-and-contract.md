@@ -1,6 +1,6 @@
-# Cartão 0 — baseline e contrato proposto (29/09/2026)
+# Cartão 0 — baseline e contrato aprovado (29/09/2026)
 
-> **Status:** coleta concluída no mock; **contrato pendente de aprovação**. Não houve mudança de interface ou de `GAS/`. Este é o Cartão 0 da [auditoria mobile](./2026-09-29-mobile-ui-consistency-audit-and-plan.md), não a antiga Fase 0 de integridade.
+> **Status:** Cartão 0 concluído: coleta no mock e contrato **aprovado pelo usuário em 29/09/2026**; validação no aparelho ainda pendente para o Cartão 4. Não houve mudança de interface ou de `GAS/`. Este é o Cartão 0 da [auditoria mobile](./2026-09-29-mobile-ui-consistency-audit-and-plan.md), não a antiga Fase 0 de integridade.
 
 ## Método e limites
 
@@ -52,15 +52,15 @@ O [inventário rastreável](./2026-09-29-card-0-inventory.md) cobre controles vi
 
 Não foi possível obter evidência de teclado físico, leitor de tela, safe areas reais, quebra de nomes/valores extremos nem DPI 2,81 nesta execução. São pendências para o *finish gate* no aparelho; não declarar AA/WCAG com base nas medidas atuais.
 
-## Contrato de interface **proposto — nenhuma decisão aprovada**
+## Contrato de interface — decisões e propostas
 
-| Decisão | Recomendação baseada nas evidências | Alternativa / custo | Cartão |
+| Decisão | Direção aprovada pelo usuário em 29/09/2026 | Alternativa / custo | Cartão |
 | --- | --- | --- | --- |
 | **I. Ícones** | Piloto de SVGs locais com mesmo traço/tamanho para navegação e ações; emoji fica como ilustração informativa, FAB existente permanece. Texto de ação/nome acessível não é removido. | Manter mistura delimitada por superfície preserva familiaridade e reduz mudanças, mas peso/alinhamento podem continuar variando por plataforma. | 2 |
 | **II. Escrita incerta** | Erro persistente: “Não foi possível confirmar. Confira o histórico (ou a lista de postos) antes de tentar novamente.” Retry explícito somente de leitura; erro confirmado de validação aponta campo. | Botão de reenviar escrita agiliza mas pode duplicar dados se a resposta se perdeu após o servidor confirmar. Sem idempotência no GAS, **não recomendado**. | 1 |
 | **III. Densidade** | Manter posto/data, valor e litros no primeiro olhar; preservar km/L, km rodados e R$/L acessíveis. Testar agrupar médias mensais em nível secundário sem remover métricas. | Manter tudo exposto favorece análise rápida, mas compete com registro e leitura externa; exigir prova em 433×762 antes de esconder qualquer número. | 3 |
 | **IV. Avisos/cópia** | Sucesso curto após confirmação, progresso até resposta, erro persistente junto à ação, verbos estáveis: “Registrar abastecimento”, “Atualizar”, “Excluir registro”, “Remover posto”, “Tentar novamente” só para leitura. Medir toast com FAB/CTA/teclado antes de definir posição/duração. | Toast para todos os estados é menos código, mas pode sumir antes de ser lido e conflitar com modal. | 1/3 |
 
-**Registro de decisões:** I pendente; II pendente; III pendente; IV pendente. Sem aprovação do usuário até agora; datas/responsável de aprovação a preencher após consulta, uma escolha por vez. Nenhuma proposta aqui autoriza implementação visual ou alterações em `GAS/`.
+**Registro de decisões (aprovação do usuário, 29/09/2026):** I — SVGs locais consistentes em navegação/ações, emojis apenas ilustrativos, FAB e rótulos acessíveis preservados. II — em resposta incerta, orientar a conferir histórico ou postos e nunca reenviar uma escrita automaticamente; leitura pode oferecer retry. III — destacar posto/data, valor e litros na primeira vista; manter demais métricas acessíveis e só reagrupar após teste no aparelho. IV — sucesso breve, progresso até resposta e erro persistente junto à ação com orientação de recuperação. Nenhuma decisão determina duração/posição exata sem medir teclado e safe area, nem autoriza mudanças em `GAS/`.
 
-**Saída do Cartão 0:** baseline e inventário disponíveis; aceite do **contrato** bloqueado nas quatro decisões. Depois da aprovação, Cartões 1–3 podem começar em branches próprias a partir da `main` atualizada; Cartão 4 medirá aparelho real e regressão.
+**Saída do Cartão 0:** baseline e inventário disponíveis, contrato aprovado. Cartões 1–3 podem começar em branches próprias a partir da `main` atualizada; Cartão 4 medirá aparelho real e regressão. Evidência nesta etapa é apenas documental: nenhuma mudança de UI foi aplicada.

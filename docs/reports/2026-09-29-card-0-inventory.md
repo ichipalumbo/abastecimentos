@@ -1,10 +1,10 @@
 # Inventário de ações, ícones e estados — Cartão 0 (29/09/2026)
 
-> Snapshot da `main` em `3a72940`; conferido contra o [baseline sintético](./2026-09-29-card-0-baseline-and-contract.md). **Sugestões não aprovadas**: o inventário descreve o produto atual, não um patch pronto. `I` = ícone; `N` = nome acessível; “ausente” indica estado sem representação útil no fluxo normal. Variantes por registro/posto compartilham o mesmo controle, com contexto acrescentado ao nome acessível. Fonte: [`index.html`](../../index.html), [`script.js`](../../script.js), [`styles.css`](../../styles.css).
+> Snapshot da `main` em `3a72940`; conferido contra o [baseline sintético](./2026-09-29-card-0-baseline-and-contract.md). **Contrato aprovado, ainda não implementado**: o inventário descreve o produto atual, não um patch pronto. `I` = ícone; `N` = nome acessível; “ausente” indica estado sem representação útil no fluxo normal. Variantes por registro/posto compartilham o mesmo controle, com contexto acrescentado ao nome acessível. Fonte: [`index.html`](../../index.html), [`script.js`](../../script.js), [`styles.css`](../../styles.css).
 
 ## Ações e elementos funcionais
 
-| ID | Superfície → gatilho/estado | Texto atual; I | N/semântica atual | Origem e efeito/recuperação; proposta (pendente) |
+| ID | Superfície → gatilho/estado | Texto atual; I | N/semântica atual | Origem e efeito/recuperação; aplicação futura |
 | --- | --- | --- | --- | --- |
 | U1 | Entrada → selecionar Luccas/Josy | Luccas IDEA / Josy LOGAN; carros SVG, logo ⛽ ilustrativo | Botões com nomes visíveis; imagens SVG dentro | `index.html` seleção; `script.js:selectUser`; manter identificação explícita, não usar emoji como único nome. |
 | U2 | Home → Trocar usuário | “🔄 Trocar usuário”; emoji | Nome pelo texto, botão | `index.html`; `logout` mantém perfis separados; manter verbo explícito. |
@@ -32,7 +32,7 @@
 
 ## Conteúdo, estados e mensagens
 
-| ID | Superfície/estado | Texto e I atuais | N/semântica, origem e recuperação; proposta (pendente) |
+| ID | Superfície/estado | Texto e I atuais | N/semântica, origem e recuperação; aplicação futura |
 | --- | --- | --- | --- |
 | S1 | Entrada/load inicial | “Abastecimentos”, “Carregando dados...”; ⛽ + spinner | `#splash`/`#loader-overlay` em `index.html`, `showLoader`/`checkLoadsDone`; progresso visual sem instrução adicional. |
 | S2 | Histórico loading/default | “Carregando registros...”; spinner; resumo “Gasto no mês”, “Média km/L geral”, “R$/L médio geral” | `selectUser`, `renderStats`, `renderList`; informações com unidade, preço e médias sem esconder cálculos. |
@@ -55,4 +55,4 @@
 | S19 | Atualização forçada | “🔄 Forçando atualização...”, eventualmente “Erro ao atualizar registros/postos” | `refreshData`; chamadas paralelas de leitura geram avisos concorrentes, sem resumo persistente do resultado. |
 | S20 | Toast visual e acessível | Fundo por tipo, `role=status` para sucesso/progresso; `role=alert` para erro, `aria-live` coerente | `index.html:365`, `showToast`, `.toast` CSS; sem foco deslocado, `pointer-events:none`; timers não cancelados; aviso pode cobrir botão sem bloquear toque. |
 
-**Decisões em aberto:** ícones SVG vs mistura delimitada; tratamento de escrita incerta; densidade do mês/chips; persistência, posição e vocabulário de avisos. Cada recomendação permanece não aprovada até confirmação explícita; o [contrato proposto](./2026-09-29-card-0-baseline-and-contract.md) contém alternativas e dependências.
+**Decisões aprovadas pelo usuário em 29/09/2026:** SVGs locais para navegação/ações, emojis apenas ilustrativos, sem mudar o FAB; em escrita incerta, conferir lista antes de tentar de novo, sem retry automático; posto/data, valor e litros primários, métricas restantes acessíveis e reagrupadas só após teste; sucesso breve, progresso até resposta e erro persistente contextual. Detalhes e limites no [contrato](./2026-09-29-card-0-baseline-and-contract.md).
