@@ -1,7 +1,7 @@
 # Auditoria de coerência visual e feedback mobile — 29/09/2026
 
 > **Status:** diagnóstico e plano para aprovação; nenhuma mudança de UI ou backend nesta rodada.
-> **Base:** `main` em `8f9ec43` (Fases 0–3 integradas). Referência de estrutura: auditoria do outro app fornecida na raiz (`2026-09-23-diag-auditoria-ui-ux-mobile.md`), **não** suas decisões de produto, código ou métricas.
+> **Base:** `main` em `8f9ec43` (Fases 0–3 integradas). Referência de estrutura: [auditoria do outro app](../reference/2026-09-23-diag-auditoria-ui-ux-mobile.md), fornecida originalmente na raiz, **não** suas decisões de produto, código ou métricas.
 
 ## Leitura em 30 segundos
 
@@ -19,7 +19,7 @@ O app tem um fluxo reconhecível de registro, tema escuro consistente, FAB vetor
 
 - Inspeção de `index.html`, `styles.css`, `script.js` e relatórios das fases anteriores; avaliação visual **somente leitura** do perfil Luccas na página publicada em viewport nominal de 433×762 CSS px. No navegador a largura medida pode arredondar para 434 px. Não foi criado posto nem registro de teste: os achados abaixo não exigiram escrita.
 - **Diferença de versão:** a página publicada observada ainda mostrava Análise sem a tendência da Fase 3 e o seletor de combustível sem “Selecione”. Logo, a versão online **não foi usada** para afirmar que a Fase 3 está correta/incorreta; os itens específicos da Fase 3 vêm do código em `main` e de inspeções locais anteriores. Revalidar em produção após a publicação/cache atualizar.
-- O mock local `file://...?mock=1` não alcançou `localhost:5000/exec`; estados com registros sintéticos não equivalem a API real. Não simulei DPR 2,81, brilho externo, teclado do aparelho, safe areas reais ou leitor de tela físico.
+- Durante esta auditoria, o mock local `file://...?mock=1` não alcançou `localhost:5000/exec`. O ambiente mock reproduzível foi implementado depois, na mesma PR, em `dev/mock/`; os achados desta auditoria não dependem dos testes posteriores do mock. Estados com registros sintéticos não equivalem à API real. Não simulei DPR 2,81, brilho externo, teclado do aparelho, safe areas reais ou leitor de tela físico.
 - **Preservar:** paleta escura, FAB verde separado da barra, abas identificadas por ícone **e texto**, ações Editar/Excluir com confirmação contextual, foco e nomes acessíveis existentes, dados mantidos quando salvar falha, sugestões de combustível/posto **sem seleção automática**, e métricas da Análise com números e unidades. Não transformar o app em clone de outro produto.
 
 ## Referências de mercado e critérios verificáveis
