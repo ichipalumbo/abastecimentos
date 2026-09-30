@@ -13,11 +13,14 @@ function app() {
       this.cards = html.split('<div class="record-card">').slice(1).map(chunk => {
         const posto = chunk.match(/<div class="record-posto">([^<]*)<\/div>/)[1];
         const handlers = {};
+        const labels = {};
         return {
           posto,
+          labels,
           querySelector(selector) {
             return {
               addEventListener(event, handler) { handlers[selector] = handler; },
+              setAttribute(name, value) { labels[selector] = value; },
               click() { handlers[selector](); }
             };
           }
@@ -35,7 +38,13 @@ function app() {
         textContent: '',
         style: {},
         focus() { this.focused = true; },
-        classList: { add() {}, remove() {} },
+        setAttribute() {},
+        classList: {
+          values: new Set(),
+          add(name) { this.values.add(name); },
+          remove(name) { this.values.delete(name); },
+          contains(name) { return this.values.has(name); }
+        },
         reset() { this.value = ''; },
         querySelector() { return { textContent: '' }; }
       });
@@ -95,6 +104,8 @@ test('edit and delete target every displayed card in both orders', () => {
     assert.equal(a.list.cards.length, 6);
     for (const card of a.list.cards) {
       const expected = a.data.find(r => r['Posto'] === card.posto);
+      assert.match(card.labels['.btn-edit'], new RegExp(`Editar abastecimento: ${card.posto}`));
+      assert.match(card.labels['.btn-delete'], new RegExp(`Excluir abastecimento: ${card.posto}`));
       card.querySelector('.btn-edit').click();
       assert.equal(a.elements.get('f-id').value, expected['ID']);
       assert.equal(a.elements.get('f-kmtotal').value, expected['KM_Total']);
@@ -106,6 +117,17 @@ test('edit and delete target every displayed card in both orders', () => {
     }
   }
   assert.deepEqual(a.requests, []);
+});
+
+test('closing a dialog restores focus to the triggering control', () => {
+  const a = app();
+  const trigger = { focus() { this.focused = true; } };
+  a.context.document.activeElement = trigger;
+  a.run('openModal()');
+  assert.equal(a.elements.get('overlay').classList.contains('open'), true);
+  a.run('closeModal()');
+  assert.equal(trigger.focused, true);
+  assert.equal(a.elements.get('overlay').classList.contains('open'), false);
 });
 
 test('cancel does not call API; confirm sends only the chosen record ID', () => {
