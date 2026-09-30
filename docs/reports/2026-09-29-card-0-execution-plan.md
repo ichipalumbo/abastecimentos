@@ -1,6 +1,6 @@
 # Plano de execução — Cartão 0: contrato e baseline mobile (29/09/2026)
 
-> **Status:** plano pré-execução; baseline e decisões ainda não coletados nem aprovados.
+> **Status:** coleta executada em 29/09/2026; contrato proposto e decisões aguardam aprovação. Evidências e inventário no [relatório de execução](./2026-09-29-card-0-baseline-and-contract.md).
 > **Origem:** [auditoria de coerência visual e feedback mobile](./2026-09-29-mobile-ui-consistency-audit-and-plan.md), Cartão 0 do roadmap; distinto da antiga *Fase 0* de integridade dos registros.
 > **Base técnica:** `main` após a integração da PR #16 (`3a72940`). Nenhuma alteração de UI ou `GAS/` está prevista neste cartão.
 
