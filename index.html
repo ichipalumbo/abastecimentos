@@ -131,7 +131,7 @@
   <div id="page-analytics" class="page">
     <div class="analytics-header">
       <h1>📊 Análise</h1>
-      <p>Histórico completo e médias por mês</p>
+      <p>Histórico completo e tendências de consumo</p>
     </div>
     <div class="summary-grid" id="summary-grid">
       <div class="summary-card" style="grid-column:span 2">
@@ -140,6 +140,16 @@
         </div>
       </div>
     </div>
+    <section class="trend-section" aria-labelledby="trend-title">
+      <div class="section-title" id="trend-title">Evolução mensal</div>
+      <p class="trend-context">Até 6 meses com registros, do mais antigo ao mais recente</p>
+      <div class="trend-tabs" role="group" aria-label="Indicador da evolução">
+        <button type="button" class="trend-tab active" id="trend-spend" aria-pressed="true" onclick="selectTrendMetric('spend')">Gasto</button>
+        <button type="button" class="trend-tab" id="trend-price" aria-pressed="false" onclick="selectTrendMetric('price')">R$/L</button>
+        <button type="button" class="trend-tab" id="trend-efficiency" aria-pressed="false" onclick="selectTrendMetric('efficiency')">km/L</button>
+      </div>
+      <div id="trend-chart" class="trend-chart"></div>
+    </section>
     <div class="content" style="margin-top:16px">
       <div class="section-title">Por Mês</div>
       <div id="monthly-list"></div>
@@ -211,14 +221,16 @@
         <!-- [FORM-COMB-PARCIAL] -->
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label" for="f-comb">⛽ Combustível</label>
-            <select class="form-control" id="f-comb">
+            <label class="form-label" for="f-comb">⛽ Combustível <span class="req">*</span></label>
+            <select class="form-control" id="f-comb" required>
+              <option value="" disabled selected>Selecione</option>
               <option>Gasolina</option>
               <option>Gasolina Aditivada</option>
               <option>Etanol</option>
               <option>Diesel</option>
               <option>GNV</option>
             </select>
+            <button type="button" class="recent-fuel" id="recent-fuel" hidden onclick="useRecentFuel()"></button>
           </div>
           <div class="form-group">
             <span class="form-label">Abastecimento parcial?</span>
@@ -275,6 +287,7 @@
 
         <!-- [FORM-POSTO] -->
         <div class="section-sub form-section">🏪 Posto</div>
+        <div class="recent-postos-label" id="recent-postos-label" hidden>Usados recentemente · escolha um posto</div>
         <div class="posto-scroll" id="posto-picker">
           <span style="color:var(--muted);font-size:0.82rem">Carregando postos...</span>
         </div>

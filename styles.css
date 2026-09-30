@@ -672,13 +672,13 @@ select:focus-visible,
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  padding: 16px 14px;
+  padding: 12px;
   box-shadow: var(--shadow);
 }
 
 .summary-icon {
   font-size: 1.3rem;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .summary-val {
@@ -695,6 +695,64 @@ select:focus-visible,
 }
 
 /* [/SUMMARY] */
+
+/* [TRENDS] */
+.trend-section {
+  margin: 20px 16px 0;
+}
+
+.trend-context {
+  font-size: .8rem;
+  color: var(--muted);
+  margin: 4px 0 12px;
+}
+
+.trend-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.trend-tab {
+  flex: 1;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  border-radius: var(--r-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.trend-tab.active {
+  color: var(--blue);
+  border-color: var(--blue);
+  background: var(--blue-dim);
+}
+
+.trend-chart {
+  padding: 16px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+
+.trend-row {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) 105px;
+  gap: 8px;
+  align-items: center;
+  min-height: 38px;
+  font-size: .76rem;
+}
+
+.trend-month { color: var(--muted); }
+.trend-value { text-align: right; font-weight: 700; white-space: nowrap; }
+.trend-track { height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; }
+.trend-fill { height: 100%; border-radius: 5px; }
+.trend-empty { color: var(--muted); font-size: .88rem; }
+
+/* [/TRENDS] */
 
 /* [MONTH-CARDS] ══════════════════════════════ */
 .month-card {
@@ -1274,6 +1332,37 @@ input:checked+.slider::before {
 /* [/FORM] */
 
 /* [POSTO-PICKER] ═════════════════════════════ */
+.recent-fuel {
+  display: block;
+  margin-top: 8px;
+  padding: 8px 12px;
+  min-height: 44px;
+  border: 1px solid var(--blue);
+  border-radius: var(--r-sm);
+  background: var(--blue-dim);
+  color: var(--text);
+  font-size: .8rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.recent-fuel[hidden],
+.recent-postos-label[hidden] {
+  display: none;
+}
+
+.recent-postos-label {
+  color: var(--muted);
+  font-size: .78rem;
+  margin-bottom: 8px;
+}
+
+.posto-group-break {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: .75rem;
+}
+
 .posto-scroll {
   display: flex;
   flex-wrap: wrap;

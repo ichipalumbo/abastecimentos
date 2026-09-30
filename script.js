@@ -4,6 +4,8 @@ let records            = [];
 let postos             = [];       // [{id, nome}]
 let currentTab         = 'home';
 let analyticsBuilt     = false;
+let trendMetric        = 'spend';
+let trendMonths        = [];
 let editMode           = false;
 let selectedPostoNome  = '';
 let pendingDeleteId    = null;
@@ -198,6 +200,7 @@ function loadRecords(forceRefresh = false) {
   if (cache && cache.data && cache.data.length) {
     records = cache.data; analyticsBuilt = false;
     renderStats(records); renderList(records);
+    refreshRecentChoices();
     lastRefreshTs = cache.ts;
     updateRefreshMeta(lastRefreshTs);
     if (!forceRefresh && isCacheFresh(cache)) {
@@ -215,6 +218,7 @@ function loadRecords(forceRefresh = false) {
       lastRefreshTs = Date.now();
       updateRefreshMeta(lastRefreshTs);
       renderStats(data); renderList(data);
+      refreshRecentChoices();
       if (currentTab === 'analytics') renderAnalytics(data);
       checkLoadsDone();
     })
@@ -461,16 +465,66 @@ function renderList(data) {
 function renderPostoPicker() {
   const el = document.getElementById('posto-picker');
   if (!el) return;
+  const recentNames = recentValues('Posto', 3).filter(name => postos.some(p => p.nome === name));
+  document.getElementById('recent-postos-label').hidden = !recentNames.length || editMode;
   if (!postos.length) {
     el.innerHTML = `<button type="button" class="chip-posto chip-add" onclick="showInlineAddPosto()">＋ Adicionar Posto</button>`;
     return;
   }
-  el.innerHTML = postos.map((p, i) => `
+  const ordered = [...postos.keys()].sort((a, b) => {
+    const rank = i => {
+      const position = recentNames.indexOf(postos[i].nome);
+      return position < 0 ? recentNames.length : position;
+    };
+    return rank(a) - rank(b);
+  });
+  el.innerHTML = ordered.map((i, position) => {
+    const p = postos[i];
+    return `${position === recentNames.length && recentNames.length && !editMode ? '<span class="posto-group-break">Outros postos</span>' : ''}
     <button type="button"
             class="chip-posto${selectedPostoNome === p.nome ? ' selected' : ''}"
-            onclick="selectPosto(${i})">${p.nome}</button>
-  `).join('') +
+            aria-pressed="${selectedPostoNome === p.nome}"
+            onclick="selectPosto(${i})">${p.nome}</button>`;
+  }).join('') +
   `<button type="button" class="chip-posto chip-add" onclick="showInlineAddPosto()">＋ Novo</button>`;
+}
+
+function recentValues(field, limit) {
+  const seen = new Set();
+  return [...records]
+    .filter(r => Number.isFinite(new Date(r['Data']).getTime()))
+    .sort((a, b) => new Date(b['Data']) - new Date(a['Data']))
+    .map(r => r[field])
+    .filter(value => {
+      if (!value || seen.has(value)) return false;
+      seen.add(value);
+      return true;
+    }).slice(0, limit);
+}
+
+function refreshRecentChoices() {
+  if (!document.getElementById('overlay').classList.contains('open')) return;
+  renderPostoPicker();
+  renderRecentFuel();
+}
+
+function renderRecentFuel() {
+  const button = document.getElementById('recent-fuel');
+  const select = document.getElementById('f-comb');
+  const options = Array.from(select.options || []);
+  const fuel = recentValues('Tipo Combustível', 5).find(value => options.some(option => option.value === value));
+  const valid = Boolean(fuel);
+  button.hidden = !valid || editMode;
+  if (!button.hidden) button.textContent = `Último: ${fuel} · usar`;
+}
+
+function useRecentFuel() {
+  const select = document.getElementById('f-comb');
+  const fuel = recentValues('Tipo Combustível', 5)
+    .find(value => Array.from(select.options || []).some(option => option.value === value));
+  if (!fuel) return;
+  select.value = fuel;
+  select.focus();
 }
 
 function selectPosto(idx) {
@@ -680,7 +734,7 @@ function openModal() {
   document.getElementById('modal-title').textContent    = '🛢️ Novo Abastecimento';
   document.getElementById('modal-subtitle').textContent = '';
   document.getElementById('btn-salvar').textContent     = '✅ Salvar Abastecimento';
-  cancelInlineAddPosto(); setNow(); renderPostoPicker(); calcKm();
+  cancelInlineAddPosto(); setNow(); renderPostoPicker(); renderRecentFuel(); calcKm();
   showDialog('overlay', '.btn-close-modal');
   positionFormSheet();
 }
@@ -706,13 +760,13 @@ function openEdit(id, renderedUser = currentUser) {
   editingRecordUser = currentUser;
   document.getElementById('f-id').value        = r['ID']               || '';
   document.getElementById('f-data').value      = toLocalDatetimeValue(r['Data']);
-  document.getElementById('f-comb').value      = r['Tipo Combustível'] || 'Gasolina';
+  document.getElementById('f-comb').value      = r['Tipo Combustível'] || '';
   document.getElementById('f-parcial').checked = !isFull(r);
   document.getElementById('f-litros').value    = r['Litros']           || '';
   document.getElementById('f-valor').value     = r['Valor']            || '';
   document.getElementById('f-kmtotal').value   = r['KM_Total']         || '';
   selectedPostoNome = r['Posto'] || '';
-  calcPreco(); calcKm(); cancelInlineAddPosto(); renderPostoPicker();
+  calcPreco(); calcKm(); cancelInlineAddPosto(); renderPostoPicker(); renderRecentFuel();
   const d    = new Date(r['Data']);
   const dStr = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
   document.getElementById('modal-title').textContent    = '✏️ Editar Abastecimento';
@@ -788,6 +842,12 @@ function submitForm(e) {
   const litros = parseDecimal(document.getElementById('f-litros').value);
   const valor  = parseDecimal(document.getElementById('f-valor').value);
   const kmTot  = parseDecimal(document.getElementById('f-kmtotal').value);
+  const fuelInput = document.getElementById('f-comb');
+  if (!fuelInput.value) {
+    showToast('⚠️ Selecione o combustível', 'err');
+    fuelInput.focus();
+    return;
+  }
 
   for (const [id, value, label, decimal] of [
     ['f-litros', litros, 'Litros', true],
@@ -879,27 +939,28 @@ function renderAnalytics(data) {
     <div class="summary-card">
       <div class="summary-icon">💸</div>
       <div class="summary-val" style="color:var(--blue)">${formatBRL(totalGasto)}</div>
-      <div class="summary-lbl">Total gasto em combustível</div>
+      <div class="summary-lbl">Total gasto no histórico</div>
     </div>
     <div class="summary-card">
       <div class="summary-icon">💧</div>
       <div class="summary-val" style="color:var(--purple)">${formatNumber(totalLitros, 1)} L</div>
-      <div class="summary-lbl">Total de litros abastecidos</div>
+      <div class="summary-lbl">Total de litros no histórico</div>
     </div>
     <div class="summary-card">
       <div class="summary-icon">⚡</div>
       <div class="summary-val" style="color:var(--green)">${avgKml ? formatNumber(avgKml, 2)+' km/L' : '—'}</div>
-      <div class="summary-lbl">Eficiência média (sem parciais)</div>
+      <div class="summary-lbl">Eficiência média no histórico (sem parciais)</div>
     </div>
     <div class="summary-card">
       <div class="summary-icon">🏷️</div>
       <div class="summary-val" style="color:var(--amber)">${avgPreco ? formatBRL(avgPreco) : '—'}</div>
-      <div class="summary-lbl">Preço médio por litro</div>
+      <div class="summary-lbl">Preço médio por litro no histórico</div>
     </div>`;
 
   const months = {};
   data.forEach(r => {
     const d   = new Date(r['Data']);
+    if (!Number.isFinite(d.getTime())) return;
     const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
     if (!months[key]) months[key] = {
       key, year:d.getFullYear(), month:d.getMonth(),
@@ -913,9 +974,11 @@ function renderAnalytics(data) {
   });
 
   const sorted   = Object.values(months).sort((a,b) => b.key.localeCompare(a.key));
-  const maxValor = Math.max(...sorted.map(m => m.valor));
+  const maxValor = Math.max(0, ...sorted.map(m => m.valor));
+  trendMonths = sorted.slice(0, 6).reverse();
+  renderTrend();
 
-  document.getElementById('monthly-list').innerHTML = sorted.map(m => {
+  document.getElementById('monthly-list').innerHTML = sorted.length ? sorted.map(m => {
     const moName  = new Date(m.year,m.month,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
     const avgKml  = m.kmlCount   ? formatNumber(m.kmlSum/m.kmlCount, 1)      : '—';
     const avgPrec = m.precoCount ? formatBRL(m.precoSum/m.precoCount)         : '—';
@@ -935,6 +998,46 @@ function renderAnalytics(data) {
         </div>
         <div class="bar-wrap"><div class="bar-fill" style="width:${barPct}%"></div></div>
       </div>`;
+  }).join('') : '<div class="empty"><p>Nenhum abastecimento para analisar ainda.</p></div>';
+}
+
+function selectTrendMetric(metric) {
+  if (!['spend', 'price', 'efficiency'].includes(metric)) return;
+  trendMetric = metric;
+  renderTrend();
+}
+
+function renderTrend() {
+  const metrics = {
+    spend: { label: 'Gasto', color: 'var(--blue)', value: m => m.valor, format: v => formatBRL(v) },
+    price: { label: 'Preço por litro', color: 'var(--amber)',
+      value: m => m.precoCount ? m.precoSum / m.precoCount : null, format: v => `${formatBRL(v)}/L` },
+    efficiency: { label: 'Eficiência', color: 'var(--green)',
+      value: m => m.kmlCount ? m.kmlSum / m.kmlCount : null, format: v => `${formatNumber(v, 1)} km/L` }
+  };
+  for (const key of Object.keys(metrics)) {
+    const button = document.getElementById('trend-' + key);
+    button.classList.toggle('active', key === trendMetric);
+    button.setAttribute('aria-pressed', String(key === trendMetric));
+  }
+  const chart = document.getElementById('trend-chart');
+  if (!trendMonths.length) {
+    chart.innerHTML = '<p class="trend-empty">Registre um abastecimento para ver a evolução.</p>';
+    return;
+  }
+  const metric = metrics[trendMetric];
+  const values = trendMonths.map(metric.value);
+  const max = Math.max(0, ...values.filter(v => v !== null));
+  chart.setAttribute('aria-label', `${metric.label} por mês, até seis meses com registros`);
+  chart.innerHTML = trendMonths.map((month, i) => {
+    const value = values[i];
+    const width = value !== null && max > 0 ? (value / max * 100).toFixed(1) : 0;
+    const monthName = new Date(month.year, month.month, 1).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
+    return `<div class="trend-row">
+      <span class="trend-month">${monthName}</span>
+      <div class="trend-track"><div class="trend-fill" style="width:${width}%;background:${metric.color}"></div></div>
+      <span class="trend-value">${value === null ? '—' : metric.format(value)}</span>
+    </div>`;
   }).join('');
 }
 /* [/ANALYTICS] */
