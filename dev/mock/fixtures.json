@@ -1,0 +1,47 @@
+{
+  "records": {
+    "Luccas": [
+      {
+        "ID": "demo-r1",
+        "Data": "2026-08-11T10:30:00",
+        "KM_Total": 51000,
+        "Litros": 35.2,
+        "Valor": 202.4,
+        "Parcial?": false,
+        "Posto": "Posto Exemplo Norte",
+        "Tipo Combustível": "Gasolina"
+      },
+      {
+        "ID": "demo-r2",
+        "Data": "2026-09-22T18:15:00",
+        "KM_Total": 51300,
+        "Litros": 38.5,
+        "Valor": 217.91,
+        "Parcial?": false,
+        "Posto": "Posto Exemplo Centro",
+        "Tipo Combustível": "Etanol"
+      }
+    ],
+    "Josy": [
+      {
+        "ID": "demo-r3",
+        "Data": "2026-09-12T09:00:00",
+        "KM_Total": 12000,
+        "Litros": 29,
+        "Valor": 165.3,
+        "Parcial?": false,
+        "Posto": "Posto Exemplo Sul",
+        "Tipo Combustível": "Gasolina"
+      }
+    ]
+  },
+  "postos": {
+    "Luccas": [
+      { "id": "demo-p1", "nome": "Posto Exemplo Norte" },
+      { "id": "demo-p2", "nome": "Posto Exemplo Centro" }
+    ],
+    "Josy": [
+      { "id": "demo-p3", "nome": "Posto Exemplo Sul" }
+    ]
+  }
+}

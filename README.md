@@ -1,58 +1,58 @@
-# abastecimentos
+# Abastecimentos
 
-## Visão geral
+PWA pessoal para registrar abastecimentos e consultar custos, consumo, histórico e postos. Frontend estático em HTML/CSS/JS; a versão publicada usa uma API Google Apps Script. **O backend local abaixo usa apenas dados fictícios em memória: não acessa a planilha nem a API real.**
 
-Este projeto é uma PWA leve para controlar abastecimentos de veículos, com histórico de registros, análises de consumo, cadastro de postos e suporte a desenvolvimento local via mock backend.
+## Estrutura
 
-O app original usa Google Apps Script para backend, mas o repositório também inclui um servidor de mock local (`mock/server.js`) para testes offline e desenvolvimento rápido.
+| Local | Finalidade |
+| --- | --- |
+| `index.html`, `styles.css`, `script.js`, `shim.js`, `manifest.json`, `icon.svg` | Arquivos públicos mantidos na raiz porque o GitHub Pages publica a partir dela e usa URLs relativas. |
+| `dev/mock/` | Servidor local e fixtures sintéticas, sem dependências externas. Não publica nem persiste alterações. |
+| `tests/` | Testes Node do comportamento do app e da API local. |
+| `docs/reports/` | Auditorias e relatórios datados. |
+| `docs/reference/` | Material de referência fornecido para auditorias. |
+| `GAS/` | Cópia do backend Apps Script; não é necessária para rodar o mock. Ao alterar essa pasta, copiar as mudanças para o GAS manualmente. |
 
-## Principais funcionalidades
+## Testar a interface localmente
 
-- Cadastro de abastecimentos com data, posto, preço, litros e quilometragem
-- Histórico agrupado por mês/ano
-- Apresentação de métricas rápidas (mês atual, km/l, preço médio)
-- Ordenação de histórico por recente/antigo
-- Cache local para reduzir requisições e permitir atualização manual
-- Localização para Brasil (formatação de moeda, datas e números)
-- Página de gerenciamento de postos
-- Mock backend que recalcule valores de `KM_Trip` e `KM/L Trip`
-
-## Estrutura do projeto
-
-- `index.html` - interface principal da aplicação
-- `styles.css` - estilos visuais e layout
-- `script.js` - lógica do app, carregamento de dados, renderização, cache e controle de navegação
-- `shim.js` - adaptador que emula `google.script.run` e envia requisições para o backend correto
-- `mock/server.js` - servidor de mock Express para desenvolvimento local
-- `mock/mock-data.json` - dados de exemplo usados pelo mock backend
-- `manifest.json` - configuração da PWA
-- `docs/reports/` - auditorias e planos de execução datados (`AAAA-MM-DD-assunto.md`)
-
-## Uso local
-
-1. Inicie o mock backend:
+Requer **Node.js 18+** (sem `npm install`, Express, Live Server ou variáveis de ambiente):
 
 ```powershell
-cd mock
-npm install
-npm start
+node dev\mock\server.js
 ```
 
-2. Abra a aplicação no navegador apontando para um servidor local ou abra `index.html` via Live Server.
+Abra **<http://localhost:5000/?mock=1>** em outra aba (se seu navegador não resolver `localhost`, use `http://127.0.0.1:5000/?mock=1`). A mensagem **AMBIENTE DE TESTE** indica que a página não usa a API real. Confira <http://localhost:5000/__mock/health> se não carregar; o servidor deve responder `{"status":"ok","environment":"mock",...}`. Para parar, pressione Ctrl+C no terminal. Se a porta 5000 já estiver ocupada, pare o processo que a usa antes de iniciar; o cliente local usa essa porta fixa.
 
-3. O `shim.js` detecta automaticamente `localhost` e usa o mock backend em vez do Apps Script.
+> **Não abra `index.html` com `file://` ou Live Server para avaliar o mock.** O servidor local entrega a página e a API na mesma origem, evitando bloqueios de CORS e impedindo que o navegador acesse o GAS real. Sem o servidor, requisições em modo mock falham; nunca passam para produção.
 
-## Como funciona o mock
+### Cenários reproduzíveis
 
-- Em desenvolvimento local, `shim.js` usa `http://localhost:5000/exec`
-- Em produção, o app usa o endpoint real do Apps Script
-- O mock backend responde às ações do frontend e recalcula automaticamente os campos derivados de quilometragem
+| URL local | Resultado |
+| --- | --- |
+| `/?mock=1` | Histórico e postos fictícios, dois perfis; criação/edição/exclusão somente em memória. |
+| `/?mock=1&scenario=empty` | Histórico e postos vazios. |
+| `/?mock=1&scenario=read-error` | Leitura da API falha com HTTP 503; útil para estados de erro. |
+| `/?mock=1&scenario=write-error` | Leituras funcionam, gravações falham com HTTP 503. |
+| `/?mock=1&scenario=slow` | Cada resposta da API atrasa cerca de 1,4 s; testar loading. |
 
-## Notas importantes
+Para restaurar todos os cenários às fixtures originais, mantenha o servidor rodando e execute:
 
-- Não inclua chaves secretas ou tokens sensíveis neste repositório. O token atual em `shim.js` é só para desenvolvimento/local.
-- Se for publicar o app online, verifique se `shim.js` não está apontando para `localhost`.
+```powershell
+Invoke-RestMethod -Method Post http://127.0.0.1:5000/__mock/reset
+```
 
-## Contato
+Em seguida, recarregue `/?mock=1&reset=1` (adicione `&reset=1` à URL de outros cenários) para limpar **apenas os caches locais de registros/postos** do app nesse navegador. Também é possível parar e reiniciar o servidor: tudo é descartado, sem arquivos de dados modificados. O modo de teste separa os caches por cenário; o perfil selecionado continua lembrado no navegador até tocar em “Trocar usuário” ou limpar os dados do site.
 
-- Projeto mantido por Luccas
+Não use informações pessoais nas fixtures versionadas. Para medir UI, use 433×762 CSS px (DPR do aparelho principal: 2,81) e 320×568 como caso compacto. Simulação no desktop não substitui brilho externo, teclado virtual, áreas seguras ou toque no dispositivo.
+
+## Testes automatizados
+
+```powershell
+node --test tests\*.test.js
+```
+
+Os testes da API iniciam seu próprio servidor em porta aleatória, sem alterar o mock aberto em `:5000`. Para a interface, navegue e faça operações somente no endereço local. O mock aproxima o contrato usado por `shim.js`, mas **não é uma réplica integral do cálculo no Google Apps Script**: valide decisões de negócio separadamente no backend.
+
+## Publicação
+
+Os arquivos públicos da raiz continuam no GitHub Pages; `dev/`, `tests/` e `docs/` são apenas material de desenvolvimento. A página publicada sem `?mock=1` usa o endpoint de produção configurado em `shim.js`. **Não publique a página com `?mock=1` como URL de uso real.** A cópia em `GAS/` não foi modificada pela infraestrutura de mock.

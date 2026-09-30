@@ -294,3 +294,14 @@ test('monthly trends show up to six chronological months with an explicit metric
   a.run('renderAnalytics([])');
   assert.match(chart.innerHTML, /Registre um abastecimento/);
 });
+
+test('cache keys isolate mock scenarios including mock mode on a published host', () => {
+  const a = app();
+  a.context.URLSearchParams = URLSearchParams;
+  a.context.window = { location: { hostname: 'example.org', protocol: 'https:', search: '' } };
+  assert.equal(a.run('getCacheKey("Luccas", "records")'), 'fuelapp_cache_Luccas_records');
+  a.context.window.location.search = '?mock=1&scenario=empty';
+  assert.equal(a.run('getCacheKey("Luccas", "records")'), 'fuelapp_cache_Luccas_records_mock_empty');
+  a.context.window.location.search = '?mock=1&scenario=write-error';
+  assert.equal(a.run('getCacheKey("Luccas", "records")'), 'fuelapp_cache_Luccas_records_mock_write-error');
+});
