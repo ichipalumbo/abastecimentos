@@ -894,6 +894,14 @@ function submitForm(e) {
     return;
   }
 
+  const editId = document.getElementById('f-id').value;
+  const previousKm = findPreviousKm(document.getElementById('f-data').value, editId);
+  if (previousKm !== null && kmTot <= previousKm) {
+    setFieldError('f-kmtotal', `O KM Total deve ser maior que o anterior (${formatNumber(previousKm, 0)}).`);
+    document.getElementById('f-kmtotal').focus();
+    return;
+  }
+
   const btn = document.getElementById('btn-salvar');
   btn.disabled = true; btn.textContent = '⏳ Salvando...';
 
@@ -1103,18 +1111,7 @@ function calcKm() {
   const editId  = document.getElementById('f-id').value;
   const previousEl = document.getElementById('previous-km');
 
-  // 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora)
-  const dataAtual = new Date(dataVal).getTime();
-  let prevKmTotal = null, prevTime = -Infinity;
-
-  records.forEach(r => {
-    if (editId && String(r['ID']) === String(editId)) return; // ignora o próprio
-    const t  = new Date(r['Data']).getTime();
-    const km = +r['KM_Total'] || 0;
-    if (km > 0 && t < dataAtual && t > prevTime) {
-      prevTime = t; prevKmTotal = km;
-    }
-  });
+  const prevKmTotal = findPreviousKm(dataVal, editId);
 
   previousEl.textContent = prevKmTotal === null ? 'Sem hodômetro anterior' :
     `Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km`;
@@ -1147,6 +1144,24 @@ function calcKm() {
     : '—';
 }
 /* [/CALC-KM-PREVIEW] */
+
+/* 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora), ignorando o próprio registro em edição */
+function findPreviousKm(dataVal, editId) {
+  const dataAtual = new Date(dataVal).getTime();
+  if (!Number.isFinite(dataAtual)) return null;
+  let prevKmTotal = null;
+  let prevTime = -Infinity;
+  records.forEach(r => {
+    if (editId && String(r['ID']) === String(editId)) return;
+    const t = new Date(r['Data']).getTime();
+    const km = +r['KM_Total'];
+    if (Number.isFinite(t) && Number.isFinite(km) && km > 0 && t < dataAtual && t > prevTime) {
+      prevTime = t;
+      prevKmTotal = km;
+    }
+  });
+  return prevKmTotal;
+}
 
 function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 

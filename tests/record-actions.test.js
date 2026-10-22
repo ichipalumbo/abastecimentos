@@ -289,6 +289,19 @@ test('fuel selection is required before sending a new record', () => {
   assert.match(a.elements.get('f-comb-error').textContent, /combustível/i);
 });
 
+test('an odometer at or below the previous reading is blocked before sending', () => {
+  const a = app();
+  a.run('document.getElementById("f-comb").value = "Gasolina"');
+  a.run('document.getElementById("f-data").value = "2026-09-29T12:00"; document.getElementById("f-litros").value = "12,5"; document.getElementById("f-valor").value = "60"; document.getElementById("f-kmtotal").value = "600"');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.operations.length, 0);
+  assert.equal(a.elements.get('f-kmtotal').focused, true);
+  assert.match(a.elements.get('f-kmtotal-error').textContent, /anterior/);
+  a.run('document.getElementById("f-kmtotal").value = "650"');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.operations.some(op => op.kind === 'add'), true);
+});
+
 test('monthly trends show up to six chronological months with an explicit metric', () => {
   const a = app();
   a.data[0]['KM/L Trip'] = 12.5;
