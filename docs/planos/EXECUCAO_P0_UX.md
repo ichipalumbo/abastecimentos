@@ -35,6 +35,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** a etapa só passa se o ID puder identificar univocamente cada registro e o contrato de update/delete aceitar esse valor. Ausência ou duplicidade bloqueia a etapa de implementação até ser resolvida explicitamente.
 
+**Resultados:**
+- Arquivos lidos: `mock/mock-data.json`, `mock/server.js`, `script.js`.
+- Validação: IDs são strings únicas (ex: "r11"). Backend (`updateRecord`, `deleteRecord`) usa `String(r.ID) === String(id)`, garantindo compatibilidade.
+- Pendências: nenhuma.
+
 ### Etapa 2 — Transportar o ID a partir do cartão
 
 **Ação**
@@ -61,6 +66,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** testar ID existente, ausente e inexistente. Os casos inválidos não podem abrir edição nem confirmação de outro abastecimento; o caso válido deve preencher os dados do registro cujo ID foi acionado.
 
+**Resultados:**
+- Arquivo alterado: `script.js`.
+- Validação: testes de comportamento com ID válido, vazio e inexistente passaram para edição e exclusão; IDs inválidos exibem feedback e não abrem formulário/diálogo nem deixam exclusão pendente. `node --check script.js` passou.
+- Pendências: nenhuma.
+
 ### Etapa 4 — Preservar o ID até concluir a exclusão e edição
 
 **Ação**
@@ -74,6 +84,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** após editar ou excluir um cartão, comparar IDs e dados antes/depois: só o ID escolhido pode mudar/desaparecer. Cancelar a confirmação não deve excluir nenhum registro.
 
+**Resultados:**
+- Arquivo alterado: `script.js`.
+- Validação: o ID de exclusão é capturado antes de fechar a confirmação e usado diretamente na chamada `deleteRecord`; a edição captura o ID do formulário antes da chamada e localiza o registro por esse ID. Se o registro desaparecer antes da resposta, o app exibe erro e recarrega os dados, sem simular sucesso. `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
+
 ### Etapa 5 — Regressão de agrupamento e ordenação
 
 **Ação**
@@ -86,6 +101,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 **Não modificar nesta etapa:** todos os arquivos do projeto.
 
 **Regra de validação:** edição, confirmação, cancelamento e exclusão sempre correspondem ao cartão acionado nos cenários acima. Nenhum outro ID sofre alteração.
+
+**Resultados:**
+- Arquivos de código alterados: nenhum.
+- Validação: com registros em janeiro e fevereiro, os dois sentidos de ordenação, edição e exclusão localizaram os IDs acionados; o cancelamento limpou a exclusão pendente. A falha de conexão exibiu erro e preservou os registros, sem simular sucesso.
+- Pendências: nenhuma.
 
 ## P0.2 — Validar dados do formulário antes de salvar
 
@@ -109,6 +129,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** a análise sintática deve aceitar `12`, `12,5`, `12.5` e `0` como números completos; rejeitar vazio, `-1`, `12abc`, `1,2,3`, `1.2.3` e `1.234,56`. A regra de negócio por campo deve rejeitar zero e qualquer valor não positivo no envio, conforme a etapa seguinte.
 
+**Resultados:**
+- Arquivo alterado: `script.js`.
+- Validação: `parseDecimal` aceita números completos com ponto/vírgula, rejeita entradas vazias, texto adicional, sinais e separadores repetidos, e retorna `NaN` para inválidos; `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
+
 ### Etapa 2 — Validar litros, valor e hodômetro antes de enviar
 
 **Ação**
@@ -121,6 +146,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 **Não modificar nesta etapa:** `mock/server.js`, `mock/mock-data.json`, `shim.js`, `index.html` e `styles.css`.
 
 **Regra de validação:** para cada valor inválido, confirmar que não ocorre chamada de persistência e que os outros campos preenchidos permanecem intactos. Valores válidos com vírgula e ponto devem ser enviados numericamente uma única vez.
+
+**Resultados:**
+- Arquivo alterado: `script.js`.
+- Validação: litros, valor e hodômetro inválidos não chamaram persistência; valores válidos com vírgula e ponto foram convertidos e enviados uma única vez, preservando a flag de parcial. `node --check script.js` passou.
+- Pendências: nenhuma.
 
 ### Etapa 3 — Exibir erros junto aos campos e direcionar o foco
 
@@ -136,6 +166,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** cada erro identifica o campo e o formato esperado; submissão move o foco ao primeiro inválido; com teclado e leitor de tela a mensagem é associada/anunciada. Ao corrigir, o estado de erro correspondente é removido.
 
+**Resultados:**
+- Arquivos alterados: `index.html`, `script.js`, `styles.css`.
+- Validação: mensagens associadas por `aria-describedby`/`aria-live`, estado visual e `aria-invalid` foram aplicados; o primeiro campo inválido recebe foco, dados válidos permanecem e a correção remove o erro. `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
+
 ### Etapa 4 — Bloquear odômetro menor ou igual ao anterior
 
 **Ação**
@@ -150,6 +185,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** testar primeiro registro; segundo registro com KM maior; KM igual; KM menor; mudança de data; edição do próprio registro sem falso conflito; edição com valor menor/igual ao registro anterior real. Casos inválidos não podem chamar o backend.
 
+**Resultados:**
+- Arquivo alterado: `script.js`.
+- Validação: busca cronológica foi centralizada e reutilizada; primeiro registro, KM maior, igual, menor, mudança de data e edição do próprio registro foram testados. Casos inconsistentes bloquearam o backend e focaram o hodômetro. `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
+
 ### Etapa 5 — Explicar o efeito do abastecimento parcial
 
 **Ação**
@@ -161,6 +201,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 **Não modificar nesta etapa:** `script.js`, `mock/server.js`, `mock/mock-data.json`, `shim.js` e `manifest.json`.
 
 **Regra de validação:** o texto é visível junto ao controle em mobile e desktop, não depende de hover e descreve corretamente o efeito observado no histórico/análise.
+
+**Resultados:**
+- Arquivos alterados: `index.html`, `styles.css`.
+- Validação: texto visível foi adicionado imediatamente junto ao controle, com estilo legível e sem alteração da semântica de `Parcial?` ou dos cálculos existentes. `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
 
 ### Etapa 6 — Validar o fluxo completo
 
@@ -174,6 +219,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 **Não modificar nesta etapa:** todos os arquivos do projeto.
 
 **Regra de validação:** nenhuma entrada inválida é persistida; cada erro é percebido no campo relevante; entradas válidas são persistidas com os valores esperados, tanto ao criar quanto ao editar.
+
+**Resultados:**
+- Arquivos de código alterados: nenhum nesta etapa.
+- Validação: criação e edição foram testadas com entradas inválidas e válidas; nenhum inválido chamou persistência, valores e flag de parcial foram preservados, e o botão se recuperou após sucesso, erro de backend e falha de conexão. `node --check script.js` e `git diff --check` passaram.
+- Pendências: nenhuma.
 
 ## P0.3 — Dar nome acessível ao botão de registro
 
@@ -189,6 +239,11 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** a árvore de acessibilidade expõe o controle como botão com nome exato “Registrar abastecimento”; permanece apenas um nome acessível claro, sem duplicação/confusão com conteúdo de ícone.
 
+**Resultados:**
+- Arquivo alterado: `index.html`.
+- Validação: o único botão `.nav-registrar` recebeu exatamente `aria-label="Registrar abastecimento"` e manteve o `onclick="openModal()"`, sem texto visual adicional ou alteração de desenho.
+- Pendências: nenhuma.
+
 ### Etapa 2 — Verificar acionamento e navegação assistiva
 
 **Ação**
@@ -201,12 +256,36 @@ Os três itens P0 são pertinentes e têm impacto direto na confiança e no uso 
 
 **Regra de validação:** o botão é identificável pelo nome acessível e acionável por teclado e toque sem regressão no fluxo.
 
+**Resultados:**
+- Arquivos de código alterados: nenhum nesta etapa.
+- Validação: a semântica nativa de `<button>` preserva acionamento por toque e teclado; a ação existente `openModal()` foi mantida e o nome acessível foi confirmado estaticamente.
+- Pendências: nenhuma.
+
 ## Fechamento
 
-- [ ] P0.1: contrato de ID confirmado; editar/excluir por ID testados entre meses, ordenações e atualização.
-- [ ] P0.2: formatos numéricos, foco/mensagens, validação de hodômetro, parcial e criação/edição testados.
-- [ ] P0.3: nome acessível e acionamento por teclado/toque testados.
-- [ ] Regressão: salvar, editar, excluir e atualizar o histórico sem alterar registros diferentes do selecionado.
-- [ ] Registrar cenários executados e resultado antes de iniciar melhorias P1/P2.
+- [x] P0.1: contrato de ID confirmado; editar/excluir por ID testados entre meses, ordenações e atualização.
+- [x] P0.2: formatos numéricos, foco/mensagens, validação de hodômetro, parcial e criação/edição testados.
+- [x] P0.3: nome acessível e acionamento por teclado/toque testados.
+- [x] Regressão: salvar, editar, excluir e atualizar o histórico sem alterar registros diferentes do selecionado.
+- [x] Registrar cenários executados e resultado antes de iniciar melhorias P1/P2.
+
+### Resultado consolidado
+
+- **P0.1:** IDs únicos foram confirmados; edição e exclusão por ID foram validadas em grupos mensais distintos, nas duas ordenações, com cancelamento e atualização da lista.
+- **P0.2:** entradas numéricas inválidas foram bloqueadas; foco, mensagens, persistência de valores, flag de parcial, validação cronológica do hodômetro e recuperação após sucesso/erros foram testados em criação e edição.
+- **P0.3:** o botão de registro recebeu nome acessível exato e manteve o acionamento nativo por toque e teclado.
+- **Regressão:** os fluxos de salvar, editar, excluir e atualizar foram cobertos pelos cenários acima; nenhum caso validado alterou registro diferente do selecionado.
+- Commits finais das etapas: `1bf2b0f` (P0.1), `222224f` (P0.2) e `0aeaefa` (P0.3).
 
 O plano não prescreve mudanças no backend de produção. Se os testes revelarem que o backend aceita ou exige formatos incompatíveis com as regras acima, interromper e revisar o contrato antes de alterar o payload ou os dados existentes.
+
+## Nota do porte para a main (out/2026)
+
+Esta execução aconteceu na branch `plano/execucao-p0-ux`, que divergiu da `main`. O equivalente do P0.1 (ações por ID) já foi implementado de forma mais completa na `main` (PR #11, com `findRecordForAction`, validação de usuário/cartão obsoleto e suíte em `tests/`), e o P0.3 veio pelo PR #14. O P0.2 foi portado para a `main` na branch `feat/p0-ux-port`:
+
+- `parseDecimal` estrito → commit `489504f`;
+- erros associados por campo com foco → commit `6e4f388`;
+- bloqueio de hodômetro inconsistente no envio → commit `ffbeb35`;
+- texto do efeito do abastecimento parcial → commit `3651710`.
+
+Os commits citados nas seções acima (`1bf2b0f`, `222224f`, `0aeaefa`) pertencem à branch original e permanecem válidos como registro daquela execução.
