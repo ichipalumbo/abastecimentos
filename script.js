@@ -838,6 +838,26 @@ function confirmDeleteRecord() {
 /* [/DELETE-RECORD] */
 
 /* [SUBMIT-FORM] ══════════════════════════════ */
+function clearFieldError(inputId) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(`${inputId}-error`);
+  if (input) {
+    input.classList.remove('field-invalid');
+    input.removeAttribute('aria-invalid');
+  }
+  if (error) error.textContent = '';
+}
+
+function setFieldError(inputId, message) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(`${inputId}-error`);
+  if (input) {
+    input.classList.add('field-invalid');
+    input.setAttribute('aria-invalid', 'true');
+  }
+  if (error) error.textContent = message;
+}
+
 function submitForm(e) {
   e.preventDefault();
 
@@ -848,22 +868,37 @@ function submitForm(e) {
   const valor  = parseDecimal(document.getElementById('f-valor').value);
   const kmTot  = parseDecimal(document.getElementById('f-kmtotal').value);
   const fuelInput = document.getElementById('f-comb');
-  if (!fuelInput.value) {
-    showToast('⚠️ Selecione o combustível', 'err');
-    fuelInput.focus();
-    return;
-  }
 
-  for (const [id, value, label, decimal] of [
-    ['f-litros', litros, 'Litros', true],
-    ['f-valor', valor, 'Valor total', true],
-    ['f-kmtotal', kmTot, 'KM total', false]
+  clearFieldError('f-comb');
+  clearFieldError('f-litros');
+  clearFieldError('f-valor');
+  clearFieldError('f-kmtotal');
+  const invalidFields = [];
+  if (!fuelInput.value) {
+    setFieldError('f-comb', 'Selecione o combustível.');
+    invalidFields.push('f-comb');
+  }
+  for (const [id, value, decimal] of [
+    ['f-litros', litros, true],
+    ['f-valor', valor, true],
+    ['f-kmtotal', kmTot, false]
   ]) {
     const input = document.getElementById(id);
     const valid = decimal ? /^\d+(?:[.,]\d+)?$/.test(String(input.value).trim()) : Number.isInteger(value);
     if (valid && value > 0) continue;
-    showToast(`⚠️ Confira ${label}`, 'err');
-    input.focus();
+    setFieldError(id, decimal ? 'Informe um número maior que zero.' : 'Informe um KM Total inteiro e positivo.');
+    invalidFields.push(id);
+  }
+  if (invalidFields.length) {
+    document.getElementById(invalidFields[0]).focus();
+    return;
+  }
+
+  const editId = document.getElementById('f-id').value;
+  const previousKm = findPreviousKm(document.getElementById('f-data').value, editId);
+  if (previousKm !== null && kmTot <= previousKm) {
+    setFieldError('f-kmtotal', `O KM Total deve ser maior que o anterior (${formatNumber(previousKm, 0)}).`);
+    document.getElementById('f-kmtotal').focus();
     return;
   }
 
@@ -1076,18 +1111,7 @@ function calcKm() {
   const editId  = document.getElementById('f-id').value;
   const previousEl = document.getElementById('previous-km');
 
-  // 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora)
-  const dataAtual = new Date(dataVal).getTime();
-  let prevKmTotal = null, prevTime = -Infinity;
-
-  records.forEach(r => {
-    if (editId && String(r['ID']) === String(editId)) return; // ignora o próprio
-    const t  = new Date(r['Data']).getTime();
-    const km = +r['KM_Total'] || 0;
-    if (km > 0 && t < dataAtual && t > prevTime) {
-      prevTime = t; prevKmTotal = km;
-    }
-  });
+  const prevKmTotal = findPreviousKm(dataVal, editId);
 
   previousEl.textContent = prevKmTotal === null ? 'Sem hodômetro anterior' :
     `Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km`;
@@ -1121,6 +1145,24 @@ function calcKm() {
 }
 /* [/CALC-KM-PREVIEW] */
 
+/* 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora), ignorando o próprio registro em edição */
+function findPreviousKm(dataVal, editId) {
+  const dataAtual = new Date(dataVal).getTime();
+  if (!Number.isFinite(dataAtual)) return null;
+  let prevKmTotal = null;
+  let prevTime = -Infinity;
+  records.forEach(r => {
+    if (editId && String(r['ID']) === String(editId)) return;
+    const t = new Date(r['Data']).getTime();
+    const km = +r['KM_Total'];
+    if (Number.isFinite(t) && Number.isFinite(km) && km > 0 && t < dataAtual && t > prevTime) {
+      prevTime = t;
+      prevKmTotal = km;
+    }
+  });
+  return prevKmTotal;
+}
+
 function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
 function showToast(msg, type) {
@@ -1144,13 +1186,13 @@ function hideLoader() {
 }
 /* [/LOADER-OVERLAY] */
 
-/* [PARSE-DECIMAL] — aceita vírgula OU ponto, sempre retorna número */
+/* [PARSE-DECIMAL] — aceita somente um número decimal completo */
 function parseDecimal(valor) {
-  if (valor === null || valor === undefined || valor === '') return 0;
-  // troca vírgula por ponto e remove espaços
-  const limpo = String(valor).trim().replace(',', '.');
-  const n = parseFloat(limpo);
-  return isNaN(n) ? 0 : n;
+  if (valor === null || valor === undefined) return NaN;
+  const limpo = String(valor).trim();
+  if (!/^\d+(?:[.,]\d*)?$/.test(limpo)) return NaN;
+  const n = Number(limpo.replace(',', '.'));
+  return Number.isFinite(n) ? n : NaN;
 }
 /* [/PARSE-DECIMAL] */
 
