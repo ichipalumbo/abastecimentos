@@ -838,6 +838,26 @@ function confirmDeleteRecord() {
 /* [/DELETE-RECORD] */
 
 /* [SUBMIT-FORM] ══════════════════════════════ */
+function clearFieldError(inputId) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(`${inputId}-error`);
+  if (input) {
+    input.classList.remove('field-invalid');
+    input.removeAttribute('aria-invalid');
+  }
+  if (error) error.textContent = '';
+}
+
+function setFieldError(inputId, message) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(`${inputId}-error`);
+  if (input) {
+    input.classList.add('field-invalid');
+    input.setAttribute('aria-invalid', 'true');
+  }
+  if (error) error.textContent = message;
+}
+
 function submitForm(e) {
   e.preventDefault();
 
@@ -848,22 +868,29 @@ function submitForm(e) {
   const valor  = parseDecimal(document.getElementById('f-valor').value);
   const kmTot  = parseDecimal(document.getElementById('f-kmtotal').value);
   const fuelInput = document.getElementById('f-comb');
-  if (!fuelInput.value) {
-    showToast('⚠️ Selecione o combustível', 'err');
-    fuelInput.focus();
-    return;
-  }
 
-  for (const [id, value, label, decimal] of [
-    ['f-litros', litros, 'Litros', true],
-    ['f-valor', valor, 'Valor total', true],
-    ['f-kmtotal', kmTot, 'KM total', false]
+  clearFieldError('f-comb');
+  clearFieldError('f-litros');
+  clearFieldError('f-valor');
+  clearFieldError('f-kmtotal');
+  const invalidFields = [];
+  if (!fuelInput.value) {
+    setFieldError('f-comb', 'Selecione o combustível.');
+    invalidFields.push('f-comb');
+  }
+  for (const [id, value, decimal] of [
+    ['f-litros', litros, true],
+    ['f-valor', valor, true],
+    ['f-kmtotal', kmTot, false]
   ]) {
     const input = document.getElementById(id);
     const valid = decimal ? /^\d+(?:[.,]\d+)?$/.test(String(input.value).trim()) : Number.isInteger(value);
     if (valid && value > 0) continue;
-    showToast(`⚠️ Confira ${label}`, 'err');
-    input.focus();
+    setFieldError(id, decimal ? 'Informe um número maior que zero.' : 'Informe um KM Total inteiro e positivo.');
+    invalidFields.push(id);
+  }
+  if (invalidFields.length) {
+    document.getElementById(invalidFields[0]).focus();
     return;
   }
 
