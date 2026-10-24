@@ -31,6 +31,26 @@ function app() {
     querySelectorAll() { return this.cards; }
   };
   elements.set('list', list);
+  const postosList = {
+    cards: [],
+    set innerHTML(html) {
+      this.html = html;
+      this.cards = (html || '').split('<div class="posto-card">').slice(1).map(chunk => {
+        const labels = {};
+        return {
+          labels,
+          querySelector(selector) {
+            return {
+              setAttribute(name, value) { labels[selector] = value; }
+            };
+          }
+        };
+      });
+    },
+    get innerHTML() { return this.html; },
+    querySelectorAll() { return this.cards; }
+  };
+  elements.set('postos-list', postosList);
   function element(id) {
     if (!elements.has(id)) {
       elements.set(id, {
@@ -38,8 +58,8 @@ function app() {
         textContent: '',
         style: {},
         focus() { this.focused = true; },
-        setAttribute() {},
-        removeAttribute() {},
+        setAttribute(name, value) { this[name] = value; },
+        removeAttribute(name) { delete this[name]; },
         classList: {
           values: new Set(),
           add(name) { this.values.add(name); },
@@ -65,17 +85,28 @@ function app() {
     },
     updateRecord(user, record) { operations.push({ kind: 'update', user, record, success: this.success, failure: this.failure }); },
     addRecord(user, record) { operations.push({ kind: 'add', user, record, success: this.success, failure: this.failure }); },
-    getRecords(user) { operations.push({ kind: 'records', user, success: this.success }); },
-    getPostos(user) { operations.push({ kind: 'postos', user, success: this.success }); }
+    getRecords(user) { operations.push({ kind: 'records', user, success: this.success, failure: this.failure }); },
+    getPostos(user) { operations.push({ kind: 'postos', user, success: this.success, failure: this.failure }); },
+    deletePosto(user, id) { operations.push({ kind: 'deletePosto', user, id, success: this.success, failure: this.failure }); }
   };
+  let timerId = 0;
+  const timeouts = [];
+  const clearedTimeouts = [];
   const context = vm.createContext({
-    document: { getElementById: element, addEventListener() {} },
+    document: { getElementById: element, addEventListener() {}, activeElement: null },
     localStorage: {
       getItem() { return null; }, setItem() {},
       removeItem(key) { removedCacheKeys.push(key); }
     },
     google: { script: { run: runner } },
-    setTimeout() {}
+    setTimeout(fn, delay) {
+      const id = ++timerId;
+      timeouts.push({ id, fn, delay });
+      return id;
+    },
+    clearTimeout(id) {
+      clearedTimeouts.push(id);
+    }
   });
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'script.js'), 'utf8'), context);
   const data = [
@@ -88,7 +119,7 @@ function app() {
   ];
   context.data = data;
   vm.runInContext('currentUser = "Luccas"; records = data', context);
-  return { context, elements, list, requests, operations, removedCacheKeys, data, run: code => vm.runInContext(code, context) };
+  return { context, elements, list, requests, operations, removedCacheKeys, timeouts, clearedTimeouts, data, run: code => vm.runInContext(code, context) };
 }
 
 function record(id, date, posto, km) {
@@ -331,4 +362,199 @@ test('cache keys isolate mock scenarios including mock mode on a published host'
   assert.equal(a.run('getCacheKey("Luccas", "records")'), 'fuelapp_cache_Luccas_records_mock_empty');
   a.context.window.location.search = '?mock=1&scenario=write-error';
   assert.equal(a.run('getCacheKey("Luccas", "records")'), 'fuelapp_cache_Luccas_records_mock_write-error');
+});
+test('submitForm blocks regressivo odometer and marks field invalid', () => {
+  const a = app();
+  a.run('document.getElementById("f-comb").value = "Gasolina"');
+  a.run('document.getElementById("f-data").value = "2026-09-29T12:00"');
+  a.run('document.getElementById("f-litros").value = "10"');
+  a.run('document.getElementById("f-valor").value = "50"');
+  // Latest previous record is sep-1 (2026-09-27) with KM 600
+  // Attempting to submit 550 (regressivo)
+  a.run('document.getElementById("f-kmtotal").value = "550"');
+  a.run('submitForm({ preventDefault() {} })');
+
+  assert.equal(a.operations.length, 0); // Blocked!
+  assert.equal(a.elements.get('f-kmtotal').focused, true);
+  assert.equal(a.elements.get('f-kmtotal').classList.contains('is-invalid'), true);
+  assert.equal(a.elements.get('f-kmtotal')['aria-invalid'], 'true');
+  assert.match(a.elements.get('toast').textContent, /deve ser maior que o anterior/);
+
+  // Now fix with forward odometer reading: 650 > 600
+  a.run('document.getElementById("f-kmtotal").value = "650"');
+  a.run('calcKm()');
+  assert.equal(a.elements.get('f-kmtotal').classList.contains('is-invalid'), false);
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.operations.length, 1);
+  assert.equal(a.operations[0].kind, 'add');
+  assert.equal(a.operations[0].record.kmTotal, 650);
+});
+
+test('showToast cancels existing active timer and applies extended duration for errors', () => {
+  const a = app();
+  a.run('showToast("Salvando...", "")');
+  assert.equal(a.timeouts.length, 1);
+  assert.equal(a.timeouts[0].delay, 3500);
+
+  // Calling showToast again with error cancels previous timer
+  a.run('showToast("Falha na gravação", "err")');
+  assert.equal(a.clearedTimeouts.length, 1);
+  assert.equal(a.clearedTimeouts[0], a.timeouts[0].id);
+  assert.equal(a.timeouts.length, 2);
+  assert.equal(a.timeouts[1].delay, 5500);
+  assert.match(a.elements.get('toast').className, /toast show err/);
+  assert.equal(a.elements.get('toast')['aria-live'], 'assertive');
+});
+test('empty states render direct action buttons and mobile terminology', () => {
+  const a = app();
+  a.run('renderList([])');
+  const listEl = a.elements.get('list');
+  assert.match(listEl.innerHTML, /btn-empty-action/);
+  assert.match(listEl.innerHTML, /Registrar Abastecimento/);
+  assert.doesNotMatch(listEl.innerHTML, /Toque em <strong>Registrar<\/strong>/);
+
+  a.run('postos = []; renderAdminPostos()');
+  const postosEl = a.elements.get('postos-list');
+  assert.match(postosEl.innerHTML, /btn-empty-action/);
+  assert.match(postosEl.innerHTML, /Novo Posto/);
+  assert.doesNotMatch(postosEl.innerHTML, /Clique/);
+});
+
+test('calc outputs update textContent and value for semantic output elements', () => {
+  const a = app();
+  a.run('document.getElementById("f-litros").value = "10"; document.getElementById("f-valor").value = "50"');
+  a.run('calcPreco()');
+  assert.match(a.elements.get('f-precol').textContent, /R\$ 5,000\/L/);
+  assert.match(a.elements.get('f-precol').value, /R\$ 5,000\/L/);
+
+  a.run('document.getElementById("f-data").value = "2026-09-29T12:00"; document.getElementById("f-kmtotal").value = "650"');
+  a.run('calcKm()');
+  assert.match(a.elements.get('f-kmtrip').textContent, /50 km/);
+  assert.match(a.elements.get('f-kmlprev').textContent, /5,00 km\/L/);
+
+  // When odometer is <= previous, preview displays clean dash and warns in previous-km
+  a.run('document.getElementById("f-kmtotal").value = "550"');
+  a.run('calcKm()');
+  assert.equal(a.elements.get('f-kmtrip').textContent, '—');
+  assert.equal(a.elements.get('f-kmlprev').textContent, '—');
+  assert.match(a.elements.get('previous-km').textContent, /atual deve ser maior/);
+});
+test('submitForm marks invalid fields with is-invalid and aria-invalid and clears on modal open', () => {
+  const a = app();
+  // 1. Missing fuel
+  a.run('document.getElementById("f-comb").value = ""');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.elements.get('f-comb').classList.contains('is-invalid'), true);
+  assert.equal(a.elements.get('f-comb')['aria-invalid'], 'true');
+  assert.equal(a.elements.get('f-comb').focused, true);
+
+  // 2. Invalid liters
+  a.run('document.getElementById("f-comb").value = "Gasolina"');
+  a.run('document.getElementById("f-litros").value = "0"');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.elements.get('f-litros').classList.contains('is-invalid'), true);
+  assert.equal(a.elements.get('f-litros')['aria-invalid'], 'true');
+
+  // 3. Invalid valor
+  a.run('document.getElementById("f-litros").value = "10"');
+  a.run('document.getElementById("f-valor").value = "-10"');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.elements.get('f-valor').classList.contains('is-invalid'), true);
+  assert.equal(a.elements.get('f-valor')['aria-invalid'], 'true');
+
+  // 4. openModal clears is-invalid and aria-invalid on all fields
+  a.run('openModal()');
+  for (const id of ['f-comb', 'f-litros', 'f-valor', 'f-kmtotal']) {
+    assert.equal(a.elements.get(id).classList.contains('is-invalid'), false);
+    assert.equal(a.elements.get(id)['aria-invalid'], undefined);
+  }
+});
+
+test('renderList formats price per liter with blue chip and reserves amber chip exclusively for partial fill', () => {
+  const a = app();
+  const testData = [
+    {
+      'ID': 'rec-1', 'Data': '2026-09-27T12:00:00', 'Posto': 'Posto A',
+      'Tipo Combustível': 'Gasolina', 'Valor': 50, 'Litros': 10,
+      'KM_Total': 600, 'Parcial?': false
+    },
+    {
+      'ID': 'rec-2', 'Data': '2026-09-28T12:00:00', 'Posto': 'Posto B',
+      'Tipo Combustível': 'Etanol', 'Valor': 40, 'Litros': 10,
+      'KM_Total': 700, 'Parcial?': true
+    }
+  ];
+  a.run('records = ' + JSON.stringify(testData) + '; renderList(records)');
+  const html = a.elements.get('list').innerHTML;
+
+  // Blue chip for R$/L
+  assert.match(html, /<span class="chip blue">R\$ 5,00\/L<\/span>/);
+  assert.match(html, /<span class="chip blue">R\$ 4,00\/L<\/span>/);
+
+  // Amber chip ONLY for partial fill
+  assert.match(html, /<span class="chip amber">⚠️ Parcial<\/span>/);
+  const amberChips = html.match(/<span class="chip amber">[^<]*<\/span>/g) || [];
+  for (const chip of amberChips) {
+    assert.doesNotMatch(chip, /R\$/);
+  }
+});
+
+test('posto management unifies deletion terminology and confirmation dialog', () => {
+  const a = app();
+  a.run('postos = [{ id: "p-1", nome: "Posto Shell" }]; renderAdminPostos()');
+  const postosEl = a.elements.get('postos-list');
+  assert.equal(postosEl.cards.length, 1);
+  assert.equal(postosEl.cards[0].labels['.btn-icon-delete'], 'Excluir posto Posto Shell');
+  assert.doesNotMatch(postosEl.cards[0].labels['.btn-icon-delete'], /Remover/);
+
+  // Trigger delete and confirm
+  a.run('askDeletePosto(0)');
+  assert.equal(a.elements.get('confirm-posto-name').textContent, 'Posto Shell');
+  assert.equal(a.elements.get('confirm-posto-overlay').classList.contains('open'), true);
+
+  a.run('confirmDeletePosto()');
+  assert.equal(a.elements.get('confirm-posto-overlay').classList.contains('open'), false);
+  assert.equal(a.operations.length, 1);
+  assert.equal(a.operations[0].kind, 'deletePosto');
+  assert.equal(a.operations[0].id, 'p-1');
+
+  // Simulate success callback
+  a.operations[0].success({ success: true });
+  assert.match(a.elements.get('toast').textContent, /Posto excluído/);
+  assert.doesNotMatch(a.elements.get('toast').textContent, /removido/);
+});
+
+test('loadRecords and loadPostos render retry action button upon connection failure', () => {
+  const a = app();
+  // Failure on loadRecords when no cached records exist
+  a.run('records = []; loadRecords(true)');
+  assert.equal(a.operations.length, 1);
+  assert.equal(a.operations[0].kind, 'records');
+  a.operations[0].failure(new Error('Network offline'));
+
+  const listHtml = a.elements.get('list').innerHTML;
+  assert.match(listHtml, /Não foi possível carregar os abastecimentos/);
+  assert.match(listHtml, /btn-empty-action/);
+  assert.match(listHtml, /🔄 Tentar novamente/);
+  assert.match(listHtml, /onclick="refreshData\(\)"/);
+
+  // Failure on loadPostos when no cached postos exist
+  a.run('postos = []; loadPostos(true)');
+  assert.equal(a.operations.length, 2);
+  assert.equal(a.operations[1].kind, 'postos');
+  a.operations[1].failure(new Error('Network timeout'));
+
+  const postosHtml = a.elements.get('postos-list').innerHTML;
+  assert.match(postosHtml, /Não foi possível carregar os postos/);
+  assert.match(postosHtml, /btn-empty-action/);
+  assert.match(postosHtml, /🔄 Tentar novamente/);
+  assert.match(postosHtml, /onclick="refreshData\(\)"/);
+});
+test('mobile viewport configuration enables safe areas and responsive media rules', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.match(indexHtml, /viewport-fit=cover/);
+
+  const stylesCss = fs.readFileSync(path.join(__dirname, '..', 'styles.css'), 'utf8');
+  assert.match(stylesCss, /@media\s*\(max-width:\s*380px\)/);
+  assert.match(stylesCss, /env\(safe-area-inset-bottom/);
 });

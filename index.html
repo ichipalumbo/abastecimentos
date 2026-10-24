@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0e0e1a">
   <meta name="mobile-web-app-capable" content="yes"> <!-- 🆕 padrão moderno -->
   <meta name="apple-mobile-web-app-capable" content="yes"> <!-- 🍎 mantém p/ iOS antigo -->
@@ -277,15 +277,15 @@
         <div class="grid-2 calc-grid">
           <div class="form-group">
             <label class="form-label" for="f-precol">Preço por litro</label>
-            <input type="text" class="form-control calc" id="f-precol" readonly placeholder="—">
+            <output class="form-control calc" id="f-precol" for="f-litros f-valor">—</output>
           </div>
           <div class="form-group">
             <label class="form-label" for="f-kmtrip">KM rodados</label>
-            <input type="text" class="form-control calc" id="f-kmtrip" readonly placeholder="—">
+            <output class="form-control calc" id="f-kmtrip" for="f-kmtotal">—</output>
           </div>
           <div class="form-group">
             <label class="form-label" for="f-kmlprev">Consumo estimado</label>
-            <input type="text" class="form-control calc" id="f-kmlprev" readonly placeholder="—">
+            <output class="form-control calc" id="f-kmlprev" for="f-litros f-kmtotal">—</output>
           </div>
         </div>
         <!-- [/FORM-HODOMETRO] -->
@@ -352,15 +352,15 @@
   <!-- [CONFIRM-POSTO] ═══════════════════════════ -->
   <div class="confirm-overlay" id="confirm-posto-overlay">
     <div class="confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="confirm-posto-title" aria-describedby="confirm-posto-text" tabindex="-1">
-      <div class="confirm-icon">🏪</div>
-      <div class="confirm-title" id="confirm-posto-title">Remover posto?</div>
+      <div class="confirm-icon">🗑️</div>
+      <div class="confirm-title" id="confirm-posto-title">Excluir posto?</div>
       <div class="confirm-text" id="confirm-posto-text">
-        Remover <strong id="confirm-posto-name"></strong>?<br>
+        Excluir <strong id="confirm-posto-name"></strong>?<br>
         Os registros existentes não serão afetados.
       </div>
       <div class="confirm-btns">
         <button class="btn-cancel" onclick="closeConfirmPosto()">Cancelar</button>
-        <button class="btn-confirm-del" onclick="confirmDeletePosto()">Remover</button>
+        <button class="btn-confirm-del" onclick="confirmDeletePosto()">Excluir</button>
       </div>
     </div>
   </div>
