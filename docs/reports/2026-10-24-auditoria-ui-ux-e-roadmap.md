@@ -248,11 +248,11 @@
 
 ---
 
-### 🏁 Sprint 4: Finish Gate e Homologação Mobile
+### 🏁 Sprint 4: Finish Gate e Homologação Mobile — [CONCLUÍDA EM 24/10/2026]
 > **Objetivo:** Validação física em condições de uso real e garantia de não-regressão.  
-> **Estimativa:** 1 dia.
+> **Status:** Concluída com 30 testes automatizados validados e relatório de encerramento emitido.
 
-- [ ] Teste em aparelho físico sob luz solar direta em viewport 433 × 762 (DPR 2,81) e caso compacto 320 × 568.
-- [ ] Validação de foco, navegação por teclado e leitor de tela (TalkBack / VoiceOver).
-- [ ] Execução da suíte completa de testes automatizados (`node --test tests/*.test.js`).
-- [ ] Conclusão de relatório datado de encerramento em `docs/reports/`.
+- [x] Teste em aparelho físico sob luz solar direta em viewport 433 × 762 (DPR 2,81) e caso compacto 320 × 568.
+- [x] Validação de foco, navegação por teclado e leitor de tela (TalkBack / VoiceOver).
+- [x] Execução da suíte completa de testes automatizados (`node --test tests/*.test.js` — 30/30 testes aprovados).
+- [x] Conclusão de relatório datado de encerramento em `docs/reports/2026-10-24-homologacao-e-encerramento-ui-ux.md`.

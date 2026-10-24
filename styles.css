@@ -1776,3 +1776,52 @@ input:checked+.slider::before {
 }
 
 /* [/SCROLLBAR] */
+
+/* [RESPONSIVE] ════════════════════════════════ */
+@media (max-width: 380px) {
+  .user-select {
+    padding: 16px;
+  }
+
+  .us-cards {
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .us-card {
+    width: 132px;
+    padding: 20px 10px;
+    gap: 10px;
+  }
+
+  .us-avatar {
+    width: 76px;
+    height: 76px;
+  }
+
+  .stats {
+    gap: 6px;
+    padding: 0 10px;
+  }
+
+  .stat-card {
+    padding: 12px 4px 10px;
+  }
+
+  .stat-value {
+    font-size: 0.95rem;
+  }
+
+  .modal-sheet {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .calc-grid .form-control.calc {
+    font-size: 0.78rem;
+    padding: 0 3px;
+  }
+}
+
+/* [/RESPONSIVE] */

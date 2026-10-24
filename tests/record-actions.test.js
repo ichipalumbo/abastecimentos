@@ -524,3 +524,11 @@ test('loadRecords and loadPostos render retry action button upon connection fail
   assert.match(postosHtml, /🔄 Tentar novamente/);
   assert.match(postosHtml, /onclick="refreshData\(\)"/);
 });
+test('mobile viewport configuration enables safe areas and responsive media rules', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.match(indexHtml, /viewport-fit=cover/);
+
+  const stylesCss = fs.readFileSync(path.join(__dirname, '..', 'styles.css'), 'utf8');
+  assert.match(stylesCss, /@media\s*\(max-width:\s*380px\)/);
+  assert.match(stylesCss, /env\(safe-area-inset-bottom/);
+});
