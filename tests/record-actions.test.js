@@ -257,7 +257,11 @@ test('a successful edit updates only the selected record before refreshing', () 
 
 test('the form shows previous mileage and does not submit malformed amounts', () => {
   const a = app();
-  a.elements.set('f-comb', { value: 'Gasolina' });
+  a.elements.set('f-comb', {
+    value: 'Gasolina', focus() { this.focused = true; },
+    setAttribute() {}, removeAttribute() {},
+    classList: { add() {}, remove() {}, contains() { return false; } }
+  });
   a.run('document.getElementById("f-data").value = "2026-09-29T12:00"; document.getElementById("f-litros").value = "12,5"');
   a.run('calcKm()');
   assert.match(a.elements.get('previous-km').textContent, /600 km/);
@@ -266,12 +270,16 @@ test('the form shows previous mileage and does not submit malformed amounts', ()
   a.run('submitForm({ preventDefault() {} })');
   assert.equal(a.elements.get('f-litros').focused, true);
   assert.equal(a.operations.length, 0);
-  assert.match(a.elements.get('toast').textContent, /Litros/);
+  assert.match(a.elements.get('f-litros-error').textContent, /número/);
 });
 
 test('a failed save retains the entered data for retry', () => {
   const a = app();
-  a.elements.set('f-comb', { value: 'Gasolina' });
+  a.elements.set('f-comb', {
+    value: 'Gasolina', focus() { this.focused = true; },
+    setAttribute() {}, removeAttribute() {},
+    classList: { add() {}, remove() {}, contains() { return false; } }
+  });
   a.run('document.getElementById("f-litros").value = "12,5"; document.getElementById("f-valor").value = "60"; document.getElementById("f-kmtotal").value = "650"');
   a.run('submitForm({ preventDefault() {} })');
   const add = a.operations.find(op => op.kind === 'add');
@@ -285,7 +293,11 @@ test('a failed save retains the entered data for retry', () => {
 
 test('recent choices are scoped to the current profile and require an explicit tap', () => {
   const a = app();
-  a.elements.set('f-comb', { value: '', options: [{ value: '' }, { value: 'Gasolina' }], focus() { this.focused = true; } });
+  a.elements.set('f-comb', {
+    value: '', options: [{ value: '' }, { value: 'Gasolina' }], focus() { this.focused = true; },
+    setAttribute() {}, removeAttribute() {},
+    classList: { add() {}, remove() {}, contains() { return false; } }
+  });
   a.run('postos = [{ nome: "Aug-1" }, { nome: "Sep-1" }, { nome: "Sep-2" }]; renderPostoPicker(); renderRecentFuel()');
   assert.match(a.elements.get('posto-picker').innerHTML, /Sep-1[\s\S]*Sep-2[\s\S]*Aug-1/);
   assert.equal(a.elements.get('recent-fuel').hidden, false);
@@ -305,6 +317,20 @@ test('fuel selection is required before sending a new record', () => {
   a.run('submitForm({ preventDefault() {} })');
   assert.equal(a.elements.get('f-comb').focused, true);
   assert.equal(a.operations.length, 0);
+  assert.match(a.elements.get('f-comb-error').textContent, /combustível/i);
+});
+
+test('an odometer at or below the previous reading is blocked before sending', () => {
+  const a = app();
+  a.run('document.getElementById("f-comb").value = "Gasolina"');
+  a.run('document.getElementById("f-data").value = "2026-09-29T12:00"; document.getElementById("f-litros").value = "12,5"; document.getElementById("f-valor").value = "60"; document.getElementById("f-kmtotal").value = "600"');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.operations.length, 0);
+  assert.equal(a.elements.get('f-kmtotal').focused, true);
+  assert.match(a.elements.get('f-kmtotal-error').textContent, /anterior/);
+  a.run('document.getElementById("f-kmtotal").value = "650"');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.operations.some(op => op.kind === 'add'), true);
 });
 
 test('monthly trends show up to six chronological months with an explicit metric', () => {
@@ -339,7 +365,7 @@ test('cache keys isolate mock scenarios including mock mode on a published host'
 });
 test('submitForm blocks regressivo odometer and marks field invalid', () => {
   const a = app();
-  a.elements.set('f-comb', { value: 'Gasolina' });
+  a.run('document.getElementById("f-comb").value = "Gasolina"');
   a.run('document.getElementById("f-data").value = "2026-09-29T12:00"');
   a.run('document.getElementById("f-litros").value = "10"');
   a.run('document.getElementById("f-valor").value = "50"');

@@ -222,7 +222,7 @@
         <div class="grid-2">
           <div class="form-group">
             <label class="form-label" for="f-comb">⛽ Combustível <span class="req">*</span></label>
-            <select class="form-control" id="f-comb" required>
+            <select class="form-control" id="f-comb" required onchange="clearFieldError('f-comb')">
               <option value="" disabled selected>Selecione</option>
               <option>Gasolina</option>
               <option>Gasolina Aditivada</option>
@@ -231,6 +231,7 @@
               <option>GNV</option>
             </select>
             <button type="button" class="recent-fuel" id="recent-fuel" hidden onclick="useRecentFuel()"></button>
+            <div class="field-error" id="f-comb-error" role="alert" aria-live="polite"></div>
           </div>
           <div class="form-group">
             <span class="form-label">Abastecimento parcial?</span>
@@ -241,6 +242,7 @@
                 <span class="slider"></span>
               </label>
             </div>
+            <div class="field-hint">Abastecimentos parciais não entram no cálculo de consumo do intervalo.</div>
           </div>
         </div>
         <!-- [/FORM-COMB-PARCIAL] -->
@@ -250,12 +252,14 @@
           <div class="form-group">
             <label class="form-label" for="f-litros">💧 Litros <span class="req">*</span></label>
             <input type="text" inputmode="decimal" enterkeyhint="next" class="form-control" id="f-litros" placeholder="0,00"
-              required oninput="calcPreco();calcKm()" onkeydown="advanceForm(event, 'f-valor')">
+              aria-describedby="f-litros-error" required oninput="clearFieldError('f-litros');calcPreco();calcKm()" onkeydown="advanceForm(event, 'f-valor')">
+            <div class="field-error" id="f-litros-error" role="alert" aria-live="polite"></div>
           </div>
           <div class="form-group">
             <label class="form-label" for="f-valor">💰 Valor total R$ <span class="req">*</span></label>
             <input type="text" inputmode="decimal" enterkeyhint="next" class="form-control" id="f-valor" placeholder="0,00" required
-              oninput="calcPreco()" onkeydown="advanceForm(event, 'f-kmtotal')">
+              aria-describedby="f-valor-error" oninput="clearFieldError('f-valor');calcPreco()" onkeydown="advanceForm(event, 'f-kmtotal')">
+            <div class="field-error" id="f-valor-error" role="alert" aria-live="polite"></div>
           </div>
         </div>
         <!-- [/FORM-LITROS-VALOR] -->
@@ -265,7 +269,8 @@
         <div class="form-group">
           <label class="form-label" for="f-kmtotal">📍 KM total no painel <span class="req">*</span></label>
           <input type="number" class="form-control" id="f-kmtotal" step="1" min="1" placeholder="000000"
-            inputmode="numeric" enterkeyhint="done" required oninput="calcKm()">
+            inputmode="numeric" enterkeyhint="done" aria-describedby="f-kmtotal-error" required oninput="clearFieldError('f-kmtotal');calcKm()">
+          <div class="field-error" id="f-kmtotal-error" role="alert" aria-live="polite"></div>
           <div class="previous-km" id="previous-km" aria-live="polite"></div>
         </div>
         <div class="calc-heading">Prévia calculada</div>

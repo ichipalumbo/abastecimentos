@@ -1,0 +1,80 @@
+{
+  "records": {
+    "Luccas": [
+      {
+        "ID": "r11",
+        "Data": "2026-06-17T04:30:00.000Z",
+        "Valor": 1,
+        "Litros": 11,
+        "KM_Total": 1000,
+        "KM_Trip": 0,
+        "KM/L Trip": 0,
+        "Posto": "Teste",
+        "Tipo Combustível": "Gasolina",
+        "Parcial?": false
+      },
+      {
+        "ID": "r12",
+        "Data": "2026-06-17T04:34:00.000Z",
+        "Valor": 20,
+        "Litros": 20,
+        "KM_Total": 2000,
+        "KM_Trip": 0,
+        "KM/L Trip": 0,
+        "Posto": "Teste",
+        "Tipo Combustível": "Gasolina",
+        "Parcial?": false
+      }
+    ],
+    "Josy": [
+      {
+        "ID": "r4",
+        "Data": "2026-06-17T03:03:00.000Z",
+        "Valor": 200,
+        "Litros": 20,
+        "KM_Total": 1000,
+        "KM_Trip": 0,
+        "KM/L Trip": 0,
+        "Posto": "Posto Principal",
+        "Tipo Combustível": "Gasolina",
+        "Parcial?": false
+      },
+      {
+        "ID": "r5",
+        "Data": "2026-06-17T03:04:00.000Z",
+        "Valor": 200,
+        "Litros": 29,
+        "KM_Total": 2000,
+        "KM_Trip": 0,
+        "KM/L Trip": 0,
+        "Posto": "Posto Principal",
+        "Tipo Combustível": "Gasolina",
+        "Parcial?": false
+      }
+    ]
+  },
+  "postos": {
+    "Luccas": [
+      {
+        "id": "p1",
+        "nome": "Posto Central"
+      },
+      {
+        "id": "p2",
+        "nome": "Posto Bairro"
+      },
+      {
+        "id": "p3",
+        "nome": "Teste"
+      }
+    ],
+    "Josy": [
+      {
+        "id": "p10",
+        "nome": "Posto Principal"
+      }
+    ]
+  },
+  "nextRecordId": 13,
+  "nextPostoId": 5
+}
