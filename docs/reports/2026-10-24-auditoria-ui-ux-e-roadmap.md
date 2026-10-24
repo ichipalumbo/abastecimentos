@@ -233,18 +233,18 @@
 
 ---
 
-### 🛡️ Sprint 3: Gramática Visual, Recuperação de Falhas e Consistência
+### 🛡️ Sprint 3: Gramática Visual, Recuperação de Falhas e Consistência — [CONCLUÍDA EM 24/10/2026]
 > **Objetivo:** Padronizar vocabulário operacional, semântica de cores e estados resilientes de rede.  
-> **Estimativa:** Médio esforço (2 a 3 dias).
+> **Status:** Concluída com 24 testes automatizados validados.
 
-- [ ] **Tarefa 3.1:** Desacoplar a cor âmbar: manter âmbar exclusivo para `⚠️ Parcial` e usar azul/neutro para métricas de `R$/L`.
-- [ ] **Tarefa 3.2:** Unificar vocabulário destrutivo para *"Excluir"* e ícone `🗑️` tanto para registros quanto para postos cadastrados.
-- [ ] **Tarefa 3.3:** Adicionar feedback visual em linha (`.is-invalid` com borda vermelha e `aria-invalid="true"`) em campos de validação rejeitados no formulário.
-- [ ] **Tarefa 3.4:** Adicionar botão explícito de "Tentar novamente" nas mensagens de falha de carregamento da Home quando a rede falhar sem cache.
+- [x] **Tarefa 3.1:** Desacoplar a cor âmbar: manter âmbar exclusivo para `⚠️ Parcial` e usar azul (`chip blue`, ratio 7.6:1) para métricas de `R$/L`.
+- [x] **Tarefa 3.2:** Unificar vocabulário destrutivo para *"Excluir"* e ícone `🗑️` tanto para registros quanto para postos cadastrados.
+- [x] **Tarefa 3.3:** Adicionar feedback visual em linha (`.is-invalid` com borda vermelha e `aria-invalid="true"`) em campos de validação rejeitados no formulário.
+- [x] **Tarefa 3.4:** Adicionar botão explícito de "Tentar novamente" nas mensagens de falha de carregamento da Home quando a rede falhar sem cache.
 - **Critério de Aceite da Sprint 3:**
-  - A cor amarela não é usada em nenhuma tag puramente informativa.
-  - Ações destrutivas possuem semântica, cor e microcópia idênticas em toda a aplicação.
-  - Falhas de conexão exibem caminho claro de recuperação sem obrigar o recarregamento total da página.
+  - [x] A cor amarela não é usada em nenhuma tag puramente informativa (apenas `⚠️ Parcial`).
+  - [x] Ações destrutivas possuem semântica, cor e microcópia idênticas em toda a aplicação (`🗑️ Excluir`).
+  - [x] Falhas de conexão exibem caminho claro de recuperação com botão de retry sem recarregar a página.
 
 ---
 

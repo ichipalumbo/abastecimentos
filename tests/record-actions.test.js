@@ -31,6 +31,26 @@ function app() {
     querySelectorAll() { return this.cards; }
   };
   elements.set('list', list);
+  const postosList = {
+    cards: [],
+    set innerHTML(html) {
+      this.html = html;
+      this.cards = (html || '').split('<div class="posto-card">').slice(1).map(chunk => {
+        const labels = {};
+        return {
+          labels,
+          querySelector(selector) {
+            return {
+              setAttribute(name, value) { labels[selector] = value; }
+            };
+          }
+        };
+      });
+    },
+    get innerHTML() { return this.html; },
+    querySelectorAll() { return this.cards; }
+  };
+  elements.set('postos-list', postosList);
   function element(id) {
     if (!elements.has(id)) {
       elements.set(id, {
@@ -65,14 +85,15 @@ function app() {
     },
     updateRecord(user, record) { operations.push({ kind: 'update', user, record, success: this.success, failure: this.failure }); },
     addRecord(user, record) { operations.push({ kind: 'add', user, record, success: this.success, failure: this.failure }); },
-    getRecords(user) { operations.push({ kind: 'records', user, success: this.success }); },
-    getPostos(user) { operations.push({ kind: 'postos', user, success: this.success }); }
+    getRecords(user) { operations.push({ kind: 'records', user, success: this.success, failure: this.failure }); },
+    getPostos(user) { operations.push({ kind: 'postos', user, success: this.success, failure: this.failure }); },
+    deletePosto(user, id) { operations.push({ kind: 'deletePosto', user, id, success: this.success, failure: this.failure }); }
   };
   let timerId = 0;
   const timeouts = [];
   const clearedTimeouts = [];
   const context = vm.createContext({
-    document: { getElementById: element, addEventListener() {} },
+    document: { getElementById: element, addEventListener() {}, activeElement: null },
     localStorage: {
       getItem() { return null; }, setItem() {},
       removeItem(key) { removedCacheKeys.push(key); }
@@ -391,4 +412,115 @@ test('calc outputs update textContent and value for semantic output elements', (
   assert.equal(a.elements.get('f-kmtrip').textContent, '—');
   assert.equal(a.elements.get('f-kmlprev').textContent, '—');
   assert.match(a.elements.get('previous-km').textContent, /atual deve ser maior/);
+});
+test('submitForm marks invalid fields with is-invalid and aria-invalid and clears on modal open', () => {
+  const a = app();
+  // 1. Missing fuel
+  a.run('document.getElementById("f-comb").value = ""');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.elements.get('f-comb').classList.contains('is-invalid'), true);
+  assert.equal(a.elements.get('f-comb')['aria-invalid'], 'true');
+  assert.equal(a.elements.get('f-comb').focused, true);
+
+  // 2. Invalid liters
+  a.run('document.getElementById("f-comb").value = "Gasolina"');
+  a.run('document.getElementById("f-litros").value = "0"');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.elements.get('f-litros').classList.contains('is-invalid'), true);
+  assert.equal(a.elements.get('f-litros')['aria-invalid'], 'true');
+
+  // 3. Invalid valor
+  a.run('document.getElementById("f-litros").value = "10"');
+  a.run('document.getElementById("f-valor").value = "-10"');
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.elements.get('f-valor').classList.contains('is-invalid'), true);
+  assert.equal(a.elements.get('f-valor')['aria-invalid'], 'true');
+
+  // 4. openModal clears is-invalid and aria-invalid on all fields
+  a.run('openModal()');
+  for (const id of ['f-comb', 'f-litros', 'f-valor', 'f-kmtotal']) {
+    assert.equal(a.elements.get(id).classList.contains('is-invalid'), false);
+    assert.equal(a.elements.get(id)['aria-invalid'], undefined);
+  }
+});
+
+test('renderList formats price per liter with blue chip and reserves amber chip exclusively for partial fill', () => {
+  const a = app();
+  const testData = [
+    {
+      'ID': 'rec-1', 'Data': '2026-09-27T12:00:00', 'Posto': 'Posto A',
+      'Tipo Combustível': 'Gasolina', 'Valor': 50, 'Litros': 10,
+      'KM_Total': 600, 'Parcial?': false
+    },
+    {
+      'ID': 'rec-2', 'Data': '2026-09-28T12:00:00', 'Posto': 'Posto B',
+      'Tipo Combustível': 'Etanol', 'Valor': 40, 'Litros': 10,
+      'KM_Total': 700, 'Parcial?': true
+    }
+  ];
+  a.run('records = ' + JSON.stringify(testData) + '; renderList(records)');
+  const html = a.elements.get('list').innerHTML;
+
+  // Blue chip for R$/L
+  assert.match(html, /<span class="chip blue">R\$ 5,00\/L<\/span>/);
+  assert.match(html, /<span class="chip blue">R\$ 4,00\/L<\/span>/);
+
+  // Amber chip ONLY for partial fill
+  assert.match(html, /<span class="chip amber">⚠️ Parcial<\/span>/);
+  const amberChips = html.match(/<span class="chip amber">[^<]*<\/span>/g) || [];
+  for (const chip of amberChips) {
+    assert.doesNotMatch(chip, /R\$/);
+  }
+});
+
+test('posto management unifies deletion terminology and confirmation dialog', () => {
+  const a = app();
+  a.run('postos = [{ id: "p-1", nome: "Posto Shell" }]; renderAdminPostos()');
+  const postosEl = a.elements.get('postos-list');
+  assert.equal(postosEl.cards.length, 1);
+  assert.equal(postosEl.cards[0].labels['.btn-icon-delete'], 'Excluir posto Posto Shell');
+  assert.doesNotMatch(postosEl.cards[0].labels['.btn-icon-delete'], /Remover/);
+
+  // Trigger delete and confirm
+  a.run('askDeletePosto(0)');
+  assert.equal(a.elements.get('confirm-posto-name').textContent, 'Posto Shell');
+  assert.equal(a.elements.get('confirm-posto-overlay').classList.contains('open'), true);
+
+  a.run('confirmDeletePosto()');
+  assert.equal(a.elements.get('confirm-posto-overlay').classList.contains('open'), false);
+  assert.equal(a.operations.length, 1);
+  assert.equal(a.operations[0].kind, 'deletePosto');
+  assert.equal(a.operations[0].id, 'p-1');
+
+  // Simulate success callback
+  a.operations[0].success({ success: true });
+  assert.match(a.elements.get('toast').textContent, /Posto excluído/);
+  assert.doesNotMatch(a.elements.get('toast').textContent, /removido/);
+});
+
+test('loadRecords and loadPostos render retry action button upon connection failure', () => {
+  const a = app();
+  // Failure on loadRecords when no cached records exist
+  a.run('records = []; loadRecords(true)');
+  assert.equal(a.operations.length, 1);
+  assert.equal(a.operations[0].kind, 'records');
+  a.operations[0].failure(new Error('Network offline'));
+
+  const listHtml = a.elements.get('list').innerHTML;
+  assert.match(listHtml, /Não foi possível carregar os abastecimentos/);
+  assert.match(listHtml, /btn-empty-action/);
+  assert.match(listHtml, /🔄 Tentar novamente/);
+  assert.match(listHtml, /onclick="refreshData\(\)"/);
+
+  // Failure on loadPostos when no cached postos exist
+  a.run('postos = []; loadPostos(true)');
+  assert.equal(a.operations.length, 2);
+  assert.equal(a.operations[1].kind, 'postos');
+  a.operations[1].failure(new Error('Network timeout'));
+
+  const postosHtml = a.elements.get('postos-list').innerHTML;
+  assert.match(postosHtml, /Não foi possível carregar os postos/);
+  assert.match(postosHtml, /btn-empty-action/);
+  assert.match(postosHtml, /🔄 Tentar novamente/);
+  assert.match(postosHtml, /onclick="refreshData\(\)"/);
 });

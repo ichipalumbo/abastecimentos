@@ -42,6 +42,18 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('⚠️ Confira ' + (e.target.labels?.[0]?.textContent.trim() || 'o campo obrigatório'), 'err');
   }, true);
 
+  ['f-comb', 'f-litros', 'f-valor', 'f-kmtotal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      const clear = () => {
+        el.classList.remove('is-invalid');
+        el.removeAttribute?.('aria-invalid');
+      };
+      el.addEventListener('input', clear);
+      el.addEventListener('change', clear);
+    }
+  });
+
   const toastEl = document.getElementById('toast');
   if (toastEl) {
     toastEl.addEventListener('click', () => {
@@ -237,11 +249,14 @@ function loadRecords(forceRefresh = false) {
     .withFailureHandler(err => {
       if (profileEpoch !== epoch || request !== recordsLoadSequence) { checkLoadsDone(); return; }
       if (records.length) {
-        showToast('❌ Erro ao atualizar registros', 'err');
+        showToast('❌ Erro ao atualizar abastecimentos', 'err');
       } else {
         document.getElementById('list').innerHTML =
-          `<div class="empty"><div class="empty-icon">❌</div>
-           <p style="color:var(--red)">Erro ao carregar:<br><small>${err.message}</small></p></div>`;
+          `<div class="empty">
+             <div class="empty-icon">❌</div>
+             <p style="color:var(--red);margin-bottom:14px">Não foi possível carregar os abastecimentos.<br><small>${err?.message || 'Falha de conexão com o servidor'}</small></p>
+             <button type="button" class="btn-empty-action" onclick="refreshData()">🔄 Tentar novamente</button>
+           </div>`;
       }
       checkLoadsDone();
     })
@@ -274,10 +289,20 @@ function loadPostos(forceRefresh = false) {
       renderAdminPostos();
       checkLoadsDone();
     })
-    .withFailureHandler(() => {
+    .withFailureHandler(err => {
       if (profileEpoch !== epoch) { checkLoadsDone(); return; }
       if (postos.length) {
         showToast('❌ Erro ao atualizar postos', 'err');
+      } else {
+        const postosList = document.getElementById('postos-list');
+        if (postosList) {
+          postosList.innerHTML =
+            `<div class="empty">
+               <div class="empty-icon">❌</div>
+               <p style="color:var(--red);margin-bottom:14px">Não foi possível carregar os postos.<br><small>${err?.message || 'Falha de conexão com o servidor'}</small></p>
+               <button type="button" class="btn-empty-action" onclick="refreshData()">🔄 Tentar novamente</button>
+             </div>`;
+        }
       }
       checkLoadsDone();
     })
@@ -447,7 +472,7 @@ function renderList(data) {
                 ${parcial ? `<span class="chip amber">⚠️ Parcial</span>`                  : ''}
                 ${kml     ? `<span class="chip green">⚡ ${formatNumber(kml, 1)} km/L</span>`    : ''}
                 ${kmTrip  ? `<span class="chip purple">🛣️ ${formatNumber(kmTrip, 0)} km</span>` : ''}
-                ${precoL  ? `<span class="chip amber">R$ ${formatNumber(precoL, 2)}/L</span>`    : ''}
+                ${precoL  ? `<span class="chip blue">R$ ${formatNumber(precoL, 2)}/L</span>`    : ''}
               </div>
             </div>
             <div class="record-right">
@@ -597,12 +622,12 @@ function renderAdminPostos() {
       <div class="posto-name">🏪 ${p.nome}</div>
       <div class="posto-btns">
         <button class="btn-icon btn-icon-edit" aria-label="Editar posto" onclick="openEditPosto(${i})">✏️</button>
-        <button class="btn-icon btn-icon-delete" aria-label="Remover posto" onclick="askDeletePosto(${i})">🗑️</button>
+        <button class="btn-icon btn-icon-delete" aria-label="Excluir posto" onclick="askDeletePosto(${i})">🗑️</button>
       </div>
     </div>`).join('');
   el.querySelectorAll('.posto-card').forEach((card, i) => {
     card.querySelector('.btn-icon-edit').setAttribute('aria-label', `Editar posto ${postos[i].nome}`);
-    card.querySelector('.btn-icon-delete').setAttribute('aria-label', `Remover posto ${postos[i].nome}`);
+    card.querySelector('.btn-icon-delete').setAttribute('aria-label', `Excluir posto ${postos[i].nome}`);
   });
 }
 
@@ -705,7 +730,7 @@ function confirmDeletePosto() {
         if (selectedPostoNome && !postos.find(p => p.nome === selectedPostoNome)) selectedPostoNome = '';
         setCachedData(currentUser, 'postos', postos);
         renderPostoPicker(); renderAdminPostos();
-        showToast('🗑️ Posto removido', 'ok');
+        showToast('🗑️ Posto excluído', 'ok');
       } else { showToast('❌ ' + res.error, 'err'); }
     })
     .withFailureHandler(() => showToast('❌ Falha na conexão', 'err'))
@@ -751,8 +776,10 @@ function openModal() {
   if (o1) { o1.value = ''; o1.textContent = '—'; }
   if (o2) { o2.value = ''; o2.textContent = '—'; }
   if (o3) { o3.value = ''; o3.textContent = '—'; }
-  const kmInput = document.getElementById('f-kmtotal');
-  if (kmInput) { kmInput.classList.remove('is-invalid'); kmInput.removeAttribute?.('aria-invalid'); }
+  ['f-comb', 'f-litros', 'f-valor', 'f-kmtotal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('is-invalid'); el.removeAttribute?.('aria-invalid'); }
+  });
   document.getElementById('modal-title').textContent    = '🛢️ Novo Abastecimento';
   document.getElementById('modal-subtitle').textContent = '';
   document.getElementById('btn-salvar').textContent     = '✅ Salvar Abastecimento';
@@ -788,8 +815,10 @@ function openEdit(id, renderedUser = currentUser) {
   document.getElementById('f-valor').value     = r['Valor']            || '';
   document.getElementById('f-kmtotal').value   = r['KM_Total']         || '';
   selectedPostoNome = r['Posto'] || '';
-  const kmInputEdit = document.getElementById('f-kmtotal');
-  if (kmInputEdit) { kmInputEdit.classList.remove('is-invalid'); kmInputEdit.removeAttribute?.('aria-invalid'); }
+  ['f-comb', 'f-litros', 'f-valor', 'f-kmtotal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('is-invalid'); el.removeAttribute?.('aria-invalid'); }
+  });
   calcPreco(); calcKm(); cancelInlineAddPosto(); renderPostoPicker(); renderRecentFuel();
   const d    = new Date(r['Data']);
   const dStr = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
@@ -869,6 +898,8 @@ function submitForm(e) {
   const fuelInput = document.getElementById('f-comb');
   if (!fuelInput.value) {
     showToast('⚠️ Selecione o combustível', 'err');
+    fuelInput.classList.add('is-invalid');
+    fuelInput.setAttribute?.('aria-invalid', 'true');
     fuelInput.focus();
     return;
   }
@@ -882,7 +913,11 @@ function submitForm(e) {
     const valid = decimal ? /^\d+(?:[.,]\d+)?$/.test(String(input.value).trim()) : Number.isInteger(value);
     if (valid && value > 0) continue;
     showToast(`⚠️ Confira ${label}`, 'err');
-    input.focus();
+    if (input) {
+      input.classList.add('is-invalid');
+      input.setAttribute?.('aria-invalid', 'true');
+      input.focus();
+    }
     return;
   }
 
