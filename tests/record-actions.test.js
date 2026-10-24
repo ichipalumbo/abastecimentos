@@ -38,7 +38,8 @@ function app() {
         textContent: '',
         style: {},
         focus() { this.focused = true; },
-        setAttribute() {},
+        setAttribute(name, value) { this[name] = value; },
+        removeAttribute(name) { delete this[name]; },
         classList: {
           values: new Set(),
           add(name) { this.values.add(name); },
@@ -67,6 +68,9 @@ function app() {
     getRecords(user) { operations.push({ kind: 'records', user, success: this.success }); },
     getPostos(user) { operations.push({ kind: 'postos', user, success: this.success }); }
   };
+  let timerId = 0;
+  const timeouts = [];
+  const clearedTimeouts = [];
   const context = vm.createContext({
     document: { getElementById: element, addEventListener() {} },
     localStorage: {
@@ -74,7 +78,14 @@ function app() {
       removeItem(key) { removedCacheKeys.push(key); }
     },
     google: { script: { run: runner } },
-    setTimeout() {}
+    setTimeout(fn, delay) {
+      const id = ++timerId;
+      timeouts.push({ id, fn, delay });
+      return id;
+    },
+    clearTimeout(id) {
+      clearedTimeouts.push(id);
+    }
   });
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'script.js'), 'utf8'), context);
   const data = [
@@ -87,7 +98,7 @@ function app() {
   ];
   context.data = data;
   vm.runInContext('currentUser = "Luccas"; records = data', context);
-  return { context, elements, list, requests, operations, removedCacheKeys, data, run: code => vm.runInContext(code, context) };
+  return { context, elements, list, requests, operations, removedCacheKeys, timeouts, clearedTimeouts, data, run: code => vm.runInContext(code, context) };
 }
 
 function record(id, date, posto, km) {
@@ -304,4 +315,46 @@ test('cache keys isolate mock scenarios including mock mode on a published host'
   assert.equal(a.run('getCacheKey("Luccas", "records")'), 'fuelapp_cache_Luccas_records_mock_empty');
   a.context.window.location.search = '?mock=1&scenario=write-error';
   assert.equal(a.run('getCacheKey("Luccas", "records")'), 'fuelapp_cache_Luccas_records_mock_write-error');
+});
+test('submitForm blocks regressivo odometer and marks field invalid', () => {
+  const a = app();
+  a.elements.set('f-comb', { value: 'Gasolina' });
+  a.run('document.getElementById("f-data").value = "2026-09-29T12:00"');
+  a.run('document.getElementById("f-litros").value = "10"');
+  a.run('document.getElementById("f-valor").value = "50"');
+  // Latest previous record is sep-1 (2026-09-27) with KM 600
+  // Attempting to submit 550 (regressivo)
+  a.run('document.getElementById("f-kmtotal").value = "550"');
+  a.run('submitForm({ preventDefault() {} })');
+
+  assert.equal(a.operations.length, 0); // Blocked!
+  assert.equal(a.elements.get('f-kmtotal').focused, true);
+  assert.equal(a.elements.get('f-kmtotal').classList.contains('is-invalid'), true);
+  assert.equal(a.elements.get('f-kmtotal')['aria-invalid'], 'true');
+  assert.match(a.elements.get('toast').textContent, /deve ser maior que o anterior/);
+
+  // Now fix with forward odometer reading: 650 > 600
+  a.run('document.getElementById("f-kmtotal").value = "650"');
+  a.run('calcKm()');
+  assert.equal(a.elements.get('f-kmtotal').classList.contains('is-invalid'), false);
+  a.run('submitForm({ preventDefault() {} })');
+  assert.equal(a.operations.length, 1);
+  assert.equal(a.operations[0].kind, 'add');
+  assert.equal(a.operations[0].record.kmTotal, 650);
+});
+
+test('showToast cancels existing active timer and applies extended duration for errors', () => {
+  const a = app();
+  a.run('showToast("Salvando...", "")');
+  assert.equal(a.timeouts.length, 1);
+  assert.equal(a.timeouts[0].delay, 3500);
+
+  // Calling showToast again with error cancels previous timer
+  a.run('showToast("Falha na gravação", "err")');
+  assert.equal(a.clearedTimeouts.length, 1);
+  assert.equal(a.clearedTimeouts[0], a.timeouts[0].id);
+  assert.equal(a.timeouts.length, 2);
+  assert.equal(a.timeouts[1].delay, 5500);
+  assert.match(a.elements.get('toast').className, /toast show err/);
+  assert.equal(a.elements.get('toast')['aria-live'], 'assertive');
 });

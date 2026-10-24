@@ -19,6 +19,7 @@ let recordsLoadSequence = 0;
 const dialogTriggers = new Map();
 let sortOrder          = 'desc';   // 'desc' = recente primeiro, 'asc' = antigo primeiro
 let lastRefreshTs      = null;
+let toastTimeoutId     = null;
 const CACHE_PREFIX     = 'fuelapp_cache';
 const CACHE_TTL_MS     = 5 * 60 * 1000; // 5 minutos
 
@@ -40,6 +41,17 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('form').addEventListener('invalid', e => {
     showToast('⚠️ Confira ' + (e.target.labels?.[0]?.textContent.trim() || 'o campo obrigatório'), 'err');
   }, true);
+
+  const toastEl = document.getElementById('toast');
+  if (toastEl) {
+    toastEl.addEventListener('click', () => {
+      toastEl.className = 'toast';
+      if (toastTimeoutId && typeof clearTimeout === 'function') {
+        clearTimeout(toastTimeoutId);
+        toastTimeoutId = null;
+      }
+    });
+  }
 
   // Esconde a splash
   setTimeout(() => {
@@ -736,6 +748,8 @@ function openModal() {
   document.getElementById('f-precol').value             = '';
   document.getElementById('f-kmtrip').value             = '';
   document.getElementById('f-kmlprev').value            = '';
+  const kmInput = document.getElementById('f-kmtotal');
+  if (kmInput) { kmInput.classList.remove('is-invalid'); kmInput.removeAttribute?.('aria-invalid'); }
   document.getElementById('modal-title').textContent    = '🛢️ Novo Abastecimento';
   document.getElementById('modal-subtitle').textContent = '';
   document.getElementById('btn-salvar').textContent     = '✅ Salvar Abastecimento';
@@ -771,6 +785,8 @@ function openEdit(id, renderedUser = currentUser) {
   document.getElementById('f-valor').value     = r['Valor']            || '';
   document.getElementById('f-kmtotal').value   = r['KM_Total']         || '';
   selectedPostoNome = r['Posto'] || '';
+  const kmInputEdit = document.getElementById('f-kmtotal');
+  if (kmInputEdit) { kmInputEdit.classList.remove('is-invalid'); kmInputEdit.removeAttribute?.('aria-invalid'); }
   calcPreco(); calcKm(); cancelInlineAddPosto(); renderPostoPicker(); renderRecentFuel();
   const d    = new Date(r['Data']);
   const dStr = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
@@ -864,6 +880,21 @@ function submitForm(e) {
     if (valid && value > 0) continue;
     showToast(`⚠️ Confira ${label}`, 'err');
     input.focus();
+    return;
+  }
+
+  // 🛡️ Validação de Hodômetro Regressivo (Sprint 1)
+  const dataVal = document.getElementById('f-data').value;
+  const editId  = document.getElementById('f-id').value;
+  const prevKmTotal = getPreviousKmTotal(dataVal, editId);
+  if (prevKmTotal !== null && kmTot <= prevKmTotal) {
+    showToast(`⚠️ O KM atual (${formatNumber(kmTot, 0)}) deve ser maior que o anterior (${formatNumber(prevKmTotal, 0)})`, 'err');
+    const inputKm = document.getElementById('f-kmtotal');
+    if (inputKm) {
+      inputKm.classList.add('is-invalid');
+      inputKm.setAttribute('aria-invalid', 'true');
+      inputKm.focus();
+    }
     return;
   }
 
@@ -1065,6 +1096,23 @@ function calcPreco() {
 }
 
 /* [CALC-KM-PREVIEW] — prévia de KM rodados e km/L no formulário */
+function getPreviousKmTotal(dataVal, editId) {
+  if (!dataVal) return null;
+  const dataAtual = new Date(dataVal).getTime();
+  if (!Number.isFinite(dataAtual)) return null;
+  let prevKmTotal = null, prevTime = -Infinity;
+
+  records.forEach(r => {
+    if (editId && String(r['ID']) === String(editId)) return; // ignora o próprio
+    const t  = new Date(r['Data']).getTime();
+    const km = +r['KM_Total'] || 0;
+    if (km > 0 && t < dataAtual && t > prevTime) {
+      prevTime = t; prevKmTotal = km;
+    }
+  });
+  return prevKmTotal;
+}
+
 function calcKm() {
   const kmTotalEl = document.getElementById('f-kmtotal');
   const kmTripEl  = document.getElementById('f-kmtrip');
@@ -1077,20 +1125,15 @@ function calcKm() {
   const previousEl = document.getElementById('previous-km');
 
   // 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora)
-  const dataAtual = new Date(dataVal).getTime();
-  let prevKmTotal = null, prevTime = -Infinity;
-
-  records.forEach(r => {
-    if (editId && String(r['ID']) === String(editId)) return; // ignora o próprio
-    const t  = new Date(r['Data']).getTime();
-    const km = +r['KM_Total'] || 0;
-    if (km > 0 && t < dataAtual && t > prevTime) {
-      prevTime = t; prevKmTotal = km;
-    }
-  });
+  const prevKmTotal = getPreviousKmTotal(dataVal, editId);
 
   previousEl.textContent = prevKmTotal === null ? 'Sem hodômetro anterior' :
     `Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km`;
+
+  if (prevKmTotal === null || kmTotal > prevKmTotal) {
+    kmTotalEl.classList.remove('is-invalid');
+    kmTotalEl.removeAttribute?.('aria-invalid');
+  }
 
   if (kmTotal <= 0 || !dataVal) {
     kmTripEl.value  = '';
@@ -1125,10 +1168,22 @@ function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
 function showToast(msg, type) {
   const el = document.getElementById('toast');
+  if (!el) return;
+  if (toastTimeoutId && typeof clearTimeout === 'function') {
+    clearTimeout(toastTimeoutId);
+    toastTimeoutId = null;
+  }
   el.setAttribute('role', type === 'err' ? 'alert' : 'status');
   el.setAttribute('aria-live', type === 'err' ? 'assertive' : 'polite');
-  el.textContent = msg; el.className = `toast show ${type||''}`;
-  setTimeout(() => el.className = 'toast', 3200);
+  el.textContent = msg;
+  el.className = `toast show ${type || ''}`;
+  const delay = type === 'err' ? 5500 : 3500;
+  if (typeof setTimeout === 'function') {
+    toastTimeoutId = setTimeout(() => {
+      el.className = 'toast';
+      toastTimeoutId = null;
+    }, delay);
+  }
 }
 /* [LOADER-OVERLAY] — controla o overlay de loading */
 function showLoader(texto) {

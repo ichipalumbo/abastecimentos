@@ -248,8 +248,8 @@ select:focus-visible,
   width: 46px;
   height: 46px;
 }
-.us-avatar.car-red svg { color: #cb0f01; }      /* fill usa currentColor */
-.us-avatar.car-silver svg { color: #918982; }
+.us-avatar.car-red svg { color: #ff6b6b; }      /* fill usa currentColor (contraste > 4.8:1) */
+.us-avatar.car-silver svg { color: #e2e2f4; }   /* contraste > 10:1 */
 
 /* prata claro */
 /* [/CARD-COLORS] */
@@ -599,22 +599,26 @@ select:focus-visible,
 
 .chip.blue {
   background: var(--blue-dim);
-  color: var(--blue);
+  color: #8bb2ff;
+  border: 1px solid rgba(108, 143, 255, .25);
 }
 
 .chip.green {
   background: var(--green-dim);
   color: var(--green);
+  border: 1px solid rgba(74, 222, 128, .2);
 }
 
 .chip.amber {
   background: var(--amber-dim);
-  color: var(--amber);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, .25);
 }
 
 .chip.purple {
   background: var(--purple-dim);
-  color: var(--purple);
+  color: #c4b5fd;
+  border: 1px solid rgba(167, 139, 250, .25);
 }
 
 .record-right {
@@ -1247,6 +1251,11 @@ select:focus-visible,
 }
 
 
+.form-control.is-invalid {
+  border-color: var(--red) !important;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, .2) !important;
+}
+
 .form-control:focus {
   outline: none;
   border-color: var(--blue);
@@ -1647,6 +1656,8 @@ input:checked+.slider::before {
 .toast.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .toast.ok {
