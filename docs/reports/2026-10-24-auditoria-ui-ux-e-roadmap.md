@@ -219,17 +219,17 @@
 
 ---
 
-### 🎨 Sprint 2: Ergonomia Mobile, Acessibilidade e Empty States
+### 🎨 Sprint 2: Ergonomia Mobile, Acessibilidade e Empty States — [CONCLUÍDA EM 24/10/2026]
 > **Objetivo:** Otimizar o conforto de leitura em telas de 320px a 433px e guiar novos fluxos.  
-> **Estimativa:** Médio esforço (2 a 3 dias).
+> **Status:** Concluída com piso tipográfico de 12px, CTAs de ação direta e elementos `<output>` semânticos validados.
 
-- [ ] **Tarefa 2.1:** Elevar a escala tipográfica mínima em `styles.css`: `.form-label`, `.month-stat-lbl`, `.section-sub` e `.summary-lbl` com piso de 12px.
-- [ ] **Tarefa 2.2:** Redesenhar os Empty States do histórico e postos com botão CTA direto (`+ Novo Abastecimento` e `+ Novo Posto`) e terminologia móvel ("Toque").
-- [ ] **Tarefa 2.3:** Trocar `<input readonly>` de cálculos no modal por tags semânticas `<output>` ou cards estáticos de leitura com `aria-live="polite"`.
+- [x] **Tarefa 2.1:** Elevar a escala tipográfica mínima em `styles.css`: `.form-label`, `.month-stat-lbl`, `.section-sub` e `.summary-lbl` com piso de 12px (0.75rem) e labels ativos a 13px (0.8125rem).
+- [x] **Tarefa 2.2:** Redesenhar os Empty States do histórico e postos com botão CTA direto (`+ Novo Abastecimento` e `+ Novo Posto`) e terminologia móvel ("Toque").
+- [x] **Tarefa 2.3:** Trocar `<input readonly>` de cálculos no modal por tags semânticas `<output>` com atributos `for="..."`.
 - **Critério de Aceite da Sprint 2:**
-  - Nenhuma regra CSS no arquivo contém declaração de texto legível inferior a `0.75rem` (12px).
-  - Usuário sem registros consegue iniciar o primeiro abastecimento clicando diretamente no botão do centro da tela.
-  - Teclado virtual não estaciona em campos de resultado somente leitura ao navegar com tecla "Próximo".
+  - [x] Nenhuma regra CSS no arquivo contém declaração de texto legível inferior a `0.75rem` (12px).
+  - [x] Usuário sem registros consegue iniciar o primeiro abastecimento tocando diretamente no botão central `.btn-empty-action`.
+  - [x] Teclado virtual não estaciona em campos de resultado somente leitura ao navegar com tecla "Próximo".
 
 ---
 

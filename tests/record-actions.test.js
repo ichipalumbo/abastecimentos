@@ -358,3 +358,30 @@ test('showToast cancels existing active timer and applies extended duration for 
   assert.match(a.elements.get('toast').className, /toast show err/);
   assert.equal(a.elements.get('toast')['aria-live'], 'assertive');
 });
+test('empty states render direct action buttons and mobile terminology', () => {
+  const a = app();
+  a.run('renderList([])');
+  const listEl = a.elements.get('list');
+  assert.match(listEl.innerHTML, /btn-empty-action/);
+  assert.match(listEl.innerHTML, /Registrar Abastecimento/);
+  assert.doesNotMatch(listEl.innerHTML, /Toque em <strong>Registrar<\/strong>/);
+
+  a.run('postos = []; renderAdminPostos()');
+  const postosEl = a.elements.get('postos-list');
+  assert.match(postosEl.innerHTML, /btn-empty-action/);
+  assert.match(postosEl.innerHTML, /Novo Posto/);
+  assert.doesNotMatch(postosEl.innerHTML, /Clique/);
+});
+
+test('calc outputs update textContent and value for semantic output elements', () => {
+  const a = app();
+  a.run('document.getElementById("f-litros").value = "10"; document.getElementById("f-valor").value = "50"');
+  a.run('calcPreco()');
+  assert.match(a.elements.get('f-precol').textContent, /R\$ 5,000\/L/);
+  assert.match(a.elements.get('f-precol').value, /R\$ 5,000\/L/);
+
+  a.run('document.getElementById("f-data").value = "2026-09-29T12:00"; document.getElementById("f-kmtotal").value = "650"');
+  a.run('calcKm()');
+  assert.match(a.elements.get('f-kmtrip').textContent, /50 km/);
+  assert.match(a.elements.get('f-kmlprev').textContent, /5,00 km\/L/);
+});

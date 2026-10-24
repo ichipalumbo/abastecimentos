@@ -381,7 +381,8 @@ function renderList(data) {
   if (!data.length) {
     el.innerHTML = `<div class="empty">
       <div class="empty-icon">⛽</div>
-      <p>Nenhum abastecimento ainda.<br>Toque em <strong>Registrar</strong> para começar!</p>
+      <p style="margin-bottom:16px">Nenhum abastecimento registrado ainda.<br>Comece registrando o primeiro!</p>
+      <button type="button" class="btn-empty-action" onclick="openModal()">＋ Registrar Abastecimento</button>
     </div>`;
     return;
   }
@@ -586,7 +587,8 @@ function renderAdminPostos() {
   if (!postos.length) {
     el.innerHTML = `<div class="empty">
       <div class="empty-icon">🏪</div>
-      <p>Nenhum posto cadastrado.<br>Clique em <strong>+ Novo Posto</strong> para adicionar.</p>
+      <p style="margin-bottom:16px">Nenhum posto cadastrado ainda.<br>Adicione postos para agilizar seus registros.</p>
+      <button type="button" class="btn-empty-action" onclick="openAddPosto()">＋ Novo Posto</button>
     </div>`;
     return;
   }
@@ -745,9 +747,10 @@ function openModal() {
   editMode = false; selectedPostoNome = '';
   document.getElementById('f-id').value = '';
   document.getElementById('form').reset();
-  document.getElementById('f-precol').value             = '';
-  document.getElementById('f-kmtrip').value             = '';
-  document.getElementById('f-kmlprev').value            = '';
+  const o1 = document.getElementById('f-precol'), o2 = document.getElementById('f-kmtrip'), o3 = document.getElementById('f-kmlprev');
+  if (o1) { o1.value = ''; o1.textContent = '—'; }
+  if (o2) { o2.value = ''; o2.textContent = '—'; }
+  if (o3) { o3.value = ''; o3.textContent = '—'; }
   const kmInput = document.getElementById('f-kmtotal');
   if (kmInput) { kmInput.classList.remove('is-invalid'); kmInput.removeAttribute?.('aria-invalid'); }
   document.getElementById('modal-title').textContent    = '🛢️ Novo Abastecimento';
@@ -942,9 +945,10 @@ function submitForm(e) {
         if (profileEpoch === epoch) {
           closeModal();
           document.getElementById('form').reset();
-          document.getElementById('f-precol').value  = '';
-          document.getElementById('f-kmtrip').value  = '';
-          document.getElementById('f-kmlprev').value = '';
+          const so1 = document.getElementById('f-precol'), so2 = document.getElementById('f-kmtrip'), so3 = document.getElementById('f-kmlprev');
+          if (so1) { so1.value = ''; so1.textContent = '—'; }
+          if (so2) { so2.value = ''; so2.textContent = '—'; }
+          if (so3) { so3.value = ''; so3.textContent = '—'; }
           selectedPostoNome = '';
           loadRecords(true);
         } else invalidateRecordsCache(user);
@@ -1092,7 +1096,9 @@ function formatNumber(valor, decimais = 2) {
 function calcPreco() {
   const l = parseDecimal(document.getElementById('f-litros').value);
   const v = parseDecimal(document.getElementById('f-valor').value);
-  document.getElementById('f-precol').value = (l>0&&v>0) ? `R$ ${formatNumber(v/l, 3)}/L` : '';
+  const val = (l>0&&v>0) ? `R$ ${formatNumber(v/l, 3)}/L` : '';
+  const el = document.getElementById('f-precol');
+  if (el) { el.value = val; el.textContent = val || '—'; }
 }
 
 /* [CALC-KM-PREVIEW] — prévia de KM rodados e km/L no formulário */
@@ -1136,31 +1142,31 @@ function calcKm() {
   }
 
   if (kmTotal <= 0 || !dataVal) {
-    kmTripEl.value  = '';
-    kmlPrevEl.value = '';
+    kmTripEl.value = ''; kmTripEl.textContent = '—';
+    kmlPrevEl.value = ''; kmlPrevEl.textContent = '—';
     return;
   }
 
   // 🛣️ KM Rodados
   if (prevKmTotal === null) {
-    kmTripEl.value  = '— (1º registro)';
-    kmlPrevEl.value = '—';
+    kmTripEl.value = '— (1º registro)'; kmTripEl.textContent = '— (1º registro)';
+    kmlPrevEl.value = '—'; kmlPrevEl.textContent = '—';
     return;
   }
 
   const dist = kmTotal - prevKmTotal;
   if (dist <= 0) {
-    kmTripEl.value  = '⚠️ KM ≤ anterior';
-    kmlPrevEl.value = '—';
+    kmTripEl.value = '⚠️ KM ≤ anterior'; kmTripEl.textContent = '⚠️ KM ≤ anterior';
+    kmlPrevEl.value = '—'; kmlPrevEl.textContent = '—';
     return;
   }
 
-  kmTripEl.value = `${formatNumber(dist, 0)} km`;
+  const distStr = `${formatNumber(dist, 0)} km`;
+  kmTripEl.value = distStr; kmTripEl.textContent = distStr;
 
   // ⚡ Prévia de km/L (estimativa simples)
-  kmlPrevEl.value = (litros > 0)
-    ? `~ ${formatNumber(dist / litros, 2)} km/L`
-    : '—';
+  const kmlStr = (litros > 0) ? `~ ${formatNumber(dist / litros, 2)} km/L` : '—';
+  kmlPrevEl.value = kmlStr; kmlPrevEl.textContent = kmlStr;
 }
 /* [/CALC-KM-PREVIEW] */
 

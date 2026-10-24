@@ -69,7 +69,7 @@ body {
   border-radius: 6px;
   background: var(--amber);
   color: var(--bg);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
 }
 
@@ -230,7 +230,7 @@ select:focus-visible,
 }
 
 .us-tag {
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--text-sec);
@@ -260,7 +260,7 @@ select:focus-visible,
   color: var(--text-sec);
   border-radius: 20px;
   padding: 5px 12px;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
@@ -387,7 +387,7 @@ select:focus-visible,
   color: var(--blue);
   padding: 5px 12px;
   border-radius: 20px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
   white-space: nowrap;
   margin-top: 2px;
@@ -448,7 +448,7 @@ select:focus-visible,
 }
 
 .section-title {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 1.2px;
   text-transform: uppercase;
@@ -484,7 +484,7 @@ select:focus-visible,
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 6px 10px;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   color: var(--muted);
   white-space: nowrap;       /* 🔧 volta a nowrap (agora tem espaço!) */
   display: inline-block;     /* 🔑 ocupa só o necessário, embaixo do título */
@@ -707,7 +707,7 @@ select:focus-visible,
 }
 
 .summary-lbl {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--muted);
   margin-top: 4px;
   line-height: 1.4;
@@ -800,7 +800,7 @@ select:focus-visible,
   color: var(--blue);
   border-radius: 20px;
   padding: 4px 12px;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -817,7 +817,7 @@ select:focus-visible,
 }
 
 .month-stat-lbl {
-  font-size: 0.61rem;
+  font-size: 0.75rem;
   color: var(--muted);
   margin-top: 3px;
 }
@@ -1133,7 +1133,7 @@ select:focus-visible,
 
 .calc-grid .form-label {
   color: var(--text-sec);
-  font-size: .7rem;
+  font-size: 0.75rem;
   min-height: 30px;
 }
 
@@ -1152,11 +1152,11 @@ select:focus-visible,
 
 #overlay .form-label {
   color: var(--text-sec);
-  font-size: .75rem;
+  font-size: 0.8125rem;
 }
 
 #overlay .calc-grid .form-label {
-  font-size: .7rem;
+  font-size: 0.75rem;
 }
 
 #overlay .form-control:focus-visible,
@@ -1187,7 +1187,7 @@ select:focus-visible,
 }
 
 .modal-subtitle {
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   color: var(--muted);
   margin-top: 3px;
   margin-bottom: 16px;
@@ -1225,7 +1225,7 @@ select:focus-visible,
 
 .form-label {
   display: block;
-  font-size: 0.68rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   color: var(--muted);
   text-transform: uppercase;
@@ -1345,7 +1345,7 @@ input:checked+.slider::before {
 }
 
 .section-sub {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: var(--muted);
   text-transform: uppercase;
@@ -1621,6 +1621,28 @@ input:checked+.slider::before {
   to {
     transform: rotate(360deg);
   }
+}
+
+.btn-empty-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 24px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+}
+
+.btn-empty-action:active {
+  background: var(--blue-dark);
+  transform: scale(.96);
 }
 
 .empty-icon {
