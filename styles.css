@@ -1127,20 +1127,53 @@ select:focus-visible,
 }
 
 #overlay .calc-grid {
+  display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
+  gap: 8px;
+  align-items: start;
 }
 
-.calc-grid .form-label {
+.calc-grid .form-group {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.calc-grid .form-label,
+#overlay .calc-grid .form-label {
   color: var(--text-sec);
   font-size: 0.75rem;
-  min-height: 30px;
+  font-weight: 700;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 6px;
+  line-height: 1.2;
 }
 
+.form-control.calc,
+output.form-control.calc,
 .calc-grid .form-control.calc {
-  padding: 10px 7px;
-  font-size: .82rem;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 100% !important;
+  min-height: 44px;
+  height: 44px;
+  padding: 0 6px;
+  background: var(--blue-dim);
+  border: 1.5px solid rgba(108, 143, 255, .3);
+  color: #8bb2ff;
+  font-weight: 800;
+  font-size: 0.875rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
+  border-radius: var(--r-sm);
+  box-sizing: border-box;
 }
 
 .previous-km {

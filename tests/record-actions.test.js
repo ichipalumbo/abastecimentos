@@ -384,4 +384,11 @@ test('calc outputs update textContent and value for semantic output elements', (
   a.run('calcKm()');
   assert.match(a.elements.get('f-kmtrip').textContent, /50 km/);
   assert.match(a.elements.get('f-kmlprev').textContent, /5,00 km\/L/);
+
+  // When odometer is <= previous, preview displays clean dash and warns in previous-km
+  a.run('document.getElementById("f-kmtotal").value = "550"');
+  a.run('calcKm()');
+  assert.equal(a.elements.get('f-kmtrip').textContent, '—');
+  assert.equal(a.elements.get('f-kmlprev').textContent, '—');
+  assert.match(a.elements.get('previous-km').textContent, /atual deve ser maior/);
 });

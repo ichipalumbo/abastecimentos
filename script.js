@@ -1133,8 +1133,15 @@ function calcKm() {
   // 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora)
   const prevKmTotal = getPreviousKmTotal(dataVal, editId);
 
-  previousEl.textContent = prevKmTotal === null ? 'Sem hodômetro anterior' :
-    `Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km`;
+  if (prevKmTotal === null) {
+    previousEl.textContent = 'Sem hodômetro anterior (1º abastecimento)';
+    previousEl.style.color = '';
+    previousEl.style.fontWeight = '';
+  } else {
+    previousEl.textContent = `Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km`;
+    previousEl.style.color = '';
+    previousEl.style.fontWeight = '';
+  }
 
   if (prevKmTotal === null || kmTotal > prevKmTotal) {
     kmTotalEl.classList.remove('is-invalid');
@@ -1149,15 +1156,18 @@ function calcKm() {
 
   // 🛣️ KM Rodados
   if (prevKmTotal === null) {
-    kmTripEl.value = '— (1º registro)'; kmTripEl.textContent = '— (1º registro)';
+    kmTripEl.value = '—'; kmTripEl.textContent = '—';
     kmlPrevEl.value = '—'; kmlPrevEl.textContent = '—';
     return;
   }
 
   const dist = kmTotal - prevKmTotal;
   if (dist <= 0) {
-    kmTripEl.value = '⚠️ KM ≤ anterior'; kmTripEl.textContent = '⚠️ KM ≤ anterior';
+    kmTripEl.value = '—'; kmTripEl.textContent = '—';
     kmlPrevEl.value = '—'; kmlPrevEl.textContent = '—';
+    previousEl.textContent = `⚠️ Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km (atual deve ser maior)`;
+    previousEl.style.color = 'var(--amber)';
+    previousEl.style.fontWeight = '700';
     return;
   }
 
