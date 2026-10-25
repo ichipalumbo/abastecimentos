@@ -1,3 +1,44 @@
+/* [ICONS] ════════════════════════════════════ */
+const ICONS = {
+  fuel: `<svg class="icon-inline" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L19.5 6.5"/><path d="M3 10h11"/><path d="M7 6h3"/></svg>`,
+  analytics: `<svg class="icon-inline" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>`,
+  store: `<svg class="icon-inline" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 2-4h16l2 4"/><path d="M4 7v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"/><path d="M9 22v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/></svg>`,
+  edit: `<svg class="icon-inline" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>`,
+  trash: `<svg class="icon-inline" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`,
+  arrowDown: `<svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>`,
+  arrowUp: `<svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>`,
+  check: `<svg class="icon-inline" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  save: `<svg class="icon-inline" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`,
+  alert: `<svg class="icon-inline" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  zap: `<svg class="icon-inline" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  route: `<svg class="icon-inline" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>`,
+  droplet: `<svg class="icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>`,
+  dollar: `<svg class="icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+  tag: `<svg class="icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><circle cx="7" cy="7" r="2"/></svg>`,
+  error: `<svg class="icon-inline" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`
+};
+/* [/ICONS] */
+
+/* [THEMING] ══════════════════════════════════ */
+function applyUserTheme(user) {
+  if (typeof document === 'undefined') return;
+  if (document.body && typeof document.body.setAttribute === 'function') {
+    if (user) document.body.setAttribute('data-user', user);
+    else document.body.removeAttribute('data-user');
+  }
+  if (document.documentElement && typeof document.documentElement.setAttribute === 'function') {
+    if (user) document.documentElement.setAttribute('data-user', user);
+    else document.documentElement.removeAttribute('data-user');
+  }
+  if (typeof document.querySelector === 'function') {
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', user === 'Josy' ? '#0e0d14' : (user === 'Luccas' ? '#0c1017' : '#0c0f17'));
+    }
+  }
+}
+/* [/THEMING] */
+
 /* [STATE] ════════════════════════════════════ */
 let currentUser        = null;     // 'Luccas' ou 'Josy'
 let records            = [];
@@ -39,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   document.getElementById('form').addEventListener('invalid', e => {
-    showToast('⚠️ Confira ' + (e.target.labels?.[0]?.textContent.trim() || 'o campo obrigatório'), 'err');
+    showToast('Confira ' + (e.target.labels?.[0]?.textContent.trim() || 'o campo obrigatório'), 'err');
   }, true);
 
   ['f-comb', 'f-litros', 'f-valor', 'f-kmtotal'].forEach(id => {
@@ -71,9 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (splash) splash.classList.add('hide');
   }, 1200);
 
-  // // ⬇️ AUTO-LOGIN: lembra o último usuário (remova este bloco se não quiser)
+  // AUTO-LOGIN: lembra o último usuário
   const saved = localStorage.getItem('fuelapp_user');
   if (saved) selectUser(saved);
+  else applyUserTheme(null);
 });
 /* [/INIT] */
 
@@ -126,27 +168,40 @@ function selectUser(user) {
   closePostoModal();
   closeConfirmPosto();
   editMode = false;
-  document.getElementById('btn-salvar').disabled = false;
+  const saveBtn = document.getElementById('btn-salvar');
+  if (saveBtn) saveBtn.disabled = false;
   currentUser = user;
   localStorage.setItem('fuelapp_user', user);
+  applyUserTheme(user);
+
   // Carrega a preferência de ordenação do localStorage
   sortOrder = localStorage.getItem('fuelapp_sortOrder') || 'desc';
   updateSortButton();
   
-  document.getElementById('user-select').classList.add('hidden');
-  document.getElementById('home-title').textContent =
-    `⛽ ${user === 'Josy' ? '💜' : '💙'} ${user}`;
+  const userSelect = document.getElementById('user-select');
+  if (userSelect && userSelect.classList) userSelect.classList.add('hidden');
 
-  // ⬇️ LIMPA dados antigos (mata o "fantasma")
+  const homeTitle = document.getElementById('home-title');
+  if (homeTitle) {
+    const carTag = user === 'Josy' ? 'LOGAN' : 'IDEA';
+    homeTitle.innerHTML = `${ICONS.fuel} <span>${user}</span> <span class="header-user-tag">${carTag}</span>`;
+  }
+
+  // LIMPA dados antigos
   records = []; postos = []; selectedPostoNome = ''; analyticsBuilt = false;
-  document.getElementById('list').innerHTML =
-    `<div class="loading"><div class="loading-spinner"></div>Carregando registros...</div>`;
-  document.getElementById('s-mes').textContent   = '—';
-  document.getElementById('s-kml').textContent   = '—';
-  document.getElementById('s-preco').textContent = '—';
+  const listEl = document.getElementById('list');
+  if (listEl) {
+    listEl.innerHTML = `<div class="loading"><div class="loading-spinner"></div>Carregando registros...</div>`;
+  }
+  const sMes = document.getElementById('s-mes');
+  if (sMes) sMes.textContent = '—';
+  const sKml = document.getElementById('s-kml');
+  if (sKml) sKml.textContent = '—';
+  const sPreco = document.getElementById('s-preco');
+  if (sPreco) sPreco.textContent = '—';
   updateRefreshMeta(null);
 
-  setLoaderText('Carregando dados...');   // 🔧 troca showLoader por setLoaderText
+  setLoaderText('Carregando dados...');
 
   switchTab('home');
   loadRecords();
@@ -160,13 +215,20 @@ function logout() {
   closePostoModal();
   closeConfirmPosto();
   editMode = false;
-  document.getElementById('btn-salvar').disabled = false;
+  const saveBtn = document.getElementById('btn-salvar');
+  if (saveBtn) saveBtn.disabled = false;
   currentUser    = null;
   records        = [];
   postos         = [];
   analyticsBuilt = false;
   localStorage.removeItem('fuelapp_user');
-  document.getElementById('user-select').classList.remove('hidden');
+  applyUserTheme(null);
+  const homeTitle = document.getElementById('home-title');
+  if (homeTitle) {
+    homeTitle.innerHTML = `${ICONS.fuel} <span>Abastecimentos</span>`;
+  }
+  const userSelect = document.getElementById('user-select');
+  if (userSelect && userSelect.classList) userSelect.classList.remove('hidden');
 }
 
 /* [SORT] ═════════════════════════════════════ */
@@ -181,10 +243,10 @@ function updateSortButton() {
   const btn = document.getElementById('btn-sort');
   if (!btn) return;
   if (sortOrder === 'desc') {
-    btn.textContent = '⬇️ Recente';
+    btn.innerHTML = `${ICONS.arrowDown} <span>Recente</span>`;
     btn.title = 'Ordenar: do mais recente para o mais antigo';
   } else {
-    btn.textContent = '⬆️ Antigo';
+    btn.innerHTML = `${ICONS.arrowUp} <span>Antigo</span>`;
     btn.title = 'Ordenar: do mais antigo para o mais recente';
   }
 }
@@ -198,15 +260,17 @@ function switchTab(tab) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelectorAll('.bottom-nav .nav-item:not(.nav-registrar)').forEach(n =>
     n.setAttribute('aria-current', n.id === 'nav-' + tab ? 'page' : 'false'));
-  document.getElementById('page-' + tab).classList.add('active');
-  document.getElementById('nav-'  + tab).classList.add('active');
+  const page = document.getElementById('page-' + tab);
+  if (page) page.classList.add('active');
+  const nav = document.getElementById('nav-'  + tab);
+  if (nav) nav.classList.add('active');
   if (tab === 'analytics' && records.length && !analyticsBuilt) renderAnalytics(records);
 }
 
 function refreshData() {
   if (!currentUser) return;
-  showToast('🔄 Forçando atualização...', '');
-  setLoaderText('Atualizando dados...');   // 🔧 só define o texto, NÃO liga
+  showToast('Forçando atualização...', '');
+  setLoaderText('Atualizando dados...');
   loadRecords(true);
   loadPostos(true);
 }
@@ -233,7 +297,7 @@ function loadRecords(forceRefresh = false) {
   }
 
   pendingLoads++;
-  if (!cache || forceRefresh) showLoader();   // 🔑 só garante o overlay visível, sem trocar texto
+  if (!cache || forceRefresh) showLoader();
   google.script.run
     .withSuccessHandler(data => {
       if (profileEpoch !== epoch || request !== recordsLoadSequence) { checkLoadsDone(); return; }
@@ -249,14 +313,17 @@ function loadRecords(forceRefresh = false) {
     .withFailureHandler(err => {
       if (profileEpoch !== epoch || request !== recordsLoadSequence) { checkLoadsDone(); return; }
       if (records.length) {
-        showToast('❌ Erro ao atualizar abastecimentos', 'err');
+        showToast('Erro ao atualizar abastecimentos', 'err');
       } else {
-        document.getElementById('list').innerHTML =
-          `<div class="empty">
-             <div class="empty-icon">❌</div>
-             <p style="color:var(--red);margin-bottom:14px">Não foi possível carregar os abastecimentos.<br><small>${err?.message || 'Falha de conexão com o servidor'}</small></p>
-             <button type="button" class="btn-empty-action" onclick="refreshData()">🔄 Tentar novamente</button>
-           </div>`;
+        const listEl = document.getElementById('list');
+        if (listEl) {
+          listEl.innerHTML =
+            `<div class="empty">
+               <div class="empty-icon">${ICONS.error}</div>
+               <p style="color:var(--red);margin-bottom:14px">Não foi possível carregar os abastecimentos.<br><small>${err?.message || 'Falha de conexão com o servidor'}</small></p>
+               <button type="button" class="btn-empty-action" onclick="refreshData()">🔄 Tentar novamente</button>
+             </div>`;
+        }
       }
       checkLoadsDone();
     })
@@ -279,7 +346,7 @@ function loadPostos(forceRefresh = false) {
   }
 
   pendingLoads++;
-  if (!cache || forceRefresh) showLoader();   // 🔑 só garante o overlay visível, sem trocar texto
+  if (!cache || forceRefresh) showLoader();
   google.script.run
     .withSuccessHandler(data => {
       if (profileEpoch !== epoch) { checkLoadsDone(); return; }
@@ -292,13 +359,13 @@ function loadPostos(forceRefresh = false) {
     .withFailureHandler(err => {
       if (profileEpoch !== epoch) { checkLoadsDone(); return; }
       if (postos.length) {
-        showToast('❌ Erro ao atualizar postos', 'err');
+        showToast('Erro ao atualizar postos', 'err');
       } else {
         const postosList = document.getElementById('postos-list');
         if (postosList) {
           postosList.innerHTML =
             `<div class="empty">
-               <div class="empty-icon">❌</div>
+               <div class="empty-icon">${ICONS.error}</div>
                <p style="color:var(--red);margin-bottom:14px">Não foi possível carregar os postos.<br><small>${err?.message || 'Falha de conexão com o servidor'}</small></p>
                <button type="button" class="btn-empty-action" onclick="refreshData()">🔄 Tentar novamente</button>
              </div>`;
@@ -339,26 +406,11 @@ function getCachedData(user, type) {
   }
 }
 
-function updateRefreshMeta(ts) {
-  const el = document.getElementById('refresh-meta');
-  if (!el) return;
-  if (!ts) {
-    el.textContent = 'Última atualização: —';
-    return;
-  }
-  el.textContent = `Última atualização: ${new Date(ts).toLocaleString('pt-BR', {
-    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-  })}`;
-}
-
 function setCachedData(user, type, data) {
   try {
-    localStorage.setItem(getCacheKey(user, type), JSON.stringify({
-      ts: Date.now(),
-      data
-    }));
+    localStorage.setItem(getCacheKey(user, type), JSON.stringify({ ts: Date.now(), data }));
   } catch (err) {
-    // sem cache se localStorage falhar
+    // quota excedida ou similar
   }
 }
 
@@ -366,52 +418,72 @@ function invalidateRecordsCache(user) {
   try {
     localStorage.removeItem(getCacheKey(user, 'records'));
   } catch (err) {
-    showToast('❌ Não foi possível limpar o cache de registros', 'err');
+    showToast('Não foi possível limpar o cache de registros', 'err');
   }
 }
 
 function isCacheFresh(cache) {
-  return cache && cache.ts && (Date.now() - cache.ts) < CACHE_TTL_MS;
+  return cache && (Date.now() - cache.ts) < CACHE_TTL_MS;
 }
 
-/* [/HELPER-ISFULL] */
+function updateRefreshMeta(timestamp) {
+  const el = document.getElementById('refresh-meta');
+  if (!el) return;
+  if (!timestamp) {
+    el.textContent = 'Última atualização: —';
+    return;
+  }
+  const date = new Date(timestamp);
+  const timeStr = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const dateStr = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  el.innerHTML = `Última atualização: <strong>${dateStr} às ${timeStr}</strong>`;
+}
 
 /* [STATS] ════════════════════════════════════ */
 function renderStats(data) {
-  const now    = new Date();
+  const now = new Date();
   const thisMo = data.filter(r => {
     const d = new Date(r['Data']);
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   });
-  const totalMes = thisMo.reduce((s,r) => s + (+r['Valor']  || 0), 0);
-  const kmlArr   = data.filter(r => isFull(r) && +r['KM/L Trip'] > 0).map(r => +r['KM/L Trip']);
-  const avgKml   = kmlArr.length  ? kmlArr.reduce((a,b)=>a+b) / kmlArr.length  : 0;
-  const precos   = data.filter(r => +r['Litros'] && +r['Valor']).map(r => +r['Valor'] / +r['Litros']);
-  const avgPreco = precos.length  ? precos.reduce((a,b)=>a+b) / precos.length  : 0;
+  const totalMes = thisMo.reduce((s, r) => s + (+r['Valor'] || 0), 0);
 
-  document.getElementById('s-mes').textContent   = formatBRL(totalMes);
-  document.getElementById('s-kml').textContent   = avgKml   ? formatNumber(avgKml, 1)  : '—';
-  document.getElementById('s-preco').textContent = avgPreco ? formatBRL(avgPreco)      : '—';
+  const fullWithKml = data.filter(r => isFull(r) && +r['KM/L Trip'] > 0);
+  const mediaKml = fullWithKml.length
+    ? fullWithKml.reduce((s, r) => s + (+r['KM/L Trip'] || 0), 0) / fullWithKml.length : 0;
 
-  const moName = now.toLocaleDateString('pt-BR', { month:'long', year:'numeric' });
-  document.getElementById('subtitle').textContent  = `${data.length} registros • ${capitalize(moName)}`;
-  document.getElementById('badge-mes').textContent = thisMo.length
-    ? `${thisMo.length} este mês` : 'sem registro';
+  const comPreco = data.filter(r => +r['Litros'] && +r['Valor']);
+  const mediaPreco = comPreco.length
+    ? comPreco.reduce((s, r) => s + (+r['Valor'] / +r['Litros']), 0) / comPreco.length : 0;
+
+  const sMes = document.getElementById('s-mes');
+  if (sMes) sMes.textContent = totalMes ? formatBRL(totalMes) : 'R$ 0,00';
+  const sKml = document.getElementById('s-kml');
+  if (sKml) sKml.textContent = mediaKml ? `${formatNumber(mediaKml, 1)}` : '—';
+  const sPreco = document.getElementById('s-preco');
+  if (sPreco) sPreco.textContent = mediaPreco ? `R$ ${formatNumber(mediaPreco, 2)}` : '—';
+
+  const moName = now.toLocaleDateString('pt-BR', { month: 'long' });
+  const subtitle = document.getElementById('subtitle');
+  if (subtitle) subtitle.textContent = `${data.length} registros • ${capitalize(moName)}`;
+  const badgeMes = document.getElementById('badge-mes');
+  if (badgeMes) badgeMes.textContent = thisMo.length ? `${thisMo.length} este mês` : 'sem registro';
 }
 /* [/STATS] */
 
 /* [LIST] ═════════════════════════════════════ */
 function renderList(data) {
   const el = document.getElementById('list');
+  if (!el) return;
   if (!data.length) {
     el.innerHTML = `<div class="empty">
-      <div class="empty-icon">⛽</div>
+      <div class="empty-icon">${ICONS.fuel}</div>
       <p style="margin-bottom:16px">Nenhum abastecimento registrado ainda.<br>Comece registrando o primeiro!</p>
       <button type="button" class="btn-empty-action" onclick="openModal()">＋ Registrar Abastecimento</button>
     </div>`;
     return;
   }
-  // ✅ Ordena por data de acordo com sortOrder
+  // Ordena por data de acordo com sortOrder
   const sorted = [...data].sort((a, b) => {
     const dateA = new Date(a['Data']);
     const dateB = new Date(b['Data']);
@@ -468,11 +540,11 @@ function renderList(data) {
               <div class="record-date">${dStr} • ${tStr}</div>
               <div class="record-posto">${posto}</div>
               <div class="chips">
-                ${tipo    ? `<span class="chip blue">${tipo}</span>`                       : ''}
-                ${parcial ? `<span class="chip amber">⚠️ Parcial</span>`                  : ''}
-                ${kml     ? `<span class="chip green">⚡ ${formatNumber(kml, 1)} km/L</span>`    : ''}
-                ${kmTrip  ? `<span class="chip purple">🛣️ ${formatNumber(kmTrip, 0)} km</span>` : ''}
-                ${precoL  ? `<span class="chip blue">R$ ${formatNumber(precoL, 2)}/L</span>`    : ''}
+                ${tipo    ? `<span class="chip blue">${tipo}</span>`                                    : ''}
+                ${parcial ? `<span class="chip amber">⚠️ Parcial</span>`                                : ''}
+                ${kml     ? `<span class="chip green">${ICONS.zap} ${formatNumber(kml, 1)} km/L</span>`: ''}
+                ${kmTrip  ? `<span class="chip purple">${ICONS.route} ${formatNumber(kmTrip, 0)} km</span>`: ''}
+                ${precoL  ? `<span class="chip blue">R$ ${formatNumber(precoL, 2)}/L</span>`           : ''}
               </div>
             </div>
             <div class="record-right">
@@ -481,8 +553,8 @@ function renderList(data) {
             </div>
           </div>
           <div class="record-actions">
-            <button class="btn-action btn-edit">✏️ Editar</button>
-            <button class="btn-action btn-delete">🗑️ Excluir</button>
+            <button class="btn-action btn-edit">${ICONS.edit} Editar</button>
+            <button class="btn-action btn-delete">${ICONS.trash} Excluir</button>
           </div>
         </div>`;
     }).join('');
@@ -509,9 +581,10 @@ function renderPostoPicker() {
   const el = document.getElementById('posto-picker');
   if (!el) return;
   const recentNames = recentValues('Posto', 3).filter(name => postos.some(p => p.nome === name));
-  document.getElementById('recent-postos-label').hidden = !recentNames.length || editMode;
+  const recentLabel = document.getElementById('recent-postos-label');
+  if (recentLabel) recentLabel.hidden = !recentNames.length || editMode;
   if (!postos.length) {
-    el.innerHTML = `<button type="button" class="chip-posto chip-add" onclick="showInlineAddPosto()">＋ Adicionar Posto</button>`;
+    el.innerHTML = `<button type="button" class="chip-posto chip-add" onclick="showInlineAddPosto()">+ Adicionar Posto</button>`;
     return;
   }
   const ordered = [...postos.keys()].sort((a, b) => {
@@ -529,7 +602,7 @@ function renderPostoPicker() {
             aria-pressed="${selectedPostoNome === p.nome}"
             onclick="selectPosto(${i})">${p.nome}</button>`;
   }).join('') +
-  `<button type="button" class="chip-posto chip-add" onclick="showInlineAddPosto()">＋ Novo</button>`;
+  `<button type="button" class="chip-posto chip-add" onclick="showInlineAddPosto()">+ Novo Posto</button>`;
 }
 
 function recentValues(field, limit) {
@@ -546,14 +619,17 @@ function recentValues(field, limit) {
 }
 
 function refreshRecentChoices() {
-  if (!document.getElementById('overlay').classList.contains('open')) return;
+  const overlay = document.getElementById('overlay');
+  if (!overlay || !overlay.classList.contains('open')) return;
   renderPostoPicker();
   renderRecentFuel();
 }
 
 function renderRecentFuel() {
   const button = document.getElementById('recent-fuel');
+  if (!button) return;
   const select = document.getElementById('f-comb');
+  if (!select) return;
   const options = Array.from(select.options || []);
   const fuel = recentValues('Tipo Combustível', 5).find(value => options.some(option => option.value === value));
   const valid = Boolean(fuel);
@@ -563,11 +639,12 @@ function renderRecentFuel() {
 
 function useRecentFuel() {
   const select = document.getElementById('f-comb');
+  if (!select) return;
   const fuel = recentValues('Tipo Combustível', 5)
     .find(value => Array.from(select.options || []).some(option => option.value === value));
   if (!fuel) return;
   select.value = fuel;
-  select.focus();
+  if (typeof select.focus === 'function') select.focus();
 }
 
 function selectPosto(idx) {
@@ -576,18 +653,21 @@ function selectPosto(idx) {
 }
 
 function showInlineAddPosto() {
-  document.getElementById('inline-add-posto').classList.add('show');
-  setTimeout(() => document.getElementById('inline-posto-input').focus(), 50);
+  const wrap = document.getElementById('inline-add-posto');
+  if (wrap) wrap.classList.add('show');
+  setTimeout(() => document.getElementById('inline-posto-input')?.focus(), 50);
 }
 
 function cancelInlineAddPosto() {
-  document.getElementById('inline-add-posto').classList.remove('show');
-  document.getElementById('inline-posto-input').value = '';
+  const wrap = document.getElementById('inline-add-posto');
+  if (wrap) wrap.classList.remove('show');
+  const input = document.getElementById('inline-posto-input');
+  if (input) input.value = '';
 }
 
 function saveInlineAddPosto() {
   const nome = document.getElementById('inline-posto-input').value.trim();
-  if (!nome) { showToast('⚠️ Digite o nome do posto', ''); return; }
+  if (!nome) { showToast('Digite o nome do posto', ''); return; }
   google.script.run
     .withSuccessHandler(res => {
       if (res.success) {
@@ -597,10 +677,10 @@ function saveInlineAddPosto() {
         cancelInlineAddPosto();
         renderPostoPicker();
         renderAdminPostos();
-        showToast('✅ Posto adicionado!', 'ok');
-      } else { showToast('❌ ' + res.error, 'err'); }
+        showToast('Posto adicionado!', 'ok');
+      } else { showToast(res.error, 'err'); }
     })
-    .withFailureHandler(() => showToast('❌ Falha na conexão', 'err'))
+    .withFailureHandler(() => showToast('Falha na conexão', 'err'))
     .addPosto(currentUser, nome);
 }
 /* [/POSTO-PICKER] */
@@ -611,7 +691,7 @@ function renderAdminPostos() {
   if (!el) return;
   if (!postos.length) {
     el.innerHTML = `<div class="empty">
-      <div class="empty-icon">🏪</div>
+      <div class="empty-icon">${ICONS.store}</div>
       <p style="margin-bottom:16px">Nenhum posto cadastrado ainda.<br>Adicione postos para agilizar seus registros.</p>
       <button type="button" class="btn-empty-action" onclick="openAddPosto()">＋ Novo Posto</button>
     </div>`;
@@ -619,10 +699,10 @@ function renderAdminPostos() {
   }
   el.innerHTML = postos.map((p, i) => `
     <div class="posto-card">
-      <div class="posto-name">🏪 ${p.nome}</div>
+      <div class="posto-name">${ICONS.store} <span>${p.nome}</span></div>
       <div class="posto-btns">
-        <button class="btn-icon btn-icon-edit" aria-label="Editar posto" onclick="openEditPosto(${i})">✏️</button>
-        <button class="btn-icon btn-icon-delete" aria-label="Excluir posto" onclick="askDeletePosto(${i})">🗑️</button>
+        <button class="btn-icon btn-icon-edit" aria-label="Editar posto" onclick="openEditPosto(${i})">${ICONS.edit}</button>
+        <button class="btn-icon btn-icon-delete" aria-label="Excluir posto" onclick="askDeletePosto(${i})">${ICONS.trash}</button>
       </div>
     </div>`).join('');
   el.querySelectorAll('.posto-card').forEach((card, i) => {
@@ -633,21 +713,27 @@ function renderAdminPostos() {
 
 function openAddPosto() {
   editingPostoId = null;
-  document.getElementById('posto-nome-input').value        = '';
-  document.getElementById('posto-modal-title').textContent = '🏪 Novo Posto';
-  document.getElementById('btn-salvar-posto').textContent  = '✅ Adicionar Posto';
+  const input = document.getElementById('posto-nome-input');
+  if (input) input.value = '';
+  const title = document.getElementById('posto-modal-title');
+  if (title) title.innerHTML = `${ICONS.store} <span>Novo Posto</span>`;
+  const btn = document.getElementById('btn-salvar-posto');
+  if (btn) btn.innerHTML = `${ICONS.check} <span>Adicionar Posto</span>`;
   showDialog('posto-overlay', '.btn-close-modal');
-  setTimeout(() => document.getElementById('posto-nome-input').focus(), 350);
+  setTimeout(() => document.getElementById('posto-nome-input')?.focus(), 350);
 }
 
 function openEditPosto(idx) {
   const p = postos[idx];
   editingPostoId = p.id;
-  document.getElementById('posto-nome-input').value        = p.nome;
-  document.getElementById('posto-modal-title').textContent = '✏️ Editar Posto';
-  document.getElementById('btn-salvar-posto').textContent  = '💾 Salvar Alterações';
+  const input = document.getElementById('posto-nome-input');
+  if (input) input.value = p.nome;
+  const title = document.getElementById('posto-modal-title');
+  if (title) title.innerHTML = `${ICONS.edit} <span>Editar Posto</span>`;
+  const btn = document.getElementById('btn-salvar-posto');
+  if (btn) btn.innerHTML = `${ICONS.save} <span>Salvar Alterações</span>`;
   showDialog('posto-overlay', '.btn-close-modal');
-  setTimeout(() => document.getElementById('posto-nome-input').focus(), 350);
+  setTimeout(() => document.getElementById('posto-nome-input')?.focus(), 350);
 }
 
 function closePostoModal() {
@@ -661,17 +747,19 @@ function bgClickPosto(e) {
 
 function savePostoModal() {
   const nome = document.getElementById('posto-nome-input').value.trim();
-  if (!nome) { showToast('⚠️ Digite o nome do posto', ''); return; }
+  if (!nome) { showToast('Digite o nome do posto', ''); return; }
 
   const btn = document.getElementById('btn-salvar-posto');
-  btn.disabled = true; btn.textContent = '⏳ Salvando...';
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
 
   if (editingPostoId) {
     const id      = editingPostoId;
     const oldNome = postos.find(p => p.id === id)?.nome;
     google.script.run
       .withSuccessHandler(res => {
-        btn.disabled = false; btn.textContent = '💾 Salvar Alterações';
+        btn.disabled = false;
+        btn.innerHTML = `${ICONS.save} <span>Salvar Alterações</span>`;
         if (res.success) {
           const idx = postos.findIndex(p => p.id === id);
           if (idx >= 0) postos[idx].nome = nome;
@@ -679,29 +767,32 @@ function savePostoModal() {
           if (selectedPostoNome === oldNome) selectedPostoNome = nome;
           setCachedData(currentUser, 'postos', postos);
           renderPostoPicker(); renderAdminPostos(); closePostoModal();
-          showToast('💾 Posto atualizado!', 'ok');
-        } else { showToast('❌ ' + res.error, 'err'); }
+          showToast('Posto atualizado!', 'ok');
+        } else { showToast(res.error, 'err'); }
       })
       .withFailureHandler(() => {
-        btn.disabled = false; btn.textContent = '💾 Salvar Alterações';
-        showToast('❌ Falha na conexão', 'err');
+        btn.disabled = false;
+        btn.innerHTML = `${ICONS.save} <span>Salvar Alterações</span>`;
+        showToast('Falha na conexão', 'err');
       })
       .updatePosto(currentUser, id, nome);
   } else {
     google.script.run
       .withSuccessHandler(res => {
-        btn.disabled = false; btn.textContent = '✅ Adicionar Posto';
+        btn.disabled = false;
+        btn.innerHTML = `${ICONS.check} <span>Adicionar Posto</span>`;
         if (res.success) {
           postos.push({ id: res.id, nome: res.nome || nome });
           postos.sort((a,b) => a.nome.localeCompare(b.nome, 'pt-BR'));
           setCachedData(currentUser, 'postos', postos);
           renderPostoPicker(); renderAdminPostos(); closePostoModal();
-          showToast('✅ Posto adicionado!', 'ok');
-        } else { showToast('❌ ' + res.error, 'err'); }
+          showToast('Posto adicionado!', 'ok');
+        } else { showToast(res.error, 'err'); }
       })
       .withFailureHandler(() => {
-        btn.disabled = false; btn.textContent = '✅ Adicionar Posto';
-        showToast('❌ Falha na conexão', 'err');
+        btn.disabled = false;
+        btn.innerHTML = `${ICONS.check} <span>Adicionar Posto</span>`;
+        showToast('Falha na conexão', 'err');
       })
       .addPosto(currentUser, nome);
   }
@@ -730,10 +821,10 @@ function confirmDeletePosto() {
         if (selectedPostoNome && !postos.find(p => p.nome === selectedPostoNome)) selectedPostoNome = '';
         setCachedData(currentUser, 'postos', postos);
         renderPostoPicker(); renderAdminPostos();
-        showToast('🗑️ Posto excluído', 'ok');
-      } else { showToast('❌ ' + res.error, 'err'); }
+        showToast('Posto excluído!', 'ok');
+      } else { showToast(res.error, 'err'); }
     })
-    .withFailureHandler(() => showToast('❌ Falha na conexão', 'err'))
+    .withFailureHandler(() => showToast('Falha na conexão', 'err'))
     .deletePosto(currentUser, id);
 }
 /* [/POSTOS-LIST] */
@@ -742,30 +833,35 @@ function confirmDeletePosto() {
 function setNow() {
   const now   = new Date();
   const local = new Date(now - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-  document.getElementById('f-data').value = local;
+  const dataEl = document.getElementById('f-data');
+  if (dataEl) dataEl.value = local;
 }
 
-function toLocalDatetimeValue(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+function toLocalDatetimeValue(isoString) {
+  if (!isoString) return '';
+  const d = new Date(isoString);
+  if (isNaN(d.getTime())) return '';
+  const local = new Date(d - d.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 16);
+}
+
+function advanceForm(e, nextId) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const nextEl = document.getElementById(nextId);
+    if (nextEl) nextEl.focus();
+  }
 }
 
 function positionFormSheet() {
   const overlay = document.getElementById('overlay');
-  if (typeof window === 'undefined' || !window.visualViewport || !overlay.classList.contains('open')) return;
+  if (typeof window === 'undefined' || !window.visualViewport || !overlay || !overlay.classList.contains('open')) return;
   overlay.style.top = `${window.visualViewport.offsetTop}px`;
   overlay.style.height = `${window.visualViewport.height}px`;
   const active = document.activeElement;
-  if (active?.closest('.form-fields')) {
+  if (active?.closest && active.closest('.form-fields')) {
     active.scrollIntoView({ block: 'nearest' });
   }
-}
-
-function advanceForm(event, nextId) {
-  if (event.key !== 'Enter' || event.isComposing) return;
-  event.preventDefault();
-  document.getElementById(nextId).focus();
 }
 
 function openModal() {
@@ -780,9 +876,12 @@ function openModal() {
     const el = document.getElementById(id);
     if (el) { el.classList.remove('is-invalid'); el.removeAttribute?.('aria-invalid'); }
   });
-  document.getElementById('modal-title').textContent    = '🛢️ Novo Abastecimento';
-  document.getElementById('modal-subtitle').textContent = '';
-  document.getElementById('btn-salvar').textContent     = '✅ Salvar Abastecimento';
+  const title = document.getElementById('modal-title');
+  if (title) title.innerHTML = `${ICONS.fuel} <span>Novo Abastecimento</span>`;
+  const sub = document.getElementById('modal-subtitle');
+  if (sub) sub.textContent = '';
+  const btn = document.getElementById('btn-salvar');
+  if (btn) btn.innerHTML = `${ICONS.check} <span>Salvar Abastecimento</span>`;
   cancelInlineAddPosto(); setNow(); renderPostoPicker(); renderRecentFuel(); calcKm();
   showDialog('overlay', '.btn-close-modal');
   positionFormSheet();
@@ -790,13 +889,13 @@ function openModal() {
 
 function findRecordForAction(id, renderedUser) {
   if (renderedUser !== currentUser || id === null || id === undefined || String(id).trim() === '') {
-    showToast('❌ Registro indisponível. Atualize o histórico.', 'err');
+    showToast('Registro indisponível. Atualize o histórico.', 'err');
     return null;
   }
   const matches = records.filter(r => r['ID'] !== null && r['ID'] !== undefined &&
     String(r['ID']) === String(id));
   if (matches.length !== 1) {
-    showToast('❌ Registro não encontrado ou duplicado. Atualize o histórico.', 'err');
+    showToast('Registro não encontrado ou duplicado. Atualize o histórico.', 'err');
     return null;
   }
   return matches[0];
@@ -822,9 +921,12 @@ function openEdit(id, renderedUser = currentUser) {
   calcPreco(); calcKm(); cancelInlineAddPosto(); renderPostoPicker(); renderRecentFuel();
   const d    = new Date(r['Data']);
   const dStr = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
-  document.getElementById('modal-title').textContent    = '✏️ Editar Abastecimento';
-  document.getElementById('modal-subtitle').textContent = `ID: ${r['ID']} • ${dStr}`;
-  document.getElementById('btn-salvar').textContent     = '💾 Salvar Alterações';
+  const title = document.getElementById('modal-title');
+  if (title) title.innerHTML = `${ICONS.edit} <span>Editar Abastecimento</span>`;
+  const sub = document.getElementById('modal-subtitle');
+  if (sub) sub.textContent = `ID: ${r['ID']} • ${dStr}`;
+  const btn = document.getElementById('btn-salvar');
+  if (btn) btn.innerHTML = `${ICONS.save} <span>Salvar Alterações</span>`;
   showDialog('overlay', '.btn-close-modal');
   positionFormSheet();
 }
@@ -868,19 +970,19 @@ function confirmDeleteRecord() {
   const user = currentUser;
   const epoch = profileEpoch;
   closeConfirmRecord();
-  showToast('⏳ Excluindo...', '');
+  showToast('Excluindo...', '');
   google.script.run
     .withSuccessHandler(res => {
       if (res.success) {
-        showToast('🗑️ Registro excluído', 'ok');
+        showToast('Registro excluído!', 'ok');
         if (profileEpoch === epoch) {
           records = records.filter(r => String(r['ID']) !== String(id));
           setCachedData(user, 'records', records);
           loadRecords(true);
         } else invalidateRecordsCache(user);
-      } else { showToast('❌ ' + res.error, 'err'); }
+      } else { showToast(res.error, 'err'); }
     })
-    .withFailureHandler(() => showToast('❌ Falha na conexão', 'err'))
+    .withFailureHandler(() => showToast('Falha na conexão', 'err'))
     .deleteRecord(user, id);
 }
 /* [/DELETE-RECORD] */
@@ -913,7 +1015,7 @@ function submitForm(e) {
 
   if (editMode && !findRecordForAction(document.getElementById('f-id').value, editingRecordUser)) return;
 
-  // ✅ Validações ANTES de enviar (evita travar o botão)
+  // Validações ANTES de enviar (evita travar o botão)
   const litros = parseDecimal(document.getElementById('f-litros').value);
   const valor  = parseDecimal(document.getElementById('f-valor').value);
   const kmTot  = parseDecimal(document.getElementById('f-kmtotal').value);
@@ -926,7 +1028,7 @@ function submitForm(e) {
   const invalidFields = [];
   if (!fuelInput.value) {
     setFieldError('f-comb', 'Selecione o combustível.');
-    showToast('⚠️ Selecione o combustível', 'err');
+    showToast('Selecione o combustível', 'err');
     invalidFields.push('f-comb');
   }
   for (const [id, value, decimal, label] of [
@@ -938,7 +1040,7 @@ function submitForm(e) {
     const valid = decimal ? /^\d+(?:[.,]\d+)?$/.test(String(input?.value ?? '').trim()) : Number.isInteger(value);
     if (valid && value > 0) continue;
     setFieldError(id, decimal ? 'Informe um número maior que zero.' : 'Informe um KM Total inteiro e positivo.');
-    showToast(`⚠️ Confira ${label}`, 'err');
+    showToast(`Confira ${label}`, 'err');
     invalidFields.push(id);
     break;
   }
@@ -947,32 +1049,33 @@ function submitForm(e) {
     return;
   }
 
-  // 🛡️ Validação de Hodômetro Regressivo (Sprint 1)
+  // 🛡️ Validação de Hodômetro Regressivo
   const editId = document.getElementById('f-id').value;
   const previousKm = findPreviousKm(document.getElementById('f-data').value, editId);
   if (previousKm !== null && kmTot <= previousKm) {
     setFieldError('f-kmtotal', `O KM Total deve ser maior que o anterior (${formatNumber(previousKm, 0)}).`);
-    showToast(`⚠️ O KM atual (${formatNumber(kmTot, 0)}) deve ser maior que o anterior (${formatNumber(previousKm, 0)})`, 'err');
+    showToast(`O KM atual (${formatNumber(kmTot, 0)}) deve ser maior que o anterior (${formatNumber(previousKm, 0)})`, 'err');
     document.getElementById('f-kmtotal').focus();
     return;
   }
 
   const btn = document.getElementById('btn-salvar');
-  btn.disabled = true; btn.textContent = '⏳ Salvando...';
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
 
   const record = {
     id:          document.getElementById('f-id').value,
     data:        document.getElementById('f-data').value,
     combustivel: document.getElementById('f-comb').value,
     parcial:     document.getElementById('f-parcial').checked,
-    litros:      litros,        // ✅ já validado
-    valor:       valor,         // ✅ já validado
-    kmTotal:     kmTot,         // ✅ já validado
+    litros:      litros,
+    valor:       valor,
+    kmTotal:     kmTot,
     posto:       selectedPostoNome
   };
 
   const fn    = editMode ? 'updateRecord' : 'addRecord';
-  const msgOk = editMode ? '💾 Alterações salvas!' : '✅ Abastecimento salvo!';
+  const msgOk = editMode ? 'Alterações salvas!' : 'Abastecimento salvo!';
   const user = currentUser;
   const wasEditing = editMode;
   const epoch = profileEpoch;
@@ -981,7 +1084,7 @@ function submitForm(e) {
     .withSuccessHandler(res => {
       if (profileEpoch === epoch) {
         btn.disabled = false;
-        btn.textContent = wasEditing ? '💾 Salvar Alterações' : '✅ Salvar Abastecimento';
+        btn.innerHTML = wasEditing ? `${ICONS.save} <span>Salvar Alterações</span>` : `${ICONS.check} <span>Salvar Abastecimento</span>`;
       }
       if (res.success) {
         if (profileEpoch === epoch && wasEditing) {
@@ -1008,14 +1111,14 @@ function submitForm(e) {
           selectedPostoNome = '';
           loadRecords(true);
         } else invalidateRecordsCache(user);
-      } else { showToast('❌ ' + res.error, 'err'); }
+      } else { showToast(res.error, 'err'); }
     })
     .withFailureHandler(() => {
       if (profileEpoch === epoch) {
         btn.disabled = false;
-        btn.textContent = wasEditing ? '💾 Salvar Alterações' : '✅ Salvar Abastecimento';
+        btn.innerHTML = wasEditing ? `${ICONS.save} <span>Salvar Alterações</span>` : `${ICONS.check} <span>Salvar Abastecimento</span>`;
       }
-      showToast('❌ Falha na conexão', 'err');
+      showToast('Falha na conexão', 'err');
     })
     [fn](user, record);
 }
@@ -1031,27 +1134,30 @@ function renderAnalytics(data) {
   const precos   = data.filter(r => +r['Litros'] && +r['Valor']).map(r => +r['Valor']/+r['Litros']);
   const avgPreco = precos.length  ? precos.reduce((a,b)=>a+b)/precos.length  : 0;
 
-  document.getElementById('summary-grid').innerHTML = `
-    <div class="summary-card">
-      <div class="summary-icon">💸</div>
-      <div class="summary-val" style="color:var(--blue)">${formatBRL(totalGasto)}</div>
-      <div class="summary-lbl">Total gasto no histórico</div>
-    </div>
-    <div class="summary-card">
-      <div class="summary-icon">💧</div>
-      <div class="summary-val" style="color:var(--purple)">${formatNumber(totalLitros, 1)} L</div>
-      <div class="summary-lbl">Total de litros no histórico</div>
-    </div>
-    <div class="summary-card">
-      <div class="summary-icon">⚡</div>
-      <div class="summary-val" style="color:var(--green)">${avgKml ? formatNumber(avgKml, 2)+' km/L' : '—'}</div>
-      <div class="summary-lbl">Eficiência média no histórico (sem parciais)</div>
-    </div>
-    <div class="summary-card">
-      <div class="summary-icon">🏷️</div>
-      <div class="summary-val" style="color:var(--amber)">${avgPreco ? formatBRL(avgPreco) : '—'}</div>
-      <div class="summary-lbl">Preço médio por litro no histórico</div>
-    </div>`;
+  const summaryGrid = document.getElementById('summary-grid');
+  if (summaryGrid) {
+    summaryGrid.innerHTML = `
+      <div class="summary-card">
+        <div class="summary-icon">${ICONS.dollar}</div>
+        <div class="summary-val" style="color:var(--primary)">${formatBRL(totalGasto)}</div>
+        <div class="summary-lbl">Total gasto no histórico</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon" style="color:var(--purple)">${ICONS.droplet}</div>
+        <div class="summary-val" style="color:var(--purple)">${formatNumber(totalLitros, 1)} L</div>
+        <div class="summary-lbl">Total de litros no histórico</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon" style="color:var(--green)">${ICONS.zap}</div>
+        <div class="summary-val" style="color:var(--green)">${avgKml ? formatNumber(avgKml, 2)+' km/L' : '—'}</div>
+        <div class="summary-lbl">Eficiência média no histórico (sem parciais)</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon" style="color:var(--amber)">${ICONS.tag}</div>
+        <div class="summary-val" style="color:var(--amber)">${avgPreco ? formatBRL(avgPreco) : '—'}</div>
+        <div class="summary-lbl">Preço médio por litro no histórico</div>
+      </div>`;
+  }
 
   const months = {};
   data.forEach(r => {
@@ -1074,27 +1180,30 @@ function renderAnalytics(data) {
   trendMonths = sorted.slice(0, 6).reverse();
   renderTrend();
 
-  document.getElementById('monthly-list').innerHTML = sorted.length ? sorted.map(m => {
-    const moName  = new Date(m.year,m.month,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-    const avgKml  = m.kmlCount   ? formatNumber(m.kmlSum/m.kmlCount, 1)      : '—';
-    const avgPrec = m.precoCount ? formatBRL(m.precoSum/m.precoCount)         : '—';
-    const barPct  = maxValor     ? ((m.valor/maxValor)*100).toFixed(1)        : 0;
-    const pAviso  = m.parciais   ? ` · ⚠️ ${m.parciais} parcial${m.parciais>1?'is':''}` : '';
-    return `
-      <div class="month-card">
-        <div class="month-header">
-          <div class="month-name">${capitalize(moName)}</div>
-          <div class="month-count">${m.count} abastec.</div>
-        </div>
-        <div class="month-grid">
-          <div><div class="month-stat-val" style="color:var(--blue)">${formatBRL(m.valor)}</div><div class="month-stat-lbl">💸 Total gasto</div></div>
-          <div><div class="month-stat-val" style="color:var(--purple)">${formatNumber(m.litros, 1)} L</div><div class="month-stat-lbl">💧 Total litros</div></div>
-          <div><div class="month-stat-val" style="color:var(--green)">${avgKml} km/L</div><div class="month-stat-lbl">⚡ Média km/L${pAviso}</div></div>
-          <div><div class="month-stat-val" style="color:var(--amber)">${avgPrec}</div><div class="month-stat-lbl">🏷️ Preço/litro</div></div>
-        </div>
-        <div class="bar-wrap"><div class="bar-fill" style="width:${barPct}%"></div></div>
-      </div>`;
-  }).join('') : '<div class="empty"><p>Nenhum abastecimento para analisar ainda.</p></div>';
+  const monthlyList = document.getElementById('monthly-list');
+  if (monthlyList) {
+    monthlyList.innerHTML = sorted.length ? sorted.map(m => {
+      const moName  = new Date(m.year,m.month,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+      const avgKml  = m.kmlCount   ? formatNumber(m.kmlSum/m.kmlCount, 1)      : '—';
+      const avgPrec = m.precoCount ? formatBRL(m.precoSum/m.precoCount)         : '—';
+      const barPct  = maxValor     ? ((m.valor/maxValor)*100).toFixed(1)        : 0;
+      const pAviso  = m.parciais   ? ` · ${m.parciais} parcial${m.parciais>1?'is':''}` : '';
+      return `
+        <div class="month-card">
+          <div class="month-header">
+            <div class="month-name">${capitalize(moName)}</div>
+            <div class="month-count">${m.count} abastec.</div>
+          </div>
+          <div class="month-grid">
+            <div><div class="month-stat-val" style="color:var(--primary)">${formatBRL(m.valor)}</div><div class="month-stat-lbl">${ICONS.dollar} Total gasto</div></div>
+            <div><div class="month-stat-val" style="color:var(--purple)">${formatNumber(m.litros, 1)} L</div><div class="month-stat-lbl">${ICONS.droplet} Total litros</div></div>
+            <div><div class="month-stat-val" style="color:var(--green)">${avgKml} km/L</div><div class="month-stat-lbl">${ICONS.zap} Média km/L${pAviso}</div></div>
+            <div><div class="month-stat-val" style="color:var(--amber)">${avgPrec}</div><div class="month-stat-lbl">${ICONS.tag} Preço/litro</div></div>
+          </div>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${barPct}%"></div></div>
+        </div>`;
+    }).join('') : '<div class="empty"><p>Nenhum abastecimento para analisar ainda.</p></div>';
+  }
 }
 
 function selectTrendMetric(metric) {
@@ -1105,7 +1214,7 @@ function selectTrendMetric(metric) {
 
 function renderTrend() {
   const metrics = {
-    spend: { label: 'Gasto', color: 'var(--blue)', value: m => m.valor, format: v => formatBRL(v) },
+    spend: { label: 'Gasto', color: 'var(--primary)', value: m => m.valor, format: v => formatBRL(v) },
     price: { label: 'Preço por litro', color: 'var(--amber)',
       value: m => m.precoCount ? m.precoSum / m.precoCount : null, format: v => `${formatBRL(v)}/L` },
     efficiency: { label: 'Eficiência', color: 'var(--green)',
@@ -1113,10 +1222,13 @@ function renderTrend() {
   };
   for (const key of Object.keys(metrics)) {
     const button = document.getElementById('trend-' + key);
-    button.classList.toggle('active', key === trendMetric);
-    button.setAttribute('aria-pressed', String(key === trendMetric));
+    if (button) {
+      button.classList.toggle('active', key === trendMetric);
+      button.setAttribute('aria-pressed', String(key === trendMetric));
+    }
   }
   const chart = document.getElementById('trend-chart');
+  if (!chart) return;
   if (!trendMonths.length) {
     chart.innerHTML = '<p class="trend-empty">Registre um abastecimento para ver a evolução.</p>';
     return;
@@ -1180,10 +1292,10 @@ function calcKm() {
   const kmTripEl  = document.getElementById('f-kmtrip');
   const kmlPrevEl = document.getElementById('f-kmlprev');
 
-  const kmTotal = parseDecimal(kmTotalEl.value) || 0;
-  const litros  = parseDecimal(document.getElementById('f-litros').value) || 0;
-  const dataVal = document.getElementById('f-data').value;
-  const editId  = document.getElementById('f-id').value;
+  const kmTotal = parseDecimal(kmTotalEl?.value) || 0;
+  const litros  = parseDecimal(document.getElementById('f-litros')?.value) || 0;
+  const dataVal = document.getElementById('f-data')?.value;
+  const editId  = document.getElementById('f-id')?.value;
   const previousEl = document.getElementById('previous-km');
 
   // 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora)
@@ -1200,44 +1312,49 @@ function calcKm() {
   }
 
   if (prevKmTotal === null || kmTotal > prevKmTotal) {
-    kmTotalEl.classList.remove('is-invalid');
-    kmTotalEl.removeAttribute?.('aria-invalid');
+    if (kmTotalEl) {
+      kmTotalEl.classList.remove('is-invalid');
+      kmTotalEl.removeAttribute?.('aria-invalid');
+    }
   }
 
   if (kmTotal <= 0 || !dataVal) {
-    kmTripEl.value = ''; kmTripEl.textContent = '—';
-    kmlPrevEl.value = ''; kmlPrevEl.textContent = '—';
+    if (kmTripEl) { kmTripEl.value = ''; kmTripEl.textContent = '—'; }
+    if (kmlPrevEl) { kmlPrevEl.value = ''; kmlPrevEl.textContent = '—'; }
     return;
   }
 
-  // 🛣️ KM Rodados
+  // KM Rodados
   if (prevKmTotal === null) {
-    kmTripEl.value = '—'; kmTripEl.textContent = '—';
-    kmlPrevEl.value = '—'; kmlPrevEl.textContent = '—';
+    if (kmTripEl) { kmTripEl.value = '—'; kmTripEl.textContent = '—'; }
+    if (kmlPrevEl) { kmlPrevEl.value = '—'; kmlPrevEl.textContent = '—'; }
     return;
   }
 
   const dist = kmTotal - prevKmTotal;
   if (dist <= 0) {
-    kmTripEl.value = '—'; kmTripEl.textContent = '—';
-    kmlPrevEl.value = '—'; kmlPrevEl.textContent = '—';
-    previousEl.textContent = `⚠️ Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km (atual deve ser maior)`;
-    previousEl.style.color = 'var(--amber)';
-    previousEl.style.fontWeight = '700';
+    if (kmTripEl) { kmTripEl.value = '—'; kmTripEl.textContent = '—'; }
+    if (kmlPrevEl) { kmlPrevEl.value = '—'; kmlPrevEl.textContent = '—'; }
+    if (previousEl) {
+      previousEl.textContent = `Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km (atual deve ser maior)`;
+      previousEl.style.color = 'var(--amber)';
+      previousEl.style.fontWeight = '700';
+    }
     return;
   }
 
   const distStr = `${formatNumber(dist, 0)} km`;
-  kmTripEl.value = distStr; kmTripEl.textContent = distStr;
+  if (kmTripEl) { kmTripEl.value = distStr; kmTripEl.textContent = distStr; }
 
   // ⚡ Prévia de km/L (estimativa simples)
   const kmlStr = (litros > 0) ? `~ ${formatNumber(dist / litros, 2)} km/L` : '—';
-  kmlPrevEl.value = kmlStr; kmlPrevEl.textContent = kmlStr;
+  if (kmlPrevEl) { kmlPrevEl.value = kmlStr; kmlPrevEl.textContent = kmlStr; }
 }
 /* [/CALC-KM-PREVIEW] */
 
 /* 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora), ignorando o próprio registro em edição */
 function findPreviousKm(dataVal, editId) {
+  if (!dataVal) return null;
   const dataAtual = new Date(dataVal).getTime();
   if (!Number.isFinite(dataAtual)) return null;
   let prevKmTotal = null;
@@ -1254,7 +1371,7 @@ function findPreviousKm(dataVal, editId) {
   return prevKmTotal;
 }
 
-function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 
 function showToast(msg, type) {
   const el = document.getElementById('toast');
@@ -1275,11 +1392,15 @@ function showToast(msg, type) {
     }, delay);
   }
 }
+
 /* [LOADER-OVERLAY] — controla o overlay de loading */
 function showLoader(texto) {
   const el = document.getElementById('loader-overlay');
   if (!el) return;
-  if (texto) el.querySelector('.loader-text').textContent = texto;
+  if (texto) {
+    const textEl = el.querySelector('.loader-text');
+    if (textEl) textEl.textContent = texto;
+  }
   el.classList.add('active');
 }
 
@@ -1302,7 +1423,10 @@ function parseDecimal(valor) {
 /* define o texto do loader SEM ligar o overlay */
 function setLoaderText(texto) {
   const el = document.getElementById('loader-overlay');
-  if (el && texto) el.querySelector('.loader-text').textContent = texto;
+  if (el && texto) {
+    const textEl = el.querySelector('.loader-text');
+    if (textEl) textEl.textContent = texto;
+  }
 }
 
 /* [/HELPERS] */

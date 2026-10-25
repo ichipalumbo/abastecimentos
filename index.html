@@ -4,10 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0e0e1a">
-  <meta name="mobile-web-app-capable" content="yes"> <!-- 🆕 padrão moderno -->
-  <meta name="apple-mobile-web-app-capable" content="yes"> <!-- 🍎 mantém p/ iOS antigo -->
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="theme-color" content="#0c1017">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Abastecimentos</title>
 
   <!-- [HEAD-LINKS] -->
@@ -15,7 +15,6 @@
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <link rel="apple-touch-icon" href="icon.svg">
   <link rel="manifest" href="manifest.json">
-
   <!-- [/HEAD-LINKS] -->
 </head>
 
@@ -23,7 +22,14 @@
 
   <!-- [SPLASH] ════════════════════════════════ -->
   <div id="splash" class="splash">
-    <div class="splash-logo">⛽</div>
+    <div class="splash-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/>
+        <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L19.5 6.5"/>
+        <path d="M3 10h11"/>
+        <path d="M7 6h3"/>
+      </svg>
+    </div>
     <div class="splash-title">Abastecimentos</div>
     <div class="splash-spinner"></div>
   </div>
@@ -38,15 +44,22 @@
 
   <!-- [USER-SELECT] ═════════════════════════════ -->
   <div id="user-select" class="user-select">
-    <div class="us-logo">⛽</div>
+    <div class="us-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/>
+        <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L19.5 6.5"/>
+        <path d="M3 10h11"/>
+        <path d="M7 6h3"/>
+      </svg>
+    </div>
     <div class="us-title">Abastecimentos</div>
     <div class="us-subtitle">Quem vai abastecer hoje?</div>
     <div class="us-cards">
 
       <!-- [CARD-LUCCAS] -->
-      <button class="us-card" onclick="selectUser('Luccas')">
+      <button class="us-card us-card-luccas" onclick="selectUser('Luccas')">
         <div class="us-avatar car-red">
-          <svg viewBox="0 0 512 512" width="46" height="46" fill="currentColor">
+          <svg viewBox="0 0 512 512" fill="currentColor">
             <path
               d="M135.2 117.4L109.1 192H402.9l-26.1-74.6C372.3 104.6 360.2 96 346.6 96H165.4c-13.6 0-25.7 8.6-30.2 21.4zM39.6 196.8L74.8 96.3C88.3 57.8 124.6 32 165.4 32H346.6c40.8 0 77.1 25.8 90.6 64.3l35.2 100.5c23.2 9.6 39.6 32.5 39.6 59.2V400v48c0 17.7-14.3 32-32 32H448c-17.7 0-32-14.3-32-32V400H96v48c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V400 256c0-26.7 16.4-49.6 39.6-59.2zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm288 32a32 32 0 1 0 0-64 32 32 0 1 0 0 64z" />
           </svg>
@@ -57,9 +70,9 @@
       <!-- [/CARD-LUCCAS] -->
 
       <!-- [CARD-JOSY] -->
-      <button class="us-card" onclick="selectUser('Josy')">
+      <button class="us-card us-card-josy" onclick="selectUser('Josy')">
         <div class="us-avatar car-silver">
-          <svg viewBox="0 0 512 512" width="46" height="46" fill="currentColor">
+          <svg viewBox="0 0 512 512" fill="currentColor">
             <path
               d="M135.2 117.4L109.1 192H402.9l-26.1-74.6C372.3 104.6 360.2 96 346.6 96H165.4c-13.6 0-25.7 8.6-30.2 21.4zM39.6 196.8L74.8 96.3C88.3 57.8 124.6 32 165.4 32H346.6c40.8 0 77.1 25.8 90.6 64.3l35.2 100.5c23.2 9.6 39.6 32.5 39.6 59.2V400v48c0 17.7-14.3 32-32 32H448c-17.7 0-32-14.3-32-32V400H96v48c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V400 256c0-26.7 16.4-49.6 39.6-59.2zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm288 32a32 32 0 1 0 0-64 32 32 0 1 0 0 64z" />
           </svg>
@@ -78,9 +91,25 @@
     <div class="header">
       <div class="header-top">
         <div>
-          <h1 id="home-title">⛽ Abastecimentos</h1>
+          <h1 id="home-title" class="home-title">
+            <svg class="icon-inline" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/>
+              <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L19.5 6.5"/>
+              <path d="M3 10h11"/>
+              <path d="M7 6h3"/>
+            </svg>
+            <span>Abastecimentos</span>
+          </h1>
           <p class="header-sub" id="subtitle">Carregando dados...</p>
-          <button class="btn-switch-user" onclick="logout()">🔄 Trocar usuário</button>
+          <button class="btn-switch-user" onclick="logout()">
+            <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span>Trocar usuário</span>
+          </button>
         </div>
         <span class="header-badge" id="badge-mes">—</span>
       </div>
@@ -110,8 +139,22 @@
         <div style="display:flex; justify-content:space-between; align-items:center; gap:8px">
           <div class="section-title section-title-lg" style="margin-top:16px">Histórico</div>
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end">
-            <button class="btn-sort" id="btn-sort" onclick="toggleSortOrder()" title="Ordenar">⬇️ Recente</button>
-            <button class="btn-sort" id="btn-refresh" onclick="refreshData()" title="Atualizar">🔄 Atualizar</button>
+            <button class="btn-sort" id="btn-sort" onclick="toggleSortOrder()" title="Ordenar">
+              <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <polyline points="19 12 12 19 5 12"/>
+              </svg>
+              <span>Recente</span>
+            </button>
+            <button class="btn-sort" id="btn-refresh" onclick="refreshData()" title="Atualizar">
+              <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                <path d="M21 3v5h-5"/>
+                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                <path d="M8 16H3v5"/>
+              </svg>
+              <span>Atualizar</span>
+            </button>
           </div>
         </div>
         <!-- LINHA 2: Atualização (subtítulo discreto) -->
@@ -130,7 +173,15 @@
   <!-- [PAGE-ANALYTICS] ══════════════════════════ -->
   <div id="page-analytics" class="page">
     <div class="analytics-header">
-      <h1>📊 Análise</h1>
+      <h1>
+        <svg class="icon-inline" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+          <line x1="2" y1="20" x2="22" y2="20"/>
+        </svg>
+        <span>Análise</span>
+      </h1>
       <p>Histórico completo e tendências de consumo</p>
     </div>
     <div class="summary-grid" id="summary-grid">
@@ -160,13 +211,26 @@
   <!-- [PAGE-POSTOS] ═════════════════════════════ -->
   <div id="page-postos" class="page">
     <div class="postos-header">
-      <h1>🏪 Postos</h1>
+      <h1>
+        <svg class="icon-inline" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m2 7 2-4h16l2 4"/>
+          <path d="M4 7v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"/>
+          <path d="M9 22v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/>
+        </svg>
+        <span>Postos</span>
+      </h1>
       <p>Gerencie seus postos cadastrados</p>
     </div>
     <div class="content" style="margin-top:20px">
       <div class="postos-toolbar">
         <div class="section-title" style="margin-bottom:0">Postos Cadastrados</div>
-        <button class="btn-new-posto" onclick="openAddPosto()">+ Novo Posto</button>
+        <button class="btn-new-posto" onclick="openAddPosto()">
+          <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>Novo Posto</span>
+        </button>
       </div>
       <div id="postos-list">
         <div class="loading">
@@ -180,13 +244,36 @@
   <!-- [BOTTOM-NAV] ══════════════════════════════ -->
   <nav class="bottom-nav" aria-label="Navegação principal">
     <button class="nav-item active" id="nav-home" aria-current="page" onclick="switchTab('home')">
-      <span class="nav-icon">⛽</span>Início
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/>
+          <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L19.5 6.5"/>
+          <path d="M3 10h11"/>
+          <path d="M7 6h3"/>
+        </svg>
+      </span>
+      <span>Início</span>
     </button>
     <button class="nav-item" id="nav-analytics" onclick="switchTab('analytics')">
-      <span class="nav-icon">📊</span>Análise
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+          <line x1="2" y1="20" x2="22" y2="20"/>
+        </svg>
+      </span>
+      <span>Análise</span>
     </button>
     <button class="nav-item" id="nav-postos" onclick="switchTab('postos')">
-      <span class="nav-icon">🏪</span>Postos
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m2 7 2-4h16l2 4"/>
+          <path d="M4 7v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"/>
+          <path d="M9 22v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/>
+        </svg>
+      </span>
+      <span>Postos</span>
     </button>
   </nav>
   <button type="button" class="nav-registrar" onclick="openModal()" aria-label="Registrar abastecimento">
@@ -194,7 +281,6 @@
       <path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
     </svg>
   </button>
-
   <!-- [/BOTTOM-NAV] -->
 
   <!-- [MODAL-FORM] ══════════════════════════════ -->
@@ -202,18 +288,48 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
       <div class="drag-bar"></div>
       <div class="modal-header">
-        <div class="modal-title" id="modal-title">🛢️ Novo Abastecimento</div>
-        <button type="button" class="btn-close-modal" aria-label="Fechar cadastro" onclick="closeModal()">✕</button>
+        <div class="modal-title" id="modal-title">
+          <svg class="icon-inline" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/>
+            <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L19.5 6.5"/>
+            <path d="M3 10h11"/>
+            <path d="M7 6h3"/>
+          </svg>
+          <span>Novo Abastecimento</span>
+        </div>
+        <button type="button" class="btn-close-modal" aria-label="Fechar cadastro" onclick="closeModal()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
       </div>
       <div class="modal-subtitle" id="modal-subtitle"></div>
 
       <form id="form" onsubmit="submitForm(event)">
         <input type="hidden" id="f-id">
         <div class="form-fields">
-        <div class="section-sub">Do abastecimento</div>
+        <div class="section-sub">
+          <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/>
+            <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L19.5 6.5"/>
+            <path d="M3 10h11"/>
+            <path d="M7 6h3"/>
+          </svg>
+          <span>Do abastecimento</span>
+        </div>
+
         <!-- [FORM-DATA] -->
         <div class="form-group form-date">
-          <label class="form-label" for="f-data">📅 Data e hora <span class="req">*</span></label>
+          <label class="form-label" for="f-data">
+            <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span>Data e hora</span> <span class="req">*</span>
+          </label>
           <input type="datetime-local" class="form-control" id="f-data" required oninput="calcKm()">
         </div>
         <!-- [/FORM-DATA] -->
@@ -221,7 +337,15 @@
         <!-- [FORM-COMB-PARCIAL] -->
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label" for="f-comb">⛽ Combustível <span class="req">*</span></label>
+            <label class="form-label" for="f-comb">
+              <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/>
+                <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L19.5 6.5"/>
+                <path d="M3 10h11"/>
+                <path d="M7 6h3"/>
+              </svg>
+              <span>Combustível</span> <span class="req">*</span>
+            </label>
             <select class="form-control" id="f-comb" required onchange="clearFieldError('f-comb')">
               <option value="" disabled selected>Selecione</option>
               <option>Gasolina</option>
@@ -234,7 +358,14 @@
             <div class="field-error" id="f-comb-error" role="alert" aria-live="polite"></div>
           </div>
           <div class="form-group">
-            <span class="form-label">Abastecimento parcial?</span>
+            <span class="form-label">
+              <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <span>Abastecimento parcial?</span>
+            </span>
             <div class="toggle-wrap">
               <label class="toggle-label" for="f-parcial">Parcial</label>
               <label class="switch" for="f-parcial">
@@ -250,13 +381,24 @@
         <!-- [FORM-LITROS-VALOR] -->
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label" for="f-litros">💧 Litros <span class="req">*</span></label>
+            <label class="form-label" for="f-litros">
+              <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>
+              </svg>
+              <span>Litros</span> <span class="req">*</span>
+            </label>
             <input type="text" inputmode="decimal" enterkeyhint="next" class="form-control" id="f-litros" placeholder="0,00"
               aria-describedby="f-litros-error" required oninput="clearFieldError('f-litros');calcPreco();calcKm()" onkeydown="advanceForm(event, 'f-valor')">
             <div class="field-error" id="f-litros-error" role="alert" aria-live="polite"></div>
           </div>
           <div class="form-group">
-            <label class="form-label" for="f-valor">💰 Valor total R$ <span class="req">*</span></label>
+            <label class="form-label" for="f-valor">
+              <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="2" x2="12" y2="22"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+              <span>Valor total R$</span> <span class="req">*</span>
+            </label>
             <input type="text" inputmode="decimal" enterkeyhint="next" class="form-control" id="f-valor" placeholder="0,00" required
               aria-describedby="f-valor-error" oninput="clearFieldError('f-valor');calcPreco()" onkeydown="advanceForm(event, 'f-kmtotal')">
             <div class="field-error" id="f-valor-error" role="alert" aria-live="polite"></div>
@@ -265,9 +407,22 @@
         <!-- [/FORM-LITROS-VALOR] -->
 
         <!-- [FORM-HODOMETRO] -->
-        <div class="section-sub form-section">Do veículo</div>
+        <div class="section-sub form-section">
+          <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 11.3 2 12v4c0 .6.4 1 1 1h2"/>
+            <circle cx="7" cy="17" r="2"/>
+            <circle cx="17" cy="17" r="2"/>
+          </svg>
+          <span>Do veículo</span>
+        </div>
         <div class="form-group">
-          <label class="form-label" for="f-kmtotal">📍 KM total no painel <span class="req">*</span></label>
+          <label class="form-label" for="f-kmtotal">
+            <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m12 14 4-4"/>
+              <path d="M3.34 19a10 10 0 1 1 17.32 0"/>
+            </svg>
+            <span>KM total no painel</span> <span class="req">*</span>
+          </label>
           <input type="number" class="form-control" id="f-kmtotal" step="1" min="1" placeholder="000000"
             inputmode="numeric" enterkeyhint="done" aria-describedby="f-kmtotal-error" required oninput="clearFieldError('f-kmtotal');calcKm()">
           <div class="field-error" id="f-kmtotal-error" role="alert" aria-live="polite"></div>
@@ -291,7 +446,14 @@
         <!-- [/FORM-HODOMETRO] -->
 
         <!-- [FORM-POSTO] -->
-        <div class="section-sub form-section">🏪 Posto</div>
+        <div class="section-sub form-section">
+          <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m2 7 2-4h16l2 4"/>
+            <path d="M4 7v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"/>
+            <path d="M9 22v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/>
+          </svg>
+          <span>Posto</span>
+        </div>
         <div class="recent-postos-label" id="recent-postos-label" hidden>Usados recentemente · escolha um posto</div>
         <div class="posto-scroll" id="posto-picker">
           <span style="color:var(--muted);font-size:0.82rem">Carregando postos...</span>
@@ -299,15 +461,27 @@
         <div class="inline-add-posto" id="inline-add-posto">
           <input type="text" class="form-control" id="inline-posto-input" placeholder="Nome do novo posto..."
             aria-label="Nome do novo posto" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();saveInlineAddPosto();}">
-          <button type="button" class="btn-inline btn-inline-save" aria-label="Adicionar posto" onclick="saveInlineAddPosto()">✓</button>
-          <button type="button" class="btn-inline btn-inline-cancel" aria-label="Cancelar novo posto" onclick="cancelInlineAddPosto()">✕</button>
+          <button type="button" class="btn-inline btn-inline-save" aria-label="Adicionar posto" onclick="saveInlineAddPosto()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </button>
+          <button type="button" class="btn-inline btn-inline-cancel" aria-label="Cancelar novo posto" onclick="cancelInlineAddPosto()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
         </div>
         <!-- [/FORM-POSTO] -->
         </div>
         <div class="form-footer">
-        <button type="submit" class="btn-submit" id="btn-salvar">
-          ✅ Salvar Abastecimento
-        </button>
+          <button type="submit" class="btn-submit" id="btn-salvar">
+            <svg class="icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Salvar Abastecimento</span>
+          </button>
         </div>
       </form>
     </div>
@@ -319,8 +493,20 @@
     <div class="modal" style="max-height:55vh" role="dialog" aria-modal="true" aria-labelledby="posto-modal-title" tabindex="-1">
       <div class="drag-bar"></div>
       <div class="modal-header">
-        <div class="modal-title" id="posto-modal-title">🏪 Novo Posto</div>
-        <button type="button" class="btn-close-modal" aria-label="Fechar posto" onclick="closePostoModal()">✕</button>
+        <div class="modal-title" id="posto-modal-title">
+          <svg class="icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m2 7 2-4h16l2 4"/>
+            <path d="M4 7v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"/>
+            <path d="M9 22v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/>
+          </svg>
+          <span>Novo Posto</span>
+        </div>
+        <button type="button" class="btn-close-modal" aria-label="Fechar posto" onclick="closePostoModal()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
       </div>
       <div style="margin-bottom:20px"></div>
       <div class="form-group">
@@ -329,7 +515,10 @@
           autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();savePostoModal();}">
       </div>
       <button type="button" class="btn-submit" id="btn-salvar-posto" onclick="savePostoModal()">
-        ✅ Adicionar Posto
+        <svg class="icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>Adicionar Posto</span>
       </button>
     </div>
   </div>
@@ -338,7 +527,15 @@
   <!-- [CONFIRM-RECORD] ══════════════════════════ -->
   <div class="confirm-overlay" id="confirm-record-overlay">
     <div class="confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="confirm-record-title" aria-describedby="confirm-record-text" tabindex="-1">
-      <div class="confirm-icon">🗑️</div>
+      <div class="confirm-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18"/>
+          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+          <line x1="10" y1="11" x2="10" y2="17"/>
+          <line x1="14" y1="11" x2="14" y2="17"/>
+        </svg>
+      </div>
       <div class="confirm-title" id="confirm-record-title">Excluir registro?</div>
       <div class="confirm-text" id="confirm-record-text">Esta ação não pode ser desfeita.</div>
       <div class="confirm-btns">
@@ -352,7 +549,13 @@
   <!-- [CONFIRM-POSTO] ═══════════════════════════ -->
   <div class="confirm-overlay" id="confirm-posto-overlay">
     <div class="confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="confirm-posto-title" aria-describedby="confirm-posto-text" tabindex="-1">
-      <div class="confirm-icon">🗑️</div>
+      <div class="confirm-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m2 7 2-4h16l2 4"/>
+          <path d="M4 7v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"/>
+          <path d="M9 22v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/>
+        </svg>
+      </div>
       <div class="confirm-title" id="confirm-posto-title">Excluir posto?</div>
       <div class="confirm-text" id="confirm-posto-text">
         Excluir <strong id="confirm-posto-name"></strong>?<br>
