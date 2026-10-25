@@ -60,6 +60,7 @@ let recordsLoadSequence = 0;
 const dialogTriggers = new Map();
 let sortOrder          = 'desc';   // 'desc' = recente primeiro, 'asc' = antigo primeiro
 let lastRefreshTs      = null;
+let toastTimeoutId     = null;
 const CACHE_PREFIX     = 'fuelapp_cache';
 const CACHE_TTL_MS     = 5 * 60 * 1000; // 5 minutos
 
@@ -81,6 +82,29 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('form').addEventListener('invalid', e => {
     showToast('Confira ' + (e.target.labels?.[0]?.textContent.trim() || 'o campo obrigatório'), 'err');
   }, true);
+
+  ['f-comb', 'f-litros', 'f-valor', 'f-kmtotal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      const clear = () => {
+        el.classList.remove('is-invalid');
+        el.removeAttribute?.('aria-invalid');
+      };
+      el.addEventListener('input', clear);
+      el.addEventListener('change', clear);
+    }
+  });
+
+  const toastEl = document.getElementById('toast');
+  if (toastEl) {
+    toastEl.addEventListener('click', () => {
+      toastEl.className = 'toast';
+      if (toastTimeoutId && typeof clearTimeout === 'function') {
+        clearTimeout(toastTimeoutId);
+        toastTimeoutId = null;
+      }
+    });
+  }
 
   // Esconde a splash
   setTimeout(() => {
@@ -289,13 +313,16 @@ function loadRecords(forceRefresh = false) {
     .withFailureHandler(err => {
       if (profileEpoch !== epoch || request !== recordsLoadSequence) { checkLoadsDone(); return; }
       if (records.length) {
-        showToast('Erro ao atualizar registros', 'err');
+        showToast('Erro ao atualizar abastecimentos', 'err');
       } else {
         const listEl = document.getElementById('list');
         if (listEl) {
           listEl.innerHTML =
-            `<div class="empty"><div class="empty-icon">${ICONS.error}</div>
-             <p style="color:var(--red)">Erro ao carregar:<br><small>${err.message}</small></p></div>`;
+            `<div class="empty">
+               <div class="empty-icon">${ICONS.error}</div>
+               <p style="color:var(--red);margin-bottom:14px">Não foi possível carregar os abastecimentos.<br><small>${err?.message || 'Falha de conexão com o servidor'}</small></p>
+               <button type="button" class="btn-empty-action" onclick="refreshData()">🔄 Tentar novamente</button>
+             </div>`;
         }
       }
       checkLoadsDone();
@@ -329,10 +356,20 @@ function loadPostos(forceRefresh = false) {
       renderAdminPostos();
       checkLoadsDone();
     })
-    .withFailureHandler(() => {
+    .withFailureHandler(err => {
       if (profileEpoch !== epoch) { checkLoadsDone(); return; }
       if (postos.length) {
         showToast('Erro ao atualizar postos', 'err');
+      } else {
+        const postosList = document.getElementById('postos-list');
+        if (postosList) {
+          postosList.innerHTML =
+            `<div class="empty">
+               <div class="empty-icon">${ICONS.error}</div>
+               <p style="color:var(--red);margin-bottom:14px">Não foi possível carregar os postos.<br><small>${err?.message || 'Falha de conexão com o servidor'}</small></p>
+               <button type="button" class="btn-empty-action" onclick="refreshData()">🔄 Tentar novamente</button>
+             </div>`;
+        }
       }
       checkLoadsDone();
     })
@@ -441,7 +478,8 @@ function renderList(data) {
   if (!data.length) {
     el.innerHTML = `<div class="empty">
       <div class="empty-icon">${ICONS.fuel}</div>
-      <p>Nenhum abastecimento ainda.<br>Toque no botão <strong>+</strong> para começar!</p>
+      <p style="margin-bottom:16px">Nenhum abastecimento registrado ainda.<br>Comece registrando o primeiro!</p>
+      <button type="button" class="btn-empty-action" onclick="openModal()">＋ Registrar Abastecimento</button>
     </div>`;
     return;
   }
@@ -503,10 +541,10 @@ function renderList(data) {
               <div class="record-posto">${posto}</div>
               <div class="chips">
                 ${tipo    ? `<span class="chip blue">${tipo}</span>`                                    : ''}
-                ${parcial ? `<span class="chip amber">${ICONS.alert} Parcial</span>`                    : ''}
+                ${parcial ? `<span class="chip amber">⚠️ Parcial</span>`                                : ''}
                 ${kml     ? `<span class="chip green">${ICONS.zap} ${formatNumber(kml, 1)} km/L</span>`: ''}
                 ${kmTrip  ? `<span class="chip purple">${ICONS.route} ${formatNumber(kmTrip, 0)} km</span>`: ''}
-                ${precoL  ? `<span class="chip amber">R$ ${formatNumber(precoL, 2)}/L</span>`           : ''}
+                ${precoL  ? `<span class="chip blue">R$ ${formatNumber(precoL, 2)}/L</span>`           : ''}
               </div>
             </div>
             <div class="record-right">
@@ -654,7 +692,8 @@ function renderAdminPostos() {
   if (!postos.length) {
     el.innerHTML = `<div class="empty">
       <div class="empty-icon">${ICONS.store}</div>
-      <p>Nenhum posto cadastrado.<br>Clique em <strong>+ Novo Posto</strong> para adicionar.</p>
+      <p style="margin-bottom:16px">Nenhum posto cadastrado ainda.<br>Adicione postos para agilizar seus registros.</p>
+      <button type="button" class="btn-empty-action" onclick="openAddPosto()">＋ Novo Posto</button>
     </div>`;
     return;
   }
@@ -663,12 +702,12 @@ function renderAdminPostos() {
       <div class="posto-name">${ICONS.store} <span>${p.nome}</span></div>
       <div class="posto-btns">
         <button class="btn-icon btn-icon-edit" aria-label="Editar posto" onclick="openEditPosto(${i})">${ICONS.edit}</button>
-        <button class="btn-icon btn-icon-delete" aria-label="Remover posto" onclick="askDeletePosto(${i})">${ICONS.trash}</button>
+        <button class="btn-icon btn-icon-delete" aria-label="Excluir posto" onclick="askDeletePosto(${i})">${ICONS.trash}</button>
       </div>
     </div>`).join('');
   el.querySelectorAll('.posto-card').forEach((card, i) => {
     card.querySelector('.btn-icon-edit').setAttribute('aria-label', `Editar posto ${postos[i].nome}`);
-    card.querySelector('.btn-icon-delete').setAttribute('aria-label', `Remover posto ${postos[i].nome}`);
+    card.querySelector('.btn-icon-delete').setAttribute('aria-label', `Excluir posto ${postos[i].nome}`);
   });
 }
 
@@ -782,7 +821,7 @@ function confirmDeletePosto() {
         if (selectedPostoNome && !postos.find(p => p.nome === selectedPostoNome)) selectedPostoNome = '';
         setCachedData(currentUser, 'postos', postos);
         renderPostoPicker(); renderAdminPostos();
-        showToast('Posto removido!', 'ok');
+        showToast('Posto excluído!', 'ok');
       } else { showToast(res.error, 'err'); }
     })
     .withFailureHandler(() => showToast('Falha na conexão', 'err'))
@@ -829,9 +868,14 @@ function openModal() {
   editMode = false; selectedPostoNome = '';
   document.getElementById('f-id').value = '';
   document.getElementById('form').reset();
-  document.getElementById('f-precol').value             = '';
-  document.getElementById('f-kmtrip').value             = '';
-  document.getElementById('f-kmlprev').value            = '';
+  const o1 = document.getElementById('f-precol'), o2 = document.getElementById('f-kmtrip'), o3 = document.getElementById('f-kmlprev');
+  if (o1) { o1.value = ''; o1.textContent = '—'; }
+  if (o2) { o2.value = ''; o2.textContent = '—'; }
+  if (o3) { o3.value = ''; o3.textContent = '—'; }
+  ['f-comb', 'f-litros', 'f-valor', 'f-kmtotal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('is-invalid'); el.removeAttribute?.('aria-invalid'); }
+  });
   const title = document.getElementById('modal-title');
   if (title) title.innerHTML = `${ICONS.fuel} <span>Novo Abastecimento</span>`;
   const sub = document.getElementById('modal-subtitle');
@@ -870,6 +914,10 @@ function openEdit(id, renderedUser = currentUser) {
   document.getElementById('f-valor').value     = r['Valor']            || '';
   document.getElementById('f-kmtotal').value   = r['KM_Total']         || '';
   selectedPostoNome = r['Posto'] || '';
+  ['f-comb', 'f-litros', 'f-valor', 'f-kmtotal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('is-invalid'); el.removeAttribute?.('aria-invalid'); }
+  });
   calcPreco(); calcKm(); cancelInlineAddPosto(); renderPostoPicker(); renderRecentFuel();
   const d    = new Date(r['Data']);
   const dStr = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
@@ -940,6 +988,28 @@ function confirmDeleteRecord() {
 /* [/DELETE-RECORD] */
 
 /* [SUBMIT-FORM] ══════════════════════════════ */
+function clearFieldError(inputId) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(`${inputId}-error`);
+  if (input) {
+    input.classList?.remove?.('field-invalid');
+    input.classList?.remove?.('is-invalid');
+    input.removeAttribute?.('aria-invalid');
+  }
+  if (error) error.textContent = '';
+}
+
+function setFieldError(inputId, message) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(`${inputId}-error`);
+  if (input) {
+    input.classList?.add?.('field-invalid');
+    input.classList?.add?.('is-invalid');
+    input.setAttribute?.('aria-invalid', 'true');
+  }
+  if (error) error.textContent = message;
+}
+
 function submitForm(e) {
   e.preventDefault();
 
@@ -950,22 +1020,42 @@ function submitForm(e) {
   const valor  = parseDecimal(document.getElementById('f-valor').value);
   const kmTot  = parseDecimal(document.getElementById('f-kmtotal').value);
   const fuelInput = document.getElementById('f-comb');
+
+  clearFieldError('f-comb');
+  clearFieldError('f-litros');
+  clearFieldError('f-valor');
+  clearFieldError('f-kmtotal');
+  const invalidFields = [];
   if (!fuelInput.value) {
+    setFieldError('f-comb', 'Selecione o combustível.');
     showToast('Selecione o combustível', 'err');
-    fuelInput.focus();
+    invalidFields.push('f-comb');
+  }
+  for (const [id, value, decimal, label] of [
+    ['f-litros', litros, true, 'os litros'],
+    ['f-valor', valor, true, 'o valor'],
+    ['f-kmtotal', kmTot, false, 'o KM total']
+  ]) {
+    const input = document.getElementById(id);
+    const valid = decimal ? /^\d+(?:[.,]\d+)?$/.test(String(input?.value ?? '').trim()) : Number.isInteger(value);
+    if (valid && value > 0) continue;
+    setFieldError(id, decimal ? 'Informe um número maior que zero.' : 'Informe um KM Total inteiro e positivo.');
+    showToast(`Confira ${label}`, 'err');
+    invalidFields.push(id);
+    break;
+  }
+  if (invalidFields.length) {
+    document.getElementById(invalidFields[0]).focus();
     return;
   }
 
-  for (const [id, value, label, decimal] of [
-    ['f-litros', litros, 'Litros', true],
-    ['f-valor', valor, 'Valor total', true],
-    ['f-kmtotal', kmTot, 'KM total', false]
-  ]) {
-    const input = document.getElementById(id);
-    const valid = decimal ? /^\d+(?:[.,]\d+)?$/.test(String(input.value).trim()) : Number.isInteger(value);
-    if (valid && value > 0) continue;
-    showToast(`Confira ${label}`, 'err');
-    input.focus();
+  // 🛡️ Validação de Hodômetro Regressivo
+  const editId = document.getElementById('f-id').value;
+  const previousKm = findPreviousKm(document.getElementById('f-data').value, editId);
+  if (previousKm !== null && kmTot <= previousKm) {
+    setFieldError('f-kmtotal', `O KM Total deve ser maior que o anterior (${formatNumber(previousKm, 0)}).`);
+    showToast(`O KM atual (${formatNumber(kmTot, 0)}) deve ser maior que o anterior (${formatNumber(previousKm, 0)})`, 'err');
+    document.getElementById('f-kmtotal').focus();
     return;
   }
 
@@ -1014,9 +1104,10 @@ function submitForm(e) {
         if (profileEpoch === epoch) {
           closeModal();
           document.getElementById('form').reset();
-          document.getElementById('f-precol').value  = '';
-          document.getElementById('f-kmtrip').value  = '';
-          document.getElementById('f-kmlprev').value = '';
+          const so1 = document.getElementById('f-precol'), so2 = document.getElementById('f-kmtrip'), so3 = document.getElementById('f-kmlprev');
+          if (so1) { so1.value = ''; so1.textContent = '—'; }
+          if (so2) { so2.value = ''; so2.textContent = '—'; }
+          if (so3) { so3.value = ''; so3.textContent = '—'; }
           selectedPostoNome = '';
           loadRecords(true);
         } else invalidateRecordsCache(user);
@@ -1173,11 +1264,29 @@ function formatNumber(valor, decimais = 2) {
 function calcPreco() {
   const l = parseDecimal(document.getElementById('f-litros').value);
   const v = parseDecimal(document.getElementById('f-valor').value);
-  const precol = document.getElementById('f-precol');
-  if (precol) precol.value = (l>0&&v>0) ? `R$ ${formatNumber(v/l, 3)}/L` : '';
+  const val = (l>0&&v>0) ? `R$ ${formatNumber(v/l, 3)}/L` : '';
+  const el = document.getElementById('f-precol');
+  if (el) { el.value = val; el.textContent = val || '—'; }
 }
 
 /* [CALC-KM-PREVIEW] — prévia de KM rodados e km/L no formulário */
+function getPreviousKmTotal(dataVal, editId) {
+  if (!dataVal) return null;
+  const dataAtual = new Date(dataVal).getTime();
+  if (!Number.isFinite(dataAtual)) return null;
+  let prevKmTotal = null, prevTime = -Infinity;
+
+  records.forEach(r => {
+    if (editId && String(r['ID']) === String(editId)) return; // ignora o próprio
+    const t  = new Date(r['Data']).getTime();
+    const km = +r['KM_Total'] || 0;
+    if (km > 0 && t < dataAtual && t > prevTime) {
+      prevTime = t; prevKmTotal = km;
+    }
+  });
+  return prevKmTotal;
+}
+
 function calcKm() {
   const kmTotalEl = document.getElementById('f-kmtotal');
   const kmTripEl  = document.getElementById('f-kmtrip');
@@ -1189,65 +1298,99 @@ function calcKm() {
   const editId  = document.getElementById('f-id')?.value;
   const previousEl = document.getElementById('previous-km');
 
-  // Acha o KM_Total do registro ANTERIOR (por data/hora)
-  const dataAtual = new Date(dataVal).getTime();
-  let prevKmTotal = null, prevTime = -Infinity;
+  // 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora)
+  const prevKmTotal = findPreviousKm(dataVal, editId);
 
-  records.forEach(r => {
-    if (editId && String(r['ID']) === String(editId)) return; // ignora o próprio
-    const t  = new Date(r['Data']).getTime();
-    const km = +r['KM_Total'] || 0;
-    if (km > 0 && t < dataAtual && t > prevTime) {
-      prevTime = t; prevKmTotal = km;
+  if (prevKmTotal === null) {
+    previousEl.textContent = 'Sem hodômetro anterior (1º abastecimento)';
+    previousEl.style.color = '';
+    previousEl.style.fontWeight = '';
+  } else {
+    previousEl.textContent = `Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km`;
+    previousEl.style.color = '';
+    previousEl.style.fontWeight = '';
+  }
+
+  if (prevKmTotal === null || kmTotal > prevKmTotal) {
+    if (kmTotalEl) {
+      kmTotalEl.classList.remove('is-invalid');
+      kmTotalEl.removeAttribute?.('aria-invalid');
     }
-  });
-
-  if (previousEl) {
-    previousEl.textContent = prevKmTotal === null ? 'Sem hodômetro anterior' :
-      `Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km`;
   }
 
   if (kmTotal <= 0 || !dataVal) {
-    if (kmTripEl) kmTripEl.value  = '';
-    if (kmlPrevEl) kmlPrevEl.value = '';
+    if (kmTripEl) { kmTripEl.value = ''; kmTripEl.textContent = '—'; }
+    if (kmlPrevEl) { kmlPrevEl.value = ''; kmlPrevEl.textContent = '—'; }
     return;
   }
 
   // KM Rodados
   if (prevKmTotal === null) {
-    if (kmTripEl) kmTripEl.value  = '— (1º registro)';
-    if (kmlPrevEl) kmlPrevEl.value = '—';
+    if (kmTripEl) { kmTripEl.value = '—'; kmTripEl.textContent = '—'; }
+    if (kmlPrevEl) { kmlPrevEl.value = '—'; kmlPrevEl.textContent = '—'; }
     return;
   }
 
   const dist = kmTotal - prevKmTotal;
   if (dist <= 0) {
-    if (kmTripEl) kmTripEl.value  = 'KM ≤ anterior';
-    if (kmlPrevEl) kmlPrevEl.value = '—';
+    if (kmTripEl) { kmTripEl.value = '—'; kmTripEl.textContent = '—'; }
+    if (kmlPrevEl) { kmlPrevEl.value = '—'; kmlPrevEl.textContent = '—'; }
+    if (previousEl) {
+      previousEl.textContent = `Hodômetro anterior: ${formatNumber(prevKmTotal, 0)} km (atual deve ser maior)`;
+      previousEl.style.color = 'var(--amber)';
+      previousEl.style.fontWeight = '700';
+    }
     return;
   }
 
-  if (kmTripEl) kmTripEl.value = `${formatNumber(dist, 0)} km`;
+  const distStr = `${formatNumber(dist, 0)} km`;
+  if (kmTripEl) { kmTripEl.value = distStr; kmTripEl.textContent = distStr; }
 
-  // Prévia de km/L (estimativa simples)
-  if (kmlPrevEl) {
-    kmlPrevEl.value = (litros > 0)
-      ? `~ ${formatNumber(dist / litros, 2)} km/L`
-      : '—';
-  }
+  // ⚡ Prévia de km/L (estimativa simples)
+  const kmlStr = (litros > 0) ? `~ ${formatNumber(dist / litros, 2)} km/L` : '—';
+  if (kmlPrevEl) { kmlPrevEl.value = kmlStr; kmlPrevEl.textContent = kmlStr; }
 }
 /* [/CALC-KM-PREVIEW] */
+
+/* 🔍 Acha o KM_Total do registro ANTERIOR (por data/hora), ignorando o próprio registro em edição */
+function findPreviousKm(dataVal, editId) {
+  if (!dataVal) return null;
+  const dataAtual = new Date(dataVal).getTime();
+  if (!Number.isFinite(dataAtual)) return null;
+  let prevKmTotal = null;
+  let prevTime = -Infinity;
+  records.forEach(r => {
+    if (editId && String(r['ID']) === String(editId)) return;
+    const t = new Date(r['Data']).getTime();
+    const km = +r['KM_Total'];
+    if (Number.isFinite(t) && Number.isFinite(km) && km > 0 && t < dataAtual && t > prevTime) {
+      prevTime = t;
+      prevKmTotal = km;
+    }
+  });
+  return prevKmTotal;
+}
 
 function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 
 function showToast(msg, type) {
   const el = document.getElementById('toast');
   if (!el) return;
+  if (toastTimeoutId && typeof clearTimeout === 'function') {
+    clearTimeout(toastTimeoutId);
+    toastTimeoutId = null;
+  }
   el.setAttribute('role', type === 'err' ? 'alert' : 'status');
   el.setAttribute('aria-live', type === 'err' ? 'assertive' : 'polite');
   el.textContent = msg;
-  el.className = `toast show ${type||''}`;
-  setTimeout(() => { if (el) el.className = 'toast'; }, 3200);
+  el.className = `toast show ${type || ''}`;
+  const delay = type === 'err' ? 5500 : 3500;
+  if (typeof setTimeout === 'function') {
+    toastTimeoutId = setTimeout(() => {
+      el.className = 'toast';
+      toastTimeoutId = null;
+    }, delay);
+  }
 }
 
 /* [LOADER-OVERLAY] — controla o overlay de loading */
@@ -1267,12 +1410,13 @@ function hideLoader() {
 }
 /* [/LOADER-OVERLAY] */
 
-/* [PARSE-DECIMAL] — aceita vírgula OU ponto, sempre retorna número */
+/* [PARSE-DECIMAL] — aceita somente um número decimal completo */
 function parseDecimal(valor) {
-  if (valor === null || valor === undefined || valor === '') return 0;
-  const limpo = String(valor).trim().replace(',', '.');
-  const n = parseFloat(limpo);
-  return isNaN(n) ? 0 : n;
+  if (valor === null || valor === undefined) return NaN;
+  const limpo = String(valor).trim();
+  if (!/^\d+(?:[.,]\d*)?$/.test(limpo)) return NaN;
+  const n = Number(limpo.replace(',', '.'));
+  return Number.isFinite(n) ? n : NaN;
 }
 /* [/PARSE-DECIMAL] */
 

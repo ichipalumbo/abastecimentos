@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0c0f17">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0c1017">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -346,7 +346,7 @@
               </svg>
               <span>Combustível</span> <span class="req">*</span>
             </label>
-            <select class="form-control" id="f-comb" required>
+            <select class="form-control" id="f-comb" required onchange="clearFieldError('f-comb')">
               <option value="" disabled selected>Selecione</option>
               <option>Gasolina</option>
               <option>Gasolina Aditivada</option>
@@ -355,6 +355,7 @@
               <option>GNV</option>
             </select>
             <button type="button" class="recent-fuel" id="recent-fuel" hidden onclick="useRecentFuel()"></button>
+            <div class="field-error" id="f-comb-error" role="alert" aria-live="polite"></div>
           </div>
           <div class="form-group">
             <span class="form-label">
@@ -372,6 +373,7 @@
                 <span class="slider"></span>
               </label>
             </div>
+            <div class="field-hint">Abastecimentos parciais não entram no cálculo de consumo do intervalo.</div>
           </div>
         </div>
         <!-- [/FORM-COMB-PARCIAL] -->
@@ -386,7 +388,8 @@
               <span>Litros</span> <span class="req">*</span>
             </label>
             <input type="text" inputmode="decimal" enterkeyhint="next" class="form-control" id="f-litros" placeholder="0,00"
-              required oninput="calcPreco();calcKm()" onkeydown="advanceForm(event, 'f-valor')">
+              aria-describedby="f-litros-error" required oninput="clearFieldError('f-litros');calcPreco();calcKm()" onkeydown="advanceForm(event, 'f-valor')">
+            <div class="field-error" id="f-litros-error" role="alert" aria-live="polite"></div>
           </div>
           <div class="form-group">
             <label class="form-label" for="f-valor">
@@ -397,7 +400,8 @@
               <span>Valor total R$</span> <span class="req">*</span>
             </label>
             <input type="text" inputmode="decimal" enterkeyhint="next" class="form-control" id="f-valor" placeholder="0,00" required
-              oninput="calcPreco()" onkeydown="advanceForm(event, 'f-kmtotal')">
+              aria-describedby="f-valor-error" oninput="clearFieldError('f-valor');calcPreco()" onkeydown="advanceForm(event, 'f-kmtotal')">
+            <div class="field-error" id="f-valor-error" role="alert" aria-live="polite"></div>
           </div>
         </div>
         <!-- [/FORM-LITROS-VALOR] -->
@@ -420,22 +424,23 @@
             <span>KM total no painel</span> <span class="req">*</span>
           </label>
           <input type="number" class="form-control" id="f-kmtotal" step="1" min="1" placeholder="000000"
-            inputmode="numeric" enterkeyhint="done" required oninput="calcKm()">
+            inputmode="numeric" enterkeyhint="done" aria-describedby="f-kmtotal-error" required oninput="clearFieldError('f-kmtotal');calcKm()">
+          <div class="field-error" id="f-kmtotal-error" role="alert" aria-live="polite"></div>
           <div class="previous-km" id="previous-km" aria-live="polite"></div>
         </div>
         <div class="calc-heading">Prévia calculada</div>
         <div class="grid-2 calc-grid">
           <div class="form-group">
             <label class="form-label" for="f-precol">Preço por litro</label>
-            <input type="text" class="form-control calc" id="f-precol" readonly placeholder="—">
+            <output class="form-control calc" id="f-precol" for="f-litros f-valor">—</output>
           </div>
           <div class="form-group">
             <label class="form-label" for="f-kmtrip">KM rodados</label>
-            <input type="text" class="form-control calc" id="f-kmtrip" readonly placeholder="—">
+            <output class="form-control calc" id="f-kmtrip" for="f-kmtotal">—</output>
           </div>
           <div class="form-group">
             <label class="form-label" for="f-kmlprev">Consumo estimado</label>
-            <input type="text" class="form-control calc" id="f-kmlprev" readonly placeholder="—">
+            <output class="form-control calc" id="f-kmlprev" for="f-litros f-kmtotal">—</output>
           </div>
         </div>
         <!-- [/FORM-HODOMETRO] -->
@@ -551,14 +556,14 @@
           <path d="M9 22v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/>
         </svg>
       </div>
-      <div class="confirm-title" id="confirm-posto-title">Remover posto?</div>
+      <div class="confirm-title" id="confirm-posto-title">Excluir posto?</div>
       <div class="confirm-text" id="confirm-posto-text">
-        Remover <strong id="confirm-posto-name"></strong>?<br>
+        Excluir <strong id="confirm-posto-name"></strong>?<br>
         Os registros existentes não serão afetados.
       </div>
       <div class="confirm-btns">
         <button class="btn-cancel" onclick="closeConfirmPosto()">Cancelar</button>
-        <button class="btn-confirm-del" onclick="confirmDeletePosto()">Remover</button>
+        <button class="btn-confirm-del" onclick="confirmDeletePosto()">Excluir</button>
       </div>
     </div>
   </div>
